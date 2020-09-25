@@ -49,11 +49,13 @@ DESTDIR = ../bin
 SOURCES += \
         src/main.cpp \
         src/MainWindow.cpp \
-    src/AboutDialog.cpp
+    src/AboutDialog.cpp \
+    src/WorldModel.cpp
 
 HEADERS += \
         src/MainWindow.h \
-    src/AboutDialog.h
+    src/AboutDialog.h \
+    src/WorldModel.h
 
 FORMS += \
         src/MainWindow.ui \

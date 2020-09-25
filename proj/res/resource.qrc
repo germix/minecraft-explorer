@@ -3,5 +3,6 @@
         <file>MainImage.png</file>
         <file>images/file-exit.png</file>
         <file>images/help-about.png</file>
+        <file>images/file-open.png</file>
     </qresource>
 </RCC>
