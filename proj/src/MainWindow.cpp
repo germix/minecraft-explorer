@@ -3,9 +3,13 @@
 #include <QFileDialog>
 #include <QTreeView>
 #include <QSplitter>
+#include <QSettings>
 
 #include "AboutDialog.h"
 #include "WorldModel.h"
+
+#define SETTINGS_APPLICATION "MinecraftExplorer"
+#define SETTINGS_ORGANIZATION "Germix"
 
 MainWindow::MainWindow(QWidget* parent)
 : QMainWindow(parent)
@@ -28,10 +32,29 @@ MainWindow::MainWindow(QWidget* parent)
     splitter->setStretchFactor(1, 1);
     splitter->setOrientation(Qt::Horizontal);
     setCentralWidget(splitter);
+
+    //
+    // Load settings
+    //
+    QSettings s(SETTINGS_ORGANIZATION, SETTINGS_APPLICATION);
+
+    restoreGeometry(s.value("WindowGeometry").toByteArray());
+    restoreState(s.value("WindowState").toByteArray());
+    splitter->restoreGeometry(s.value("SplitterGeometry").toByteArray());
+    splitter->restoreState(s.value("SplitterState").toByteArray());
+    currentSavesFolder = s.value("SaveFolder", "").toString();
+
+    reloadWorlds();
 }
 
 MainWindow::~MainWindow()
 {
+    QSettings s(SETTINGS_ORGANIZATION, SETTINGS_APPLICATION);
+    s.setValue("WindowState", saveState());
+    s.setValue("WindowGeometry", saveGeometry());
+    s.setValue("SplitterState", splitter->saveState());
+    s.setValue("SplitterGeometry", splitter->saveGeometry());
+    s.setValue("SaveFolder", currentSavesFolder);
     delete ui;
 }
 
@@ -65,5 +88,8 @@ void MainWindow::slotAction()
 
 void MainWindow::reloadWorlds()
 {
-    worldModel->load(currentSavesFolder);
+    if(!currentSavesFolder.isEmpty())
+    {
+        worldModel->load(currentSavesFolder);
+    }
 }
