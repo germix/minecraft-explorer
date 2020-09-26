@@ -217,20 +217,30 @@ TreeItem::~TreeItem()
     children.clear();
 }
 
-void readNbtDatFilesInFolder(TreeItem* parent, const QString& folder)
+int readNbtDatFilesInFolder(TreeItem* parent, const QString& folder)
 {
     QDir dir(folder);
     int count = 0;
 
-    foreach(QString datFile, dir.entryList(QStringList() << "*.dat", QDir::Files))
+    foreach(QString subDirName, dir.entryList(QStringList(), QDir::Dirs))
+    {
+        if(subDirName == "." || subDirName == "..")
+        {
+            continue;
+        }
+        count += readNbtDatFilesInFolder(new TreeItemFolder(parent, subDirName), folder + "/" + subDirName);
+    }
+    foreach(QString datFileName, dir.entryList(QStringList() << "*.dat", QDir::Files))
     {
         count++;
-        new TreeItemNbtFile(parent, folder, datFile);
+        new TreeItemNbtFile(parent, folder, datFileName);
     }
     if(count == 0)
     {
         delete parent;
     }
+
+    return count;
 }
 
 QIcon TreeItem::getIcon() const
@@ -249,17 +259,6 @@ TreeItemWorld::TreeItemWorld(TreeItem* parent, const QString& worldNameIn, const
     , worldFolder(worldFolderIn)
 {
     readNbtDatFilesInFolder(this, worldFolderIn);
-
-    QDir dir(worldFolder);
-
-    foreach(QString folderName, dir.entryList(QStringList(), QDir::AllDirs))
-    {
-        if(folderName == "." || folderName == "..")
-        {
-            continue;
-        }
-        readNbtDatFilesInFolder(new TreeItemFolder(this, folderName), worldFolder + "/" + folderName);
-    }
 }
 
 QString TreeItemWorld::getLabel() const
