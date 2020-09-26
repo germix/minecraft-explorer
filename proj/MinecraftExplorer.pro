@@ -65,7 +65,12 @@ SOURCES += \
     src/TreeItemNbtTagString.cpp \
     src/TreeItemNbtTagCompound.cpp \
     src/TreeItemNbtTagIntArray.cpp \
-    src/TreeItemNbtFile.cpp
+    src/TreeItemNbtFile.cpp \
+    src/TreeItemStatFile.cpp \
+    src/TreeItemWorld.cpp \
+    src/TreeItemStatObject.cpp \
+    src/TreeItemStatPair.cpp \
+    src/TreeItemStatArray.cpp
 
 HEADERS += \
         src/MainWindow.h \

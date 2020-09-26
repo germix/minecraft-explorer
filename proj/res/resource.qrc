@@ -18,5 +18,7 @@
         <file>images/treeitem-world-folder.png</file>
         <file>images/treeitem-nbt-tag-byte-array.png</file>
         <file>images/treeitem-nbt-tag-int-array.png</file>
+        <file>images/treeitem-stat-file.png</file>
+        <file>images/treeitem-stat-item.png</file>
     </qresource>
 </RCC>
