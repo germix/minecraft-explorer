@@ -227,39 +227,34 @@ public:
     virtual void read(QDataStream& in) override;
 };
 
-class TreeItemStatFile : public TreeItem
+class TreeItemJsonFile : public TreeItem
 {
 public:
     QString name;
 public:
-    TreeItemStatFile(TreeItem* parent, const QString& folder, const QString& fileName);
+    TreeItemJsonFile(TreeItem* parent, const QString& folder, const QString& fileName);
 public:
     virtual QIcon getIcon() const override;
     virtual QString getLabel() const override;
 };
 
-class TreeItemStatPair : public TreeItem
+class TreeItemJsonPair : public TreeItem
 {
 public:
     QString name;
     QString value;
 public:
-    TreeItemStatPair(TreeItem* parent, const QString& nameIn, const QString& valueIn)
-        : TreeItem(parent)
-        , name(nameIn)
-        , value(valueIn)
-    {
-    }
+    TreeItemJsonPair(TreeItem* parent, const QString& nameIn, const QString& valueIn);
 public:
     virtual QIcon getIcon() const override;
     virtual QString getLabel() const override;
 };
-class TreeItemStatArray : public TreeItem
+class TreeItemJsonArray : public TreeItem
 {
 public:
     QString name;
 public:
-    TreeItemStatArray(TreeItem* parent, const QString& nameIn)
+    TreeItemJsonArray(TreeItem* parent, const QString& nameIn)
         : TreeItem(parent)
         , name(nameIn)
     {
@@ -268,12 +263,12 @@ public:
     virtual QIcon getIcon() const override;
     virtual QString getLabel() const override;
 };
-class TreeItemStatObject : public TreeItem
+class TreeItemJsonObject : public TreeItem
 {
 public:
     QString name;
 public:
-    TreeItemStatObject(TreeItem* parent, const QString& nameIn)
+    TreeItemJsonObject(TreeItem* parent, const QString& nameIn)
         : TreeItem(parent)
         , name(nameIn)
     {

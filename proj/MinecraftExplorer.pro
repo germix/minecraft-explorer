@@ -49,8 +49,8 @@ DESTDIR = ../bin
 #---------------------------------------------------------------------------------------------------
 
 SOURCES += \
-        src/main.cpp \
-        src/MainWindow.cpp \
+    src/main.cpp \
+    src/MainWindow.cpp \
     src/AboutDialog.cpp \
     src/TreeItem.cpp \
     src/TreeModel.cpp \
@@ -66,22 +66,22 @@ SOURCES += \
     src/TreeItemNbtTagCompound.cpp \
     src/TreeItemNbtTagIntArray.cpp \
     src/TreeItemNbtFile.cpp \
-    src/TreeItemStatFile.cpp \
+    src/TreeItemJsonFile.cpp \
     src/TreeItemWorld.cpp \
-    src/TreeItemStatObject.cpp \
-    src/TreeItemStatPair.cpp \
-    src/TreeItemStatArray.cpp \
+    src/TreeItemJsonObject.cpp \
+    src/TreeItemJsonPair.cpp \
+    src/TreeItemJsonArray.cpp \
     src/TreeItemRegionFile.cpp \
     src/TreeItemRegionChunk.cpp
 
 HEADERS += \
-        src/MainWindow.h \
+    src/MainWindow.h \
     src/AboutDialog.h \
     src/TreeItem.h \
     src/TreeModel.h
 
 FORMS += \
-        src/MainWindow.ui \
+    src/MainWindow.ui \
     src/AboutDialog.ui
 
 

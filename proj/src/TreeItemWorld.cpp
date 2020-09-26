@@ -1,10 +1,9 @@
 #include "TreeItem.h"
 #include <QDir>
 
-int readNbtDatFilesInFolder(TreeItem* parent, const QString& folder)
+void readValidFilesInFolder(TreeItem* parent, const QString& folder)
 {
     QDir dir(folder);
-    int count = 0;
 
     foreach(QString subDirName, dir.entryList(QStringList(), QDir::Dirs))
     {
@@ -12,19 +11,28 @@ int readNbtDatFilesInFolder(TreeItem* parent, const QString& folder)
         {
             continue;
         }
-        count += readNbtDatFilesInFolder(new TreeItemFolder(parent, subDirName), folder + "/" + subDirName);
+        readValidFilesInFolder(new TreeItemFolder(parent, subDirName), folder + "/" + subDirName);
     }
-    foreach(QString datFileName, dir.entryList(QStringList() << "*.dat", QDir::Files))
+    foreach(QFileInfo fileInfo, dir.entryList
+                (QStringList()
+                    << "*.dat"
+                    << "*.mca"
+                    << "*.json"
+                , QDir::Files))
     {
-        count++;
-        new TreeItemNbtFile(parent, folder, datFileName);
+        if(fileInfo.suffix() == "dat")
+        {
+            new TreeItemNbtFile(parent, folder, fileInfo.fileName());
+        }
+        else if(fileInfo.suffix() == "mca")
+        {
+            new TreeItemRegionFile(parent, folder, fileInfo.fileName());
+        }
+        else if(fileInfo.suffix() == "json")
+        {
+            new TreeItemJsonFile(parent, folder, fileInfo.fileName());
+        }
     }
-    if(count == 0)
-    {
-        delete parent;
-    }
-
-    return count;
 }
 
 TreeItemWorld::TreeItemWorld(TreeItem* parent, const QString& worldNameIn, const QString& worldFolderIn)
@@ -32,29 +40,7 @@ TreeItemWorld::TreeItemWorld(TreeItem* parent, const QString& worldNameIn, const
     , worldName(worldNameIn)
     , worldFolder(worldFolderIn)
 {
-    readNbtDatFilesInFolder(this, worldFolderIn);
-
-    {
-        QDir statsDir(worldFolder + "/stats");
-        QString statsFolder = statsDir.absolutePath();
-        TreeItemFolder* statsFolderItem = new TreeItemFolder(this, "stats");
-
-        foreach(QString statFileName, statsDir.entryList(QStringList() << "*.json", QDir::Files))
-        {
-            new TreeItemStatFile(statsFolderItem, statsFolder, statFileName);
-        }
-    }
-    {
-        QDir regionDir(worldFolder + "/region");
-        QString regionFolder = regionDir.absolutePath();
-        TreeItemFolder* regionFolderItem = new TreeItemFolder(this, "region");
-
-        foreach(QString regionFileName, regionDir.entryList(QStringList() << "*.mca", QDir::Files))
-        {
-            new TreeItemRegionFile(regionFolderItem, regionFolder, regionFileName);
-        }
-    }
-
+    readValidFilesInFolder(this, worldFolderIn);
     sort();
 }
 

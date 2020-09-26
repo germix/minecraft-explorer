@@ -37,7 +37,7 @@ void TreeItemNbtTagList::read(QDataStream& in)
     in >> type;
     in >> size;
 
-    for(int k = 0; k < size; ++k)
+    for(quint32 k = 0; k < size; ++k)
     {
         TreeItemNbtTag* tag = createItemTag(this, type);
         tag->read(in);

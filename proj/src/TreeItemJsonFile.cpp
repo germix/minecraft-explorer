@@ -12,27 +12,27 @@ void parseJsonValue(TreeItem* parent, QString key, QJsonValue value)
 {
     if(value.isNull())
     {
-        new TreeItemStatPair(parent, key, "null");
+        new TreeItemJsonPair(parent, key, "null");
     }
     else if(value.isBool())
     {
-        new TreeItemStatPair(parent, key, value.toBool() == true ? "true" : "false");
+        new TreeItemJsonPair(parent, key, value.toBool() == true ? "true" : "false");
     }
     else if(value.isDouble())
     {
-        new TreeItemStatPair(parent, key, QString::number(value.toDouble()));
+        new TreeItemJsonPair(parent, key, QString::number(value.toDouble()));
     }
     else if(value.isString())
     {
-        new TreeItemStatPair(parent, key, value.toString());
+        new TreeItemJsonPair(parent, key, value.toString());
     }
     else if(value.isArray())
     {
-        parseJsonArray(new TreeItemStatArray(parent, key), value.toArray());
+        parseJsonArray(new TreeItemJsonArray(parent, key), value.toArray());
     }
     else if(value.isObject())
     {
-        parseJsonObject(new TreeItemStatObject(parent, key), value.toObject());
+        parseJsonObject(new TreeItemJsonObject(parent, key), value.toObject());
     }
 }
 
@@ -52,7 +52,7 @@ void parseJsonObject(TreeItem* parent, QJsonObject obj)
     }
 }
 
-TreeItemStatFile::TreeItemStatFile(TreeItem* parent, const QString& folder, const QString& fileName)
+TreeItemJsonFile::TreeItemJsonFile(TreeItem* parent, const QString& folder, const QString& fileName)
     : TreeItem(parent)
 {
     QFile file(folder + "/" + fileName);
@@ -70,12 +70,12 @@ TreeItemStatFile::TreeItemStatFile(TreeItem* parent, const QString& folder, cons
     }
 }
 
-QIcon TreeItemStatFile::getIcon() const
+QIcon TreeItemJsonFile::getIcon() const
 {
-    return QIcon(":/images/treeitem-stat-file.png");
+    return QIcon(":/images/treeitem-json-file.png");
 }
 
-QString TreeItemStatFile::getLabel() const
+QString TreeItemJsonFile::getLabel() const
 {
     return name;
 }
