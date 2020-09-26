@@ -21,6 +21,7 @@ public:
     TreeItem(TreeItem* parent);
     virtual ~TreeItem();
 public:
+    void sort();
     virtual QIcon getIcon() const;
     virtual QString getLabel() const;
 };
@@ -276,6 +277,7 @@ public:
         : TreeItem(parent)
         , name(nameIn)
     {
+        sort();
     }
 public:
     virtual QIcon getIcon() const override;

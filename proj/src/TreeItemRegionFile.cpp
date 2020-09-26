@@ -54,6 +54,7 @@ TreeItemRegionFile::TreeItemRegionFile(TreeItem* parent, const QString& folder, 
             }
         }
     }
+    sort();
 }
 
 QIcon TreeItemRegionFile::getIcon() const

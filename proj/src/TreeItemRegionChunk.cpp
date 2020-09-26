@@ -93,6 +93,8 @@ TreeItemRegionChunk::TreeItemRegionChunk(TreeItemRegionFile *parent,
         data = gUncompress(file.read(j1 - 1));
         readNbtFromData(this, data);
     }
+
+    sort();
 }
 
 QIcon TreeItemRegionChunk::getIcon() const

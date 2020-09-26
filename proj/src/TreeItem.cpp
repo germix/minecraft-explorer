@@ -371,6 +371,26 @@ QIcon TreeItem::getIcon() const
     return QIcon();
 }
 
+static bool treeItemLessThan(TreeItem* item1, TreeItem* item2)
+{
+    if(dynamic_cast<TreeItemFolder*>(item1) != nullptr
+        && dynamic_cast<TreeItemFolder*>(item2) == nullptr)
+    {
+        return true;
+    }
+    if(dynamic_cast<TreeItemFolder*>(item2) != nullptr
+        && dynamic_cast<TreeItemFolder*>(item1) == nullptr)
+    {
+        return false;
+    }
+    return item1->getLabel() < item2->getLabel();
+}
+
+void TreeItem::sort()
+{
+    qSort(children.begin(), children.end(), treeItemLessThan);
+}
+
 QString TreeItem::getLabel() const
 {
     return QString();
@@ -380,4 +400,5 @@ TreeItemFolder::TreeItemFolder(TreeItem* parent, const QString& folderNameIn)
     : TreeItem(parent)
     , folderName(folderNameIn)
 {
+    sort();
 }

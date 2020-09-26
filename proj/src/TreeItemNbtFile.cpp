@@ -30,6 +30,7 @@ TreeItemNbtFile::TreeItemNbtFile(TreeItem* parent, const QString& folder, const 
 
         readNbtFromData(this, data);
     }
+    sort();
 }
 
 QIcon TreeItemNbtFile::getIcon() const

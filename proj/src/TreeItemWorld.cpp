@@ -54,6 +54,8 @@ TreeItemWorld::TreeItemWorld(TreeItem* parent, const QString& worldNameIn, const
             new TreeItemRegionFile(regionFolderItem, regionFolder, regionFileName);
         }
     }
+
+    sort();
 }
 
 QString TreeItemWorld::getLabel() const

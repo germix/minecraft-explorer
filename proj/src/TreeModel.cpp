@@ -43,6 +43,7 @@ void TreeModel::load(const QString& savesPath)
         }
         new TreeItemWorld(root, worldName, savesPath + '/' + worldName);
     }
+    root->sort();
     endResetModel();
 }
 

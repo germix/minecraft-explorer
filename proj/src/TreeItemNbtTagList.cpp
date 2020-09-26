@@ -2,6 +2,7 @@
 
 TreeItemNbtTagList::TreeItemNbtTagList(TreeItem* parent) : TreeItemNbtTag(parent)
 {
+    sort();
 }
 
 TreeItemNbtTagList::~TreeItemNbtTagList()

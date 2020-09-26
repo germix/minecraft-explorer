@@ -2,6 +2,7 @@
 
 TreeItemNbtTagCompound::TreeItemNbtTagCompound(TreeItem* parent) : TreeItemNbtTag(parent)
 {
+    sort();
 }
 
 TreeItemNbtTagCompound::~TreeItemNbtTagCompound()
