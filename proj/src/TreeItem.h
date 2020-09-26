@@ -89,6 +89,7 @@ public:
 public:
     virtual void read(QDataStream& in) override
     {
+        Q_UNUSED(in);
     }
 };
 class TreeItemNbtTagByte : public TreeItemNbtTag
@@ -276,6 +277,30 @@ public:
         , name(nameIn)
     {
     }
+public:
+    virtual QIcon getIcon() const override;
+    virtual QString getLabel() const override;
+};
+
+class TreeItemRegionFile : public TreeItem
+{
+public:
+    QString name;
+public:
+    TreeItemRegionFile(TreeItem* parent, const QString& folder, const QString& fileName);
+public:
+    virtual QIcon getIcon() const override;
+    virtual QString getLabel() const override;
+};
+class QFile;
+class TreeItemRegionChunk : public TreeItem
+{
+public:
+    int chunkX;
+    int chunkZ;
+    bool isCompressed;
+public:
+    TreeItemRegionChunk(TreeItemRegionFile* parent, QFile& file, int x, int z, quint32 location, quint32 timestamps);
 public:
     virtual QIcon getIcon() const override;
     virtual QString getLabel() const override;

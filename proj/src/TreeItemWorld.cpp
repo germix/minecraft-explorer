@@ -34,13 +34,25 @@ TreeItemWorld::TreeItemWorld(TreeItem* parent, const QString& worldNameIn, const
 {
     readNbtDatFilesInFolder(this, worldFolderIn);
 
-    QDir statsDir(worldFolder + "/stats");
-    QString statsFolder = statsDir.absolutePath();
-    TreeItemFolder* statsFolderItem = new TreeItemFolder(this, "stats");
-
-    foreach(QString statFileName, statsDir.entryList(QStringList() << "*.json", QDir::Files))
     {
-        new TreeItemStatFile(statsFolderItem, statsFolder, statFileName);
+        QDir statsDir(worldFolder + "/stats");
+        QString statsFolder = statsDir.absolutePath();
+        TreeItemFolder* statsFolderItem = new TreeItemFolder(this, "stats");
+
+        foreach(QString statFileName, statsDir.entryList(QStringList() << "*.json", QDir::Files))
+        {
+            new TreeItemStatFile(statsFolderItem, statsFolder, statFileName);
+        }
+    }
+    {
+        QDir regionDir(worldFolder + "/region");
+        QString regionFolder = regionDir.absolutePath();
+        TreeItemFolder* regionFolderItem = new TreeItemFolder(this, "region");
+
+        foreach(QString regionFileName, regionDir.entryList(QStringList() << "*.mca", QDir::Files))
+        {
+            new TreeItemRegionFile(regionFolderItem, regionFolder, regionFileName);
+        }
     }
 }
 

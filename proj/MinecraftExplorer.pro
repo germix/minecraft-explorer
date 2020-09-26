@@ -70,7 +70,9 @@ SOURCES += \
     src/TreeItemWorld.cpp \
     src/TreeItemStatObject.cpp \
     src/TreeItemStatPair.cpp \
-    src/TreeItemStatArray.cpp
+    src/TreeItemStatArray.cpp \
+    src/TreeItemRegionFile.cpp \
+    src/TreeItemRegionChunk.cpp
 
 HEADERS += \
         src/MainWindow.h \

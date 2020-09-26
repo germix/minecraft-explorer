@@ -20,5 +20,6 @@
         <file>images/treeitem-nbt-tag-int-array.png</file>
         <file>images/treeitem-stat-file.png</file>
         <file>images/treeitem-stat-item.png</file>
+        <file>images/treeitem-region-file.png</file>
     </qresource>
 </RCC>

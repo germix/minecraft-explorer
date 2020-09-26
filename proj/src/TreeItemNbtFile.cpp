@@ -1,6 +1,8 @@
 #include "TreeItem.h"
 #include <QFile>
 
+extern void readNbtFromData(TreeItem* parent, QByteArray data);
+
 TreeItemNbtFile::TreeItemNbtFile(TreeItem* parent, const QString& folder, const QString& fileName)
     : TreeItem(parent)
 {
@@ -12,7 +14,9 @@ TreeItemNbtFile::TreeItemNbtFile(TreeItem* parent, const QString& folder, const 
         QByteArray data;
 
         data = file.read(2);
-        isCompressed = (data[0] == 0x1f && data[1] == 0x8b);
+        quint8 ch1 = (quint8)data[0];
+        quint8 ch2 = (quint8)data[1];
+        isCompressed = (ch1 == 0x1f && ch2 == 0x8b);
         data.clear();
         file.seek(0);
         if(!isCompressed)
@@ -24,51 +28,7 @@ TreeItemNbtFile::TreeItemNbtFile(TreeItem* parent, const QString& folder, const 
             gzipDecompress(file.readAll(), data);
         }
 
-        QDataStream stream(data);
-
-        quint8 type;
-        TreeItemNbtTag* tag;
-
-        stream >> type;
-        if(type == 0)
-        {
-            stream >> type;
-        }
-        if(type == 0)
-        {
-            tag = new TreeItemNbtTagEnd(this);
-        }
-        else
-        {
-            QString s = readStringUTF8(stream);
-
-            if(!s.isEmpty())
-            {
-                tag = createItemTag(this, type);
-                tag->name = s;
-                tag->read(stream);
-            }
-            else
-            {
-                stream >> type;
-                while(0 != type)
-                {
-                    s = readStringUTF8(stream);
-                    tag = createItemTag(this, type);
-                    if(tag == nullptr)
-                    {
-                        // TODO: error
-                        break;
-                    }
-                    else
-                    {
-                        tag->name = s;
-                        tag->read(stream);
-                    }
-                    stream >> type;
-                }
-            }
-        }
+        readNbtFromData(this, data);
     }
 }
 

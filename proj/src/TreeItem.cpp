@@ -10,6 +10,110 @@
 #define GZIP_WINDOWS_BIT 15 + 16
 #define GZIP_CHUNK_SIZE 32 * 1024
 
+//
+// https://stackoverflow.com/questions/2690328/qt-quncompress-gzip-data
+//
+
+
+/**
+ * @brief Compresses the given buffer using the standard GZIP algorithm
+ * @param input The buffer to be compressed
+ * @param output The result of the compression
+ * @param level The compression level to be used (@c 0 = no compression, @c 9 = max, @c -1 = default)
+ * @return @c true if the compression was successful, @c false otherwise
+ */
+bool gzipCompress(QByteArray input, QByteArray &output, int level)
+{
+    // Prepare output
+    output.clear();
+
+    // Is there something to do?
+    if(input.length())
+    {
+        // Declare vars
+        int flush = 0;
+
+        // Prepare deflater status
+        z_stream strm;
+        strm.zalloc = Z_NULL;
+        strm.zfree = Z_NULL;
+        strm.opaque = Z_NULL;
+        strm.avail_in = 0;
+        strm.next_in = Z_NULL;
+
+        // Initialize deflater
+        int ret = deflateInit2(&strm, qMax(-1, qMin(9, level)), Z_DEFLATED, GZIP_WINDOWS_BIT, 8, Z_DEFAULT_STRATEGY);
+
+        if (ret != Z_OK)
+            return(false);
+
+        // Prepare output
+        output.clear();
+
+        // Extract pointer to input data
+        char *input_data = input.data();
+        int input_data_left = input.length();
+
+        // Compress data until available
+        do {
+            // Determine current chunk size
+            int chunk_size = qMin(GZIP_CHUNK_SIZE, input_data_left);
+
+            // Set deflater references
+            strm.next_in = (unsigned char*)input_data;
+            strm.avail_in = chunk_size;
+
+            // Update interval variables
+            input_data += chunk_size;
+            input_data_left -= chunk_size;
+
+            // Determine if it is the last chunk
+            flush = (input_data_left <= 0 ? Z_FINISH : Z_NO_FLUSH);
+
+            // Deflate chunk and cumulate output
+            do {
+
+                // Declare vars
+                char out[GZIP_CHUNK_SIZE];
+
+                // Set deflater references
+                strm.next_out = (unsigned char*)out;
+                strm.avail_out = GZIP_CHUNK_SIZE;
+
+                // Try to deflate chunk
+                ret = deflate(&strm, flush);
+
+                // Check errors
+                if(ret == Z_STREAM_ERROR)
+                {
+                    // Clean-up
+                    deflateEnd(&strm);
+
+                    // Return
+                    return(false);
+                }
+
+                // Determine compressed size
+                int have = (GZIP_CHUNK_SIZE - strm.avail_out);
+
+                // Cumulate result
+                if(have > 0)
+                    output.append((char*)out, have);
+
+            } while (strm.avail_out == 0);
+
+        } while (flush != Z_FINISH);
+
+        // Clean-up
+        (void)deflateEnd(&strm);
+
+        // Return
+        return(ret == Z_STREAM_END);
+    }
+    else
+        return(true);
+}
+
 /**
  * @brief Decompresses the given buffer using the standard GZIP algorithm
  * @param input The buffer to be decompressed
@@ -185,6 +289,51 @@ TreeItemNbtTag* createItemTag(TreeItem* parent, quint8 type)
         case NBTTAG_INT_ARRAY: return new TreeItemNbtTagIntArray(parent);
     }
     return nullptr;
+}
+
+
+void readNbtFromData(TreeItem* parent, QByteArray data)
+{
+    quint8 type;
+    TreeItemNbtTag* tag;
+    QDataStream stream(data);
+
+    stream >> type;
+    if(type == 0)
+    {
+        tag = new TreeItemNbtTagEnd(parent);
+    }
+    else
+    {
+        QString s = readStringUTF8(stream);
+
+        if(!s.isEmpty())
+        {
+            tag = createItemTag(parent, type);
+            tag->name = s;
+            tag->read(stream);
+        }
+        else
+        {
+            stream >> type;
+            while(0 != type)
+            {
+                s = readStringUTF8(stream);
+                tag = createItemTag(parent, type);
+                if(tag == nullptr)
+                {
+                    // TODO: error
+                    break;
+                }
+                else
+                {
+                    tag->name = s;
+                    tag->read(stream);
+                }
+                stream >> type;
+            }
+        }
+    }
 }
 
 TreeItem::TreeItem(TreeItem* ___parent)
