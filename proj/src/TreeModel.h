@@ -12,7 +12,7 @@ public:
     explicit TreeModel(QObject *parent = nullptr);
     ~TreeModel();
 public:
-    void load(const QString& savesPath);
+    void load(const QString& worldOrSavesPath);
     TreeItem* toItem(const QModelIndex& index) const;
     QModelIndex toIndex(TreeItem* item, int column) const;
 public:

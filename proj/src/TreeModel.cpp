@@ -7,6 +7,17 @@
 #include <QFile>
 #include <QDataStream>
 
+bool loadWorld(TreeItem* parent, const QString& worldFolderPath)
+{
+    QFileInfo levelDat(worldFolderPath + "/level.dat");
+
+    if(levelDat.exists())
+    {
+        new TreeItemWorld(parent, QFileInfo(worldFolderPath).fileName(), worldFolderPath);
+        return true;
+    }
+    return false;
+}
 
 TreeModel::TreeModel(QObject *parent)
     : QAbstractItemModel(parent)
@@ -28,20 +39,24 @@ void TreeModel::clear()
     root = nullptr;
 }
 
-void TreeModel::load(const QString& savesPath)
+void TreeModel::load(const QString& worldOrSavesPath)
 {
-    QDir dir(savesPath);
-
     beginResetModel();
     clear();
     root = new TreeItem(nullptr);
-    foreach(QString worldName, dir.entryList(QStringList(), QDir::AllDirs))
+    if(!loadWorld(root, worldOrSavesPath))
     {
-        if(worldName == "." || worldName == "..")
+        QDir dir(worldOrSavesPath);
+        TreeItemFolder* savesFolderItem = new TreeItemFolder(root, dir.dirName());
+
+        foreach(QString worldName, dir.entryList(QStringList(), QDir::AllDirs))
         {
-            continue;
+            if(worldName == "." || worldName == "..")
+            {
+                continue;
+            }
+            loadWorld(savesFolderItem, worldOrSavesPath + '/' + worldName);
         }
-        new TreeItemWorld(root, worldName, savesPath + '/' + worldName);
     }
     root->sort();
     endResetModel();

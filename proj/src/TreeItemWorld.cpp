@@ -1,6 +1,8 @@
 #include "TreeItem.h"
 #include <QDir>
 
+bool loadWorld(TreeItem* parent, const QString& worldFolderPath);
+
 void readValidFilesInFolder(TreeItem* parent, const QString& folder)
 {
     QDir dir(folder);
@@ -11,7 +13,10 @@ void readValidFilesInFolder(TreeItem* parent, const QString& folder)
         {
             continue;
         }
-        readValidFilesInFolder(new TreeItemFolder(parent, subDirName), folder + "/" + subDirName);
+        if(!loadWorld(parent, folder + "/" + subDirName))
+        {
+            readValidFilesInFolder(new TreeItemFolder(parent, subDirName), folder + "/" + subDirName);
+        }
     }
     foreach(QFileInfo fileInfo, dir.entryList
                 (QStringList()

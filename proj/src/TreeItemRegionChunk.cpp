@@ -64,7 +64,6 @@ TreeItemRegionChunk::TreeItemRegionChunk(TreeItemRegionFile *parent,
                                          quint32 location, quint32 timestamps)
     : TreeItem(parent)
 {
-    //location = qFromBigEndian(location);
     quint16 offset = location >> 8;
     quint16 length = location & 255;
 

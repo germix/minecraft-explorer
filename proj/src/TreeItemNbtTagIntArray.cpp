@@ -35,7 +35,7 @@ void TreeItemNbtTagIntArray::read(QDataStream& in)
     in >> size;
 
     data.resize(size);
-    for(int i = 0; i < size; i++)
+    for(quint32 i = 0; i < size; i++)
     {
         in >> data[i];
     }
