@@ -1,39 +1,20 @@
-#ifndef WORLDMODEL_H
-#define WORLDMODEL_H
+#ifndef TREEMODEL_H
+#define TREEMODEL_H
 #include <QAbstractItemModel>
-#include <QVector>
 
-class WorldModel : public QAbstractItemModel
+class TreeItem;
+
+class TreeModel : public QAbstractItemModel
 {
     Q_OBJECT
-    class WorldItem
-    {
-    public:
-        QString name;
-        WorldItem()
-        {
-        }
-        WorldItem(const QString& n)
-            : name(n)
-        {
-        }
-        WorldItem(const WorldItem& o)
-            : name(o.name)
-        {
-        }
-    public:
-        WorldItem& operator = (const WorldItem& o)
-        {
-            name = o.name;
-            return *this;
-        }
-    };
-    QString basePath;
-    QVector<WorldItem> worlds;
+    TreeItem* root;
 public:
-    explicit WorldModel(QObject* parent = nullptr);
+    explicit TreeModel(QObject *parent = nullptr);
+    ~TreeModel();
 public:
     void load(const QString& savesPath);
+    TreeItem* toItem(const QModelIndex& index) const;
+    QModelIndex toIndex(TreeItem* item, int column) const;
 public:
     // Header:
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
@@ -47,7 +28,9 @@ public:
     int columnCount(const QModelIndex& parent = QModelIndex()) const override;
 
     QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
+
 private:
+    void clear();
 };
 
-#endif // WORLDMODEL_H
+#endif // TREEMODEL_H

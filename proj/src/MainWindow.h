@@ -10,6 +10,7 @@ class MainWindow;
 class WorldModel;
 class QTreeView;
 class QSplitter;
+class TreeModel;
 
 class MainWindow : public QMainWindow
 {
@@ -17,10 +18,12 @@ class MainWindow : public QMainWindow
     Ui::MainWindow* ui;
     QString currentSavesFolder;
 
-    QWidget* viewWidget;
-    WorldModel* worldModel;
-    QTreeView* worldTreeView;
     QSplitter* splitter;
+
+    QWidget* viewWidget;
+
+    TreeModel* treeModel;
+    QTreeView* treeModelView;
 public:
     explicit MainWindow(QWidget* parent = 0);
     ~MainWindow();

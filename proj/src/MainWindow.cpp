@@ -6,7 +6,7 @@
 #include <QSettings>
 
 #include "AboutDialog.h"
-#include "WorldModel.h"
+#include "TreeModel.h"
 
 #define SETTINGS_APPLICATION "MinecraftExplorer"
 #define SETTINGS_ORGANIZATION "Germix"
@@ -17,17 +17,15 @@ MainWindow::MainWindow(QWidget* parent)
 {
     ui->setupUi(this);
 
-    worldModel = new WorldModel();
-    worldTreeView = new QTreeView();
-    worldTreeView->setModel(worldModel);
-    worldTreeView->setHeaderHidden(true);
-    worldTreeView->setRootIsDecorated(false);
-
     viewWidget = new QWidget();
 
+    treeModel = new TreeModel();
+    treeModelView = new QTreeView();
+    treeModelView->setModel(treeModel);
+    treeModelView->setHeaderHidden(true);
+
     splitter = new QSplitter();
-    splitter->addWidget(worldTreeView);
-    splitter->addWidget(viewWidget);
+    splitter->addWidget(treeModelView);
     splitter->setStretchFactor(0, 1);
     splitter->setStretchFactor(1, 1);
     splitter->setOrientation(Qt::Horizontal);
@@ -90,6 +88,7 @@ void MainWindow::reloadWorlds()
 {
     if(!currentSavesFolder.isEmpty())
     {
-        worldModel->load(currentSavesFolder);
+        //worldModel->load(currentSavesFolder);
+        treeModel->load(currentSavesFolder);
     }
 }

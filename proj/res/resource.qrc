@@ -4,5 +4,19 @@
         <file>images/file-exit.png</file>
         <file>images/help-about.png</file>
         <file>images/file-open.png</file>
+        <file>images/treeitem-folder.png</file>
+        <file>images/treeitem-nbt-file.png</file>
+        <file>images/treeitem-nbt-tag-byte.png</file>
+        <file>images/treeitem-nbt-tag-compound.png</file>
+        <file>images/treeitem-nbt-tag-double.png</file>
+        <file>images/treeitem-nbt-tag-float.png</file>
+        <file>images/treeitem-nbt-tag-int.png</file>
+        <file>images/treeitem-nbt-tag-list.png</file>
+        <file>images/treeitem-nbt-tag-long.png</file>
+        <file>images/treeitem-nbt-tag-short.png</file>
+        <file>images/treeitem-nbt-tag-string.png</file>
+        <file>images/treeitem-world-folder.png</file>
+        <file>images/treeitem-nbt-tag-byte-array.png</file>
+        <file>images/treeitem-nbt-tag-int-array.png</file>
     </qresource>
 </RCC>

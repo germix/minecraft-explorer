@@ -21,6 +21,8 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
+LIBS += -lz
+
 #---------------------------------------------------------------------------------------------------
 # Version
 #---------------------------------------------------------------------------------------------------
@@ -50,12 +52,26 @@ SOURCES += \
         src/main.cpp \
         src/MainWindow.cpp \
     src/AboutDialog.cpp \
-    src/WorldModel.cpp
+    src/TreeItem.cpp \
+    src/TreeModel.cpp \
+    src/TreeItemNbtTagInt.cpp \
+    src/TreeItemNbtTagShort.cpp \
+    src/TreeItemNbtTagByte.cpp \
+    src/TreeItemNbtTagLong.cpp \
+    src/TreeItemNbtTagFloat.cpp \
+    src/TreeItemNbtTagDouble.cpp \
+    src/TreeItemNbtTagList.cpp \
+    src/TreeItemNbtTagByteArray.cpp \
+    src/TreeItemNbtTagString.cpp \
+    src/TreeItemNbtTagCompound.cpp \
+    src/TreeItemNbtTagIntArray.cpp \
+    src/TreeItemNbtFile.cpp
 
 HEADERS += \
         src/MainWindow.h \
     src/AboutDialog.h \
-    src/WorldModel.h
+    src/TreeItem.h \
+    src/TreeModel.h
 
 FORMS += \
         src/MainWindow.ui \
@@ -66,7 +82,7 @@ FORMS += \
 # Resource files
 #---------------------------------------------------------------------------------------------------
 
-RESOURCES += res/resource.qrc
+RESOURCES +=res/resource.qrc
 
 win32:RC_FILE = res/resource_win32.rc
 
