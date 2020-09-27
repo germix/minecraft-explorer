@@ -285,6 +285,7 @@ TreeItemNbtTag* createItemTag(TreeItem* parent, quint8 type)
         case NBTTAG_LIST: return new TreeItemNbtTagList(parent);
         case NBTTAG_COMPOUND: return new TreeItemNbtTagCompound(parent);
         case NBTTAG_INT_ARRAY: return new TreeItemNbtTagIntArray(parent);
+        case NBTTAG_LONG_ARRAY: return new TreeItemNbtTagLongArray(parent);
     }
     return nullptr;
 }

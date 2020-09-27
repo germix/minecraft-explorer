@@ -74,7 +74,8 @@ SOURCES += \
     src/TreeItemRegionChunk.cpp \
     src/TreeItemFolder.cpp \
     src/TreeItemFolderWorld.cpp \
-    src/TreeItemNbtTag.cpp
+    src/TreeItemNbtTag.cpp \
+    src/TreeItemNbtTagLongArray.cpp
 
 HEADERS += \
     src/MainWindow.h \
@@ -102,7 +103,8 @@ HEADERS += \
     src/TreeItemRegionFile.h \
     src/TreeItemRegionChunk.h \
     src/TreeItemFolder.h \
-    src/TreeItemFolderWorld.h
+    src/TreeItemFolderWorld.h \
+    src/TreeItemNbtTagLongArray.h
 
 FORMS += \
     src/MainWindow.ui \

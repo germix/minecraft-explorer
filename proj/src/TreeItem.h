@@ -30,6 +30,7 @@ enum NBTTAG
     NBTTAG_LIST = 9,
     NBTTAG_COMPOUND = 10,
     NBTTAG_INT_ARRAY = 11,
+    NBTTAG_LONG_ARRAY = 12,
 };
 
 enum
@@ -112,6 +113,7 @@ public:
 #include "TreeItemNbtTagList.h"
 #include "TreeItemNbtTagCompound.h"
 #include "TreeItemNbtTagIntArray.h"
+#include "TreeItemNbtTagLongArray.h"
 #include "TreeItemJsonFile.h"
 #include "TreeItemJsonPair.h"
 #include "TreeItemJsonArray.h"
