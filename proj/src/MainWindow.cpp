@@ -88,7 +88,6 @@ void MainWindow::reloadWorlds()
 {
     if(!currentSavesFolder.isEmpty())
     {
-        //worldModel->load(currentSavesFolder);
         treeModel->load(currentSavesFolder);
     }
 }
