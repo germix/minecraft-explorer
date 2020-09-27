@@ -118,6 +118,40 @@ QModelIndex TreeModel::toIndex(TreeItem* item, int column) const
     return QModelIndex();
 }
 
+void TreeModel::moveItemUp(const QModelIndex& index)
+{
+    int count = 1;
+    int sourceRow = index.row();
+    int destinationRow = index.row()-1;
+    QModelIndex sourceParent = index.parent();
+    QModelIndex destinationParent = index.parent();
+
+    beginMoveRows(sourceParent, sourceRow, sourceRow+count-1, destinationParent, destinationRow);
+    TreeItem* item = toItem(index);
+    TreeItem* parent = item->parent;
+    TreeItem* tmp = parent->children[sourceRow];
+    parent->children[sourceRow] = parent->children[destinationRow];
+    parent->children[destinationRow] = tmp;
+    endMoveRows();
+}
+
+void TreeModel::moveItemDown(const QModelIndex& index)
+{
+    int count = 1;
+    int sourceRow = index.row()+1;
+    int destinationRow = index.row();
+    QModelIndex sourceParent = index.parent();
+    QModelIndex destinationParent = index.parent();
+
+    beginMoveRows(sourceParent, sourceRow, sourceRow+count-1, destinationParent, destinationRow);
+    TreeItem* item = toItem(index);
+    TreeItem* parent = item->parent;
+    TreeItem* tmp = parent->children[sourceRow];
+    parent->children[sourceRow] = parent->children[destinationRow];
+    parent->children[destinationRow] = tmp;
+    endMoveRows();
+}
+
 QVariant TreeModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     Q_UNUSED(section);

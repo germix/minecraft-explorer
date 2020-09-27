@@ -26,5 +26,7 @@
         <file>images/nav-enter.png</file>
         <file>images/nav-up.png</file>
         <file>images/file-open-container-folder.png</file>
+        <file>images/action-move-down.png</file>
+        <file>images/action-move-up.png</file>
     </qresource>
 </RCC>

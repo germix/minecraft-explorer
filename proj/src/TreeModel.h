@@ -15,6 +15,8 @@ public:
     void load(const QString& worldOrSavesPath);
     TreeItem* toItem(const QModelIndex& index) const;
     QModelIndex toIndex(TreeItem* item, int column) const;
+    void moveItemUp(const QModelIndex& index);
+    void moveItemDown(const QModelIndex& index);
 public:
     // Header:
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;

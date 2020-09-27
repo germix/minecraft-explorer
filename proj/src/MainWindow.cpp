@@ -47,6 +47,9 @@ MainWindow::MainWindow(QWidget* parent)
     actionDirEnter = new QAction(QIcon(":/images/nav-enter.png"), tr("Enter directory"));
     actionOpenContainerFolder = new QAction(QIcon(":/images/file-open-container-folder.png"), tr("Open container folder"));
 
+    actionListItemUp = new QAction(QIcon(":/images/action-move-up.png"), tr("Move up"));
+    actionListItemDown = new QAction(QIcon(":/images/action-move-down.png"), tr("Move down"));
+
     //
     // Load settings
     //
@@ -114,6 +117,7 @@ void MainWindow::slotTreeView_customContextMenuRequested(const QPoint& pos)
     QModelIndex index = treeModelView->currentIndex();
     TreeItem* treeItem = treeModel->toItem(index);
     TreeItemFolder* treeItemFolder = dynamic_cast<TreeItemFolder*>(treeItem);
+    TreeItemNbtTagList* parentItemTagList = dynamic_cast<TreeItemNbtTagList*>(treeItem->parent);
 
     if(!treeItem)
     {
@@ -132,6 +136,17 @@ void MainWindow::slotTreeView_customContextMenuRequested(const QPoint& pos)
         }
         menu.addSeparator();
         menu.addAction(actionOpenContainerFolder);
+    }
+    if(parentItemTagList != nullptr)
+    {
+        if(parentItemTagList->children.indexOf(treeItem) > 0)
+        {
+            menu.addAction(actionListItemUp);
+        }
+        if(parentItemTagList->children.indexOf(treeItem) < parentItemTagList->children.size()-1)
+        {
+            menu.addAction(actionListItemDown);
+        }
     }
     QAction* action = menu.exec(QCursor::pos());
     if(action == actionDirUp)
@@ -157,5 +172,13 @@ void MainWindow::slotTreeView_customContextMenuRequested(const QPoint& pos)
         param += QDir::toNativeSeparators(folderPath);
 
         QProcess::startDetached("explorer.exe", QStringList(param));
+    }
+    else if(action == actionListItemUp)
+    {
+        treeModel->moveItemUp(index);
+    }
+    else if(action == actionListItemDown)
+    {
+        treeModel->moveItemDown(index);
     }
 }
