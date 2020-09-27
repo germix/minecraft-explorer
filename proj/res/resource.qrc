@@ -32,5 +32,6 @@
         <file>images/edit-delete.png</file>
         <file>images/action-refresh.png</file>
         <file>images/action-rename.png</file>
+        <file>images/treeitem-region-chunk.png</file>
     </qresource>
 </RCC>

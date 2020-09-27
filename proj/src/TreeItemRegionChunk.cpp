@@ -108,7 +108,7 @@ TreeItemRegionChunk::TreeItemRegionChunk(TreeItemRegionFile *parent,
 
 QIcon TreeItemRegionChunk::getIcon() const
 {
-    return QIcon(":/images/treeitem-nbt-tag-compound.png");
+    return QIcon(":/images/treeitem-region-chunk.png");
 }
 
 QString TreeItemRegionChunk::getLabel() const
