@@ -27,6 +27,7 @@ class MainWindow : public QMainWindow
 
     QAction* actionDirUp;
     QAction* actionDirEnter;
+    QAction* actionOpenContainerFolder;
 public:
     explicit MainWindow(QWidget* parent = 0);
     ~MainWindow();

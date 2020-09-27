@@ -4,6 +4,7 @@
 #include <QTreeView>
 #include <QSplitter>
 #include <QSettings>
+#include <QProcess>
 
 #include "AboutDialog.h"
 #include "TreeModel.h"
@@ -42,6 +43,7 @@ MainWindow::MainWindow(QWidget* parent)
     //
     actionDirUp = new QAction(QIcon(":/images/nav-up.png"), tr("Move up"));
     actionDirEnter = new QAction(QIcon(":/images/nav-enter.png"), tr("Enter directory"));
+    actionOpenContainerFolder = new QAction(QIcon(":/images/file-open-container-folder.png"), tr("Open container folder"));
 
     //
     // Load settings
@@ -126,6 +128,8 @@ void MainWindow::slotTreeView_customContextMenuRequested(const QPoint& pos)
         {
             menu.addAction(actionDirEnter);
         }
+        menu.addSeparator();
+        menu.addAction(actionOpenContainerFolder);
     }
     QAction* action = menu.exec(QCursor::pos());
     if(action == actionDirUp)
@@ -139,5 +143,17 @@ void MainWindow::slotTreeView_customContextMenuRequested(const QPoint& pos)
     {
         currentSavesFolder = treeItemFolder->parentFolderPath + '/' + treeItemFolder->folderName;
         reloadWorlds();
+    }
+    else if(action == actionOpenContainerFolder)
+    {
+        QString folderPath = treeItemFolder->parentFolderPath + '/' + treeItemFolder->folderName;
+        QString param;
+        if(!QFileInfo(folderPath).isDir())
+        {
+            param = QLatin1String("/select,");
+        }
+        param += QDir::toNativeSeparators(folderPath);
+
+        QProcess::startDetached("explorer.exe", QStringList(param));
     }
 }
