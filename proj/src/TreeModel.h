@@ -1,6 +1,7 @@
 #ifndef TREEMODEL_H
 #define TREEMODEL_H
 #include <QAbstractItemModel>
+#include <QSet>
 
 class TreeItem;
 
@@ -8,15 +9,24 @@ class TreeModel : public QAbstractItemModel
 {
     Q_OBJECT
     TreeItem* root;
+    QSet<TreeItem*> dirtyItemSet;
+    bool modified;
 public:
     explicit TreeModel(QObject *parent = nullptr);
     ~TreeModel();
 public:
     void load(const QString& worldOrSavesPath);
+    void save();
+    bool isModified() const
+    {
+        return modified;
+    }
+
     TreeItem* toItem(const QModelIndex& index) const;
     QModelIndex toIndex(TreeItem* item, int column) const;
     void moveItemUp(const QModelIndex& index);
     void moveItemDown(const QModelIndex& index);
+    void deleteItem(const QModelIndex& index);
 public:
     // Header:
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
@@ -34,8 +44,11 @@ public:
     bool hasChildren(const QModelIndex& parent) const override;
     void fetchMore(const QModelIndex& parent) override;
     bool canFetchMore(const QModelIndex& parent) const override;
+signals:
+    void onModified();
 private:
     void clear();
+    void markDirty(TreeItem* item);
 };
 
 #endif // TREEMODEL_H

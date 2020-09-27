@@ -29,7 +29,7 @@ QString TreeItemNbtTagCompound::getLabel() const
     return s;
 }
 
-void TreeItemNbtTagCompound::read(QDataStream& in)
+void TreeItemNbtTagCompound::readNbt(QDataStream& in)
 {
     quint8 type;
 
@@ -47,8 +47,24 @@ void TreeItemNbtTagCompound::read(QDataStream& in)
         else
         {
             tag->name = s;
-            tag->read(in);
+            tag->readNbt(in);
         }
         in >> type;
     }
+}
+
+void TreeItemNbtTagCompound::writeNbt(QDataStream& out)
+{
+    for(quint32 i = 0; i < children.size(); i++)
+    {
+        TreeItemNbtTag* childTag = (TreeItemNbtTag*)children[i];
+
+        if(childTag->nbtType() != NBTTAG_END)
+        {
+            out << childTag->nbtType();
+            writeStringUTF8(childTag->name, out);
+            childTag->writeNbt(out);
+        }
+    }
+    out << (quint8)NBTTAG_END;
 }

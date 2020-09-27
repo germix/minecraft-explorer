@@ -9,9 +9,17 @@ public:
     {
     }
 public:
-    virtual void read(QDataStream& in) override
+    virtual quint8 nbtType() const override
+    {
+        return NBTTAG_END;
+    }
+    virtual void readNbt(QDataStream& in)
     {
         Q_UNUSED(in);
+    }
+    virtual void writeNbt(QDataStream& out)
+    {
+        Q_UNUSED(out);
     }
 };
 

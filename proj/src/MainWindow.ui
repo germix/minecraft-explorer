@@ -28,6 +28,7 @@
      <string>&amp;File</string>
     </property>
     <addaction name="actionFileOpenFolder"/>
+    <addaction name="actionFileSave"/>
     <addaction name="separator"/>
     <addaction name="actionFileExit"/>
    </widget>
@@ -57,6 +58,7 @@
     <bool>false</bool>
    </attribute>
    <addaction name="actionFileOpenFolder"/>
+   <addaction name="actionFileSave"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionHelpAbout">
@@ -84,6 +86,15 @@
    </property>
    <property name="text">
     <string>&amp;Open folder</string>
+   </property>
+  </action>
+  <action name="actionFileSave">
+   <property name="icon">
+    <iconset resource="../res/resource.qrc">
+     <normaloff>:/images/file-save.png</normaloff>:/images/file-save.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Save</string>
    </property>
   </action>
  </widget>
@@ -126,6 +137,22 @@
   </connection>
   <connection>
    <sender>actionFileOpenFolder</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>slotAction()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>199</x>
+     <y>149</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionFileSave</sender>
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
    <slot>slotAction()</slot>

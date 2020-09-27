@@ -79,3 +79,7 @@ bool TreeItemRegionFile::canFetchMore() const
 {
     return canFetchData;
 }
+
+void TreeItemRegionFile::saveItem()
+{
+}

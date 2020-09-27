@@ -9,7 +9,9 @@ class TreeItem;
 class TreeItemNbtTag;
 
 extern QString readStringUTF8(QDataStream& in);
+extern void writeStringUTF8(const QString& src, QDataStream& out);
 extern TreeItemNbtTag* createItemTag(TreeItem* parent, quint8 type);
+extern bool gzipCompress(QByteArray input, QByteArray &output, int level);
 extern bool gzipDecompress(QByteArray input, QByteArray &output);
 extern void readValidFilesInFolder(TreeItem* parent, const QString& folder);
 extern bool readNbtFromData(TreeItem* parent, QByteArray data);
@@ -57,6 +59,15 @@ public:
     virtual bool canFetchMore() const
     {
         return false;
+    }
+
+    virtual void saveItem()
+    {
+    }
+
+    virtual TreeItem* markDirty()
+    {
+        return nullptr;
     }
 };
 

@@ -15,10 +15,27 @@ QIcon TreeItemNbtTagDouble::getIcon() const
 
 QString TreeItemNbtTagDouble::getLabel() const
 {
-    return name + ": " + QString::number(value);
+    return name + ": " + QString::number(value, 'g', 14);
 }
 
-void TreeItemNbtTagDouble::read(QDataStream& in)
+void TreeItemNbtTagDouble::readNbt(QDataStream& in)
 {
+#if 0
     in >> value;
+#else
+    quint64 value64;
+    in >> value64;
+    value = *((double*)&value64);
+#endif
+}
+
+void TreeItemNbtTagDouble::writeNbt(QDataStream& out)
+{
+#if 0
+    out >> value;
+#else
+    quint64 value64;
+    value64 = *((quint64*)&value);
+    out << value64;
+#endif
 }

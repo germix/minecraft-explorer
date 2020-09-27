@@ -10,6 +10,8 @@
 #include "TreeModel.h"
 #include "TreeItem.h"
 
+#define TITLE "Minecraft Explorer"
+
 #define SETTINGS_APPLICATION "MinecraftExplorer"
 #define SETTINGS_ORGANIZATION "Germix"
 
@@ -30,6 +32,7 @@ MainWindow::MainWindow(QWidget* parent)
             SIGNAL(customContextMenuRequested(QPoint)),
             this,
             SLOT(slotTreeView_customContextMenuRequested(QPoint)));
+    connect(treeModel, SIGNAL(onModified()), this, SLOT(slotModelModified()));
 
     splitter = new QSplitter();
     splitter->addWidget(treeModelView);
@@ -49,6 +52,7 @@ MainWindow::MainWindow(QWidget* parent)
 
     actionListItemUp = new QAction(QIcon(":/images/action-move-up.png"), tr("Move up"));
     actionListItemDown = new QAction(QIcon(":/images/action-move-down.png"), tr("Move down"));
+    actionDelete = new QAction(QIcon(":/images/edit-delete.png"), tr("Delete"));
 
     //
     // Load settings
@@ -62,6 +66,7 @@ MainWindow::MainWindow(QWidget* parent)
     currentSavesFolder = s.value("SaveFolder", "").toString();
 
     reloadWorlds();
+    updateActions();
 }
 
 MainWindow::~MainWindow()
@@ -83,6 +88,11 @@ void MainWindow::reloadWorlds()
     }
 }
 
+void MainWindow::updateActions()
+{
+    ui->actionFileSave->setEnabled(treeModel->isModified());
+}
+
 void MainWindow::slotAction()
 {
     QAction* action = qobject_cast<QAction*>(sender());
@@ -90,6 +100,10 @@ void MainWindow::slotAction()
     if(action == ui->actionFileExit)
     {
         close();
+    }
+    else if(action == ui->actionFileSave)
+    {
+        treeModel->save();
     }
     else if(action == ui->actionFileOpenFolder)
     {
@@ -111,6 +125,20 @@ void MainWindow::slotAction()
     }
 }
 
+void MainWindow::slotModelModified()
+{
+    QString s = TITLE;
+
+    if(treeModel->isModified())
+    {
+        s += " *";
+    }
+    setWindowTitle(s);
+    setWindowModified(treeModel->isModified());
+
+    updateActions();
+}
+
 void MainWindow::slotTreeView_customContextMenuRequested(const QPoint& pos)
 {
     QMenu menu;
@@ -118,6 +146,7 @@ void MainWindow::slotTreeView_customContextMenuRequested(const QPoint& pos)
     TreeItem* treeItem = treeModel->toItem(index);
     TreeItemFolder* treeItemFolder = dynamic_cast<TreeItemFolder*>(treeItem);
     TreeItemNbtTagList* parentItemTagList = dynamic_cast<TreeItemNbtTagList*>(treeItem->parent);
+    TreeItemNbtTag* treeItemNbtTag = dynamic_cast<TreeItemNbtTag*>(treeItem);
 
     if(!treeItem)
     {
@@ -147,6 +176,10 @@ void MainWindow::slotTreeView_customContextMenuRequested(const QPoint& pos)
         {
             menu.addAction(actionListItemDown);
         }
+    }
+    if(treeItemNbtTag != nullptr)
+    {
+        menu.addAction(actionDelete);
     }
     QAction* action = menu.exec(QCursor::pos());
     if(action == actionDirUp)
@@ -180,5 +213,9 @@ void MainWindow::slotTreeView_customContextMenuRequested(const QPoint& pos)
     else if(action == actionListItemDown)
     {
         treeModel->moveItemDown(index);
+    }
+    else if(action == actionDelete)
+    {
+        treeModel->deleteItem(index);
     }
 }

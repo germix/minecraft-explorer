@@ -18,7 +18,12 @@ QString TreeItemNbtTagByte::getLabel() const
     return name + ": " + QString::number(value);
 }
 
-void TreeItemNbtTagByte::read(QDataStream& in)
+void TreeItemNbtTagByte::readNbt(QDataStream& in)
 {
     in >> value;
+}
+
+void TreeItemNbtTagByte::writeNbt(QDataStream& out)
+{
+    out << value;
 }

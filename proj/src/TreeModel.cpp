@@ -64,6 +64,7 @@ TreeModel::TreeModel(QObject *parent)
     : QAbstractItemModel(parent)
 {
     root = nullptr;
+    modified = false;
 }
 
 TreeModel::~TreeModel()
@@ -78,6 +79,21 @@ void TreeModel::clear()
         delete root;
     }
     root = nullptr;
+    modified = false;
+}
+
+void TreeModel::markDirty(TreeItem* item)
+{
+    TreeItem* dirtyItem;
+
+    if(nullptr != (dirtyItem = item->markDirty()))
+    {
+        dirtyItemSet.insert(dirtyItem);
+
+        modified = true;
+
+        emit onModified();
+    }
 }
 
 void TreeModel::load(const QString& worldOrSavesPath)
@@ -96,6 +112,18 @@ void TreeModel::load(const QString& worldOrSavesPath)
     }
     root->sort();
     endResetModel();
+}
+
+void TreeModel::save()
+{
+    foreach(TreeItem* dirtyItem, dirtyItemSet)
+    {
+        dirtyItem->saveItem();
+    }
+    dirtyItemSet.clear();
+
+    modified = false;
+    emit onModified();
 }
 
 TreeItem* TreeModel::toItem(const QModelIndex& index) const
@@ -133,6 +161,8 @@ void TreeModel::moveItemUp(const QModelIndex& index)
     parent->children[sourceRow] = parent->children[destinationRow];
     parent->children[destinationRow] = tmp;
     endMoveRows();
+
+    markDirty(parent);
 }
 
 void TreeModel::moveItemDown(const QModelIndex& index)
@@ -150,6 +180,20 @@ void TreeModel::moveItemDown(const QModelIndex& index)
     parent->children[sourceRow] = parent->children[destinationRow];
     parent->children[destinationRow] = tmp;
     endMoveRows();
+
+    markDirty(parent);
+}
+
+void TreeModel::deleteItem(const QModelIndex& index)
+{
+    TreeItem* item = toItem(index);
+    TreeItem* parent = item->parent;
+
+    beginRemoveRows(index.parent(), index.row(), index.row());
+    delete item;
+    endRemoveRows();
+
+    markDirty(parent);
 }
 
 QVariant TreeModel::headerData(int section, Qt::Orientation orientation, int role) const

@@ -28,7 +28,7 @@ QString TreeItemNbtTagByteArray::getLabel() const
     return s;
 }
 
-void TreeItemNbtTagByteArray::read(QDataStream& in)
+void TreeItemNbtTagByteArray::readNbt(QDataStream& in)
 {
     quint32 size;
 
@@ -38,5 +38,17 @@ void TreeItemNbtTagByteArray::read(QDataStream& in)
     for(quint32 i = 0; i < size; i++)
     {
         in >> data[i];
+    }
+}
+
+void TreeItemNbtTagByteArray::writeNbt(QDataStream& out)
+{
+    quint32 size = data.size();
+
+    out << size;
+
+    for(quint32 i = 0; i < size; i++)
+    {
+        out << data[i];
     }
 }

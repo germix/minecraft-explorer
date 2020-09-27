@@ -30,13 +30,17 @@ class MainWindow : public QMainWindow
     QAction* actionOpenContainerFolder;
     QAction* actionListItemUp;
     QAction* actionListItemDown;
+    QAction* actionDelete;
 public:
     explicit MainWindow(QWidget* parent = 0);
     ~MainWindow();
 private:
     void reloadWorlds();
+    void updateActions();
 private slots:
     void slotAction();
+
+    void slotModelModified();
 
     void slotTreeView_customContextMenuRequested(const QPoint& pos);
 };

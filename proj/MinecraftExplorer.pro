@@ -73,7 +73,8 @@ SOURCES += \
     src/TreeItemRegionFile.cpp \
     src/TreeItemRegionChunk.cpp \
     src/TreeItemFolder.cpp \
-    src/TreeItemFolderWorld.cpp
+    src/TreeItemFolderWorld.cpp \
+    src/TreeItemNbtTag.cpp
 
 HEADERS += \
     src/MainWindow.h \

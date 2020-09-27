@@ -28,5 +28,7 @@
         <file>images/file-open-container-folder.png</file>
         <file>images/action-move-down.png</file>
         <file>images/action-move-up.png</file>
+        <file>images/file-save.png</file>
+        <file>images/edit-delete.png</file>
     </qresource>
 </RCC>

@@ -15,6 +15,7 @@ public:
     virtual QString getLabel() const override;
     virtual void fetchMore() override;
     virtual bool canFetchMore() const override;
+    virtual void saveItem() override;
 };
 
 #endif // TREEITEMREGIONFILE_H

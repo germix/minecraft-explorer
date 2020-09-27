@@ -29,7 +29,7 @@ QString TreeItemNbtTagList::getLabel() const
     return s;
 }
 
-void TreeItemNbtTagList::read(QDataStream& in)
+void TreeItemNbtTagList::readNbt(QDataStream& in)
 {
     quint8 type;
     quint32 size;
@@ -40,6 +40,24 @@ void TreeItemNbtTagList::read(QDataStream& in)
     for(quint32 k = 0; k < size; ++k)
     {
         TreeItemNbtTag* tag = createItemTag(this, type);
-        tag->read(in);
+        tag->readNbt(in);
+    }
+}
+
+void TreeItemNbtTagList::writeNbt(QDataStream& out)
+{
+    quint8 type = NBTTAG_END;
+    if(children.size() > 0)
+    {
+        type = ((TreeItemNbtTag*)children[0])->nbtType();
+    }
+    quint32 size = children.size();
+
+    out << type;
+    out << size;
+
+    for(quint32 i = 0; i < size; ++i)
+    {
+        ((TreeItemNbtTag*)children[i])->writeNbt(out);
     }
 }

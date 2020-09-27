@@ -241,19 +241,32 @@ static wchar_t utf8_to_unicode(QDataStream& in)
     charcode |= ((t >> high_bit_shift) & high_bit_mask) << total_bits;
     return charcode;
 }
+
 QString readStringUTF8(QDataStream& in)
 {
     quint16 utflen;
     QString utfstr;
 
     in >> utflen;
+    char* data = (char*)malloc(utflen);
+    in.readRawData(data, utflen);
 
-    while(utflen > 0)
-    {
-        utflen--;
-        utfstr += (wchar_t)utf8_to_unicode(in);
-    }
+    utfstr = QString::fromUtf8(data, utflen);
+
+    free(data);
     return utfstr;
+}
+
+void writeStringUTF8(const QString& src, QDataStream& out)
+{
+    QByteArray data = src.toUtf8();
+    quint16 len16 = data.size();
+
+    out << len16;
+    if(len16 > 0)
+    {
+        out.writeRawData(data.constData(), data.length());
+    }
 }
 
 TreeItemNbtTag* createItemTag(TreeItem* parent, quint8 type)
@@ -291,7 +304,7 @@ bool readNbtFromData(TreeItem* parent, QByteArray data)
         {
             tag = createItemTag(parent, type);
             tag->name = s;
-            tag->read(stream);
+            tag->readNbt(stream);
         }
         else
         {
@@ -308,7 +321,7 @@ bool readNbtFromData(TreeItem* parent, QByteArray data)
                 else
                 {
                     tag->name = s;
-                    tag->read(stream);
+                    tag->readNbt(stream);
                 }
                 stream >> type;
             }

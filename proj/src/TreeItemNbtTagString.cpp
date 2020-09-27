@@ -18,7 +18,12 @@ QString TreeItemNbtTagString::getLabel() const
     return name + ": " + value;
 }
 
-void TreeItemNbtTagString::read(QDataStream& in)
+void TreeItemNbtTagString::readNbt(QDataStream& in)
 {
     value = readStringUTF8(in);
+}
+
+void TreeItemNbtTagString::writeNbt(QDataStream& out)
+{
+    writeStringUTF8(value, out);
 }

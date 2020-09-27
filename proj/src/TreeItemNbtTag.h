@@ -11,7 +11,10 @@ public:
     {
     }
 public:
-    virtual void read(QDataStream& in) = 0;
+    virtual TreeItem* markDirty() override;
+    virtual quint8 nbtType() const = 0;
+    virtual void readNbt(QDataStream& in) = 0;
+    virtual void writeNbt(QDataStream& out) = 0;
 };
 
 #endif // TREEITEMNBTTAG_H
