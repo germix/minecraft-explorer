@@ -196,6 +196,19 @@ void TreeModel::deleteItem(const QModelIndex& index)
     markDirty(parent);
 }
 
+void TreeModel::refreshUpdate(const QModelIndex& index)
+{
+    TreeItem* item = toItem(index);
+
+    beginRemoveRows(index.parent(), 0, item->children.size());
+    item->clear();
+    endRemoveRows();
+
+    item->fetchMore();
+    beginInsertRows(index.parent(), 0, item->children.size());
+    endInsertRows();
+}
+
 QVariant TreeModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     Q_UNUSED(section);

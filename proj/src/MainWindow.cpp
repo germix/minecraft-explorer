@@ -5,6 +5,7 @@
 #include <QSplitter>
 #include <QSettings>
 #include <QProcess>
+#include <QScrollBar>
 
 #include "AboutDialog.h"
 #include "TreeModel.h"
@@ -53,6 +54,7 @@ MainWindow::MainWindow(QWidget* parent)
     actionListItemUp = new QAction(QIcon(":/images/action-move-up.png"), tr("Move up"));
     actionListItemDown = new QAction(QIcon(":/images/action-move-down.png"), tr("Move down"));
     actionDelete = new QAction(QIcon(":/images/edit-delete.png"), tr("Delete"));
+    actionRefresh = new QAction(QIcon(":/images/action-refresh.png"), tr("Refresh"));
 
     //
     // Load settings
@@ -181,6 +183,12 @@ void MainWindow::slotTreeView_customContextMenuRequested(const QPoint& pos)
     {
         menu.addAction(actionDelete);
     }
+
+    if(treeItem->canRefresh())
+    {
+        menu.addAction(actionRefresh);
+    }
+
     QAction* action = menu.exec(QCursor::pos());
     if(action == actionDirUp)
     {
@@ -217,5 +225,13 @@ void MainWindow::slotTreeView_customContextMenuRequested(const QPoint& pos)
     else if(action == actionDelete)
     {
         treeModel->deleteItem(index);
+    }
+    else if(action == actionRefresh)
+    {
+        int pos = treeModelView->verticalScrollBar()->value();
+        treeModel->refreshUpdate(index);
+        treeModelView->setCurrentIndex(index);
+        treeModelView->expand(index);
+        treeModelView->verticalScrollBar()->setValue(pos);
     }
 }

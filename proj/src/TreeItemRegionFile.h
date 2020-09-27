@@ -16,6 +16,10 @@ public:
     virtual void fetchMore() override;
     virtual bool canFetchMore() const override;
     virtual void saveItem() override;
+    virtual bool canRefresh() const override
+    {
+        return true;
+    }
 };
 
 #endif // TREEITEMREGIONFILE_H

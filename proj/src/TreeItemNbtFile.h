@@ -18,6 +18,10 @@ public:
     virtual bool canFetchMore() const override;
     virtual void saveItem() override;
     virtual TreeItem* markDirty() override;
+    virtual bool canRefresh() const override
+    {
+        return true;
+    }
 };
 
 #endif // TREEITEMNBTFILE_H

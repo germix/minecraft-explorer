@@ -27,6 +27,7 @@ public:
     void moveItemUp(const QModelIndex& index);
     void moveItemDown(const QModelIndex& index);
     void deleteItem(const QModelIndex& index);
+    void refreshUpdate(const QModelIndex& index);
 public:
     // Header:
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;

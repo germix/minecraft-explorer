@@ -361,11 +361,6 @@ TreeItem::~TreeItem()
     children.clear();
 }
 
-QIcon TreeItem::getIcon() const
-{
-    return QIcon();
-}
-
 static bool treeItemLessThan(TreeItem* item1, TreeItem* item2)
 {
     if(dynamic_cast<TreeItemFolder*>(item1) != nullptr
@@ -386,7 +381,12 @@ void TreeItem::sort()
     std::sort(children.begin(), children.end(), treeItemLessThan);
 }
 
-QString TreeItem::getLabel() const
+void TreeItem::clear()
 {
-    return QString();
+    for(int i = 0; i < children.size(); i++)
+    {
+        children[i]->parent = nullptr;
+        delete children[i];
+    }
+    children.clear();
 }

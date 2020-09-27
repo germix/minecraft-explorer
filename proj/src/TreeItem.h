@@ -50,8 +50,16 @@ public:
     virtual ~TreeItem();
 public:
     void sort();
-    virtual QIcon getIcon() const;
-    virtual QString getLabel() const;
+    void clear();
+
+    virtual QIcon getIcon() const
+    {
+        return QIcon();
+    }
+    virtual QString getLabel() const
+    {
+        return QString();
+    }
 
     virtual void fetchMore()
     {
@@ -68,6 +76,11 @@ public:
     virtual TreeItem* markDirty()
     {
         return nullptr;
+    }
+
+    virtual bool canRefresh() const
+    {
+        return false;
     }
 };
 

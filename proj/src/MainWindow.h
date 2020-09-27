@@ -31,6 +31,7 @@ class MainWindow : public QMainWindow
     QAction* actionListItemUp;
     QAction* actionListItemDown;
     QAction* actionDelete;
+    QAction* actionRefresh;
 public:
     explicit MainWindow(QWidget* parent = 0);
     ~MainWindow();
