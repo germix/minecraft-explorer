@@ -15,3 +15,8 @@ TreeItem* TreeItemNbtTag::markDirty()
     }
     return nullptr;
 }
+
+bool TreeItemNbtTag::canRename() const
+{
+    return dynamic_cast<TreeItemNbtTagList*>(parent) == nullptr;
+}

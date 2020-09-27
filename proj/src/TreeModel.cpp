@@ -196,7 +196,18 @@ void TreeModel::deleteItem(const QModelIndex& index)
     markDirty(parent);
 }
 
-void TreeModel::refreshUpdate(const QModelIndex& index)
+void TreeModel::renameItem(const QModelIndex& index, const QString& name)
+{
+    TreeItem* item = toItem(index);
+
+    item->renameItem(name);
+
+    dataChanged(index, index);
+
+    markDirty(item);
+}
+
+void TreeModel::refreshItem(const QModelIndex& index)
 {
     TreeItem* item = toItem(index);
 

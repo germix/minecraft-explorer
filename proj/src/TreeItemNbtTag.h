@@ -12,6 +12,16 @@ public:
     }
 public:
     virtual TreeItem* markDirty() override;
+    virtual QString getName() const override
+    {
+        return name;
+    }
+    virtual void renameItem(const QString& newName) override
+    {
+        name = newName;
+    }
+    virtual bool canRename() const override;
+
     virtual quint8 nbtType() const = 0;
     virtual void readNbt(QDataStream& in) = 0;
     virtual void writeNbt(QDataStream& out) = 0;

@@ -6,6 +6,7 @@
 #include <QSettings>
 #include <QProcess>
 #include <QScrollBar>
+#include <QInputDialog>
 
 #include "AboutDialog.h"
 #include "TreeModel.h"
@@ -54,6 +55,7 @@ MainWindow::MainWindow(QWidget* parent)
     actionListItemUp = new QAction(QIcon(":/images/action-move-up.png"), tr("Move up"));
     actionListItemDown = new QAction(QIcon(":/images/action-move-down.png"), tr("Move down"));
     actionDelete = new QAction(QIcon(":/images/edit-delete.png"), tr("Delete"));
+    actionRename = new QAction(QIcon(":/images/action-rename.png"), tr("Rename"));
     actionRefresh = new QAction(QIcon(":/images/action-refresh.png"), tr("Refresh"));
 
     //
@@ -184,6 +186,10 @@ void MainWindow::slotTreeView_customContextMenuRequested(const QPoint& pos)
         menu.addAction(actionDelete);
     }
 
+    if(treeItem->canRename())
+    {
+        menu.addAction(actionRename);
+    }
     if(treeItem->canRefresh())
     {
         menu.addAction(actionRefresh);
@@ -226,10 +232,23 @@ void MainWindow::slotTreeView_customContextMenuRequested(const QPoint& pos)
     {
         treeModel->deleteItem(index);
     }
+    else if(action == actionRename)
+    {
+        QString newName = QInputDialog::getText(
+                            this,
+                            tr("Rename"),
+                            tr("Name"),
+                            QLineEdit::Normal,
+                            treeItem->getName());
+        if(treeItem->getName() != newName)
+        {
+            treeModel->renameItem(index, newName);
+        }
+    }
     else if(action == actionRefresh)
     {
         int pos = treeModelView->verticalScrollBar()->value();
-        treeModel->refreshUpdate(index);
+        treeModel->refreshItem(index);
         treeModelView->setCurrentIndex(index);
         treeModelView->expand(index);
         treeModelView->verticalScrollBar()->setValue(pos);

@@ -82,6 +82,19 @@ public:
     {
         return false;
     }
+
+    virtual QString getName() const
+    {
+        return QString();
+    }
+    virtual void renameItem(const QString& newName)
+    {
+        Q_UNUSED(newName);
+    }
+    virtual bool canRename() const
+    {
+        return false;
+    }
 };
 
 #include "TreeItemFolderWorld.h"

@@ -31,5 +31,6 @@
         <file>images/file-save.png</file>
         <file>images/edit-delete.png</file>
         <file>images/action-refresh.png</file>
+        <file>images/action-rename.png</file>
     </qresource>
 </RCC>
