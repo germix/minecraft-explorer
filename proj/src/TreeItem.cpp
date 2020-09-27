@@ -210,21 +210,6 @@ bool gzipDecompress(QByteArray input, QByteArray &output)
         return(true);
 }
 
-enum NBTTAG
-{
-    NBTTAG_END = 0,
-    NBTTAG_BYTE = 1,
-    NBTTAG_SHORT = 2,
-    NBTTAG_INT = 3,
-    NBTTAG_LONG = 4,
-    NBTTAG_FLOAT = 5,
-    NBTTAG_DOUBLE = 6,
-    NBTTAG_BYTE_ARRAY = 7,
-    NBTTAG_STRING = 8,
-    NBTTAG_LIST = 9,
-    NBTTAG_COMPOUND = 10,
-    NBTTAG_INT_ARRAY = 11,
-};
 static wchar_t utf8_to_unicode(QDataStream& in)
 {
     // Reference: https://stackoverflow.com/questions/18534494/convert-from-utf-8-to-unicode-c
@@ -291,19 +276,14 @@ TreeItemNbtTag* createItemTag(TreeItem* parent, quint8 type)
     return nullptr;
 }
 
-
-void readNbtFromData(TreeItem* parent, QByteArray data)
+bool readNbtFromData(TreeItem* parent, QByteArray data)
 {
     quint8 type;
     TreeItemNbtTag* tag;
     QDataStream stream(data);
 
     stream >> type;
-    if(type == 0)
-    {
-        tag = new TreeItemNbtTagEnd(parent);
-    }
-    else
+    if(type == NBTTAG_COMPOUND)
     {
         QString s = readStringUTF8(stream);
 
@@ -333,7 +313,9 @@ void readNbtFromData(TreeItem* parent, QByteArray data)
                 stream >> type;
             }
         }
+        return true;
     }
+    return false;
 }
 
 TreeItem::TreeItem(TreeItem* ___parent)
@@ -388,17 +370,10 @@ static bool treeItemLessThan(TreeItem* item1, TreeItem* item2)
 
 void TreeItem::sort()
 {
-    qSort(children.begin(), children.end(), treeItemLessThan);
+    std::sort(children.begin(), children.end(), treeItemLessThan);
 }
 
 QString TreeItem::getLabel() const
 {
     return QString();
-}
-
-TreeItemFolder::TreeItemFolder(TreeItem* parent, const QString& folderNameIn)
-    : TreeItem(parent)
-    , folderName(folderNameIn)
-{
-    sort();
 }

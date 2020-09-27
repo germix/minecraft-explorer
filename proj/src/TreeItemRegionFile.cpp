@@ -2,10 +2,28 @@
 #include <QFile>
 #include <QDataStream>
 
-TreeItemRegionFile::TreeItemRegionFile(TreeItem* parent, const QString& folder, const QString& fileName)
+TreeItemRegionFile::TreeItemRegionFile(TreeItem* parent, const QString& fileNameIn, const QString& parentFolderPathIn)
     : TreeItem(parent)
+    , canFetchData(true)
+    , fileName(fileNameIn)
+    , parentFolderPath(parentFolderPathIn)
 {
-    name = fileName;
+}
+
+QIcon TreeItemRegionFile::getIcon() const
+{
+    return QIcon(":/images/treeitem-region-file.png");
+}
+
+QString TreeItemRegionFile::getLabel() const
+{
+    return fileName;
+}
+
+void TreeItemRegionFile::fetchMore()
+{
+    canFetchData = false;
+
     enum
     {
         CHUNK_COUNT = 1024,
@@ -16,7 +34,7 @@ TreeItemRegionFile::TreeItemRegionFile(TreeItem* parent, const QString& folder, 
     memset(locations, 0, sizeof(locations));
     memset(timestamps, 0, sizeof(timestamps));
 
-    QFile file(folder + "/" + fileName);
+    QFile file(parentFolderPath + "/" + fileName);
     if(file.open(QFile::ReadOnly))
     {
         if(file.size() < 8192)
@@ -57,12 +75,7 @@ TreeItemRegionFile::TreeItemRegionFile(TreeItem* parent, const QString& folder, 
     sort();
 }
 
-QIcon TreeItemRegionFile::getIcon() const
+bool TreeItemRegionFile::canFetchMore() const
 {
-    return QIcon(":/images/treeitem-region-file.png");
-}
-
-QString TreeItemRegionFile::getLabel() const
-{
-    return name;
+    return canFetchData;
 }

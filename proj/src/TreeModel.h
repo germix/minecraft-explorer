@@ -29,6 +29,9 @@ public:
 
     QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
 
+    bool hasChildren(const QModelIndex& parent) const override;
+    void fetchMore(const QModelIndex& parent) override;
+    bool canFetchMore(const QModelIndex& parent) const override;
 private:
     void clear();
 };

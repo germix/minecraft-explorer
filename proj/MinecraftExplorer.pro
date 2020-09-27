@@ -72,13 +72,36 @@ SOURCES += \
     src/TreeItemJsonPair.cpp \
     src/TreeItemJsonArray.cpp \
     src/TreeItemRegionFile.cpp \
-    src/TreeItemRegionChunk.cpp
+    src/TreeItemRegionChunk.cpp \
+    src/TreeItemFolder.cpp
 
 HEADERS += \
     src/MainWindow.h \
     src/AboutDialog.h \
     src/TreeItem.h \
-    src/TreeModel.h
+    src/TreeModel.h \
+    src/TreeItemWorld.h \
+    src/TreeItemFolder.h \
+    src/TreeItemNbtFile.h \
+    src/TreeItemNbtTag.h \
+    src/TreeItemNbtTagEnd.h \
+    src/TreeItemNbtTagByte.h \
+    src/TreeItemNbtTagShort.h \
+    src/TreeItemNbtTagInt.h \
+    src/TreeItemNbtTagLong.h \
+    src/TreeItemNbtTagFloat.h \
+    src/TreeItemNbtTagDouble.h \
+    src/TreeItemNbtTagString.h \
+    src/TreeItemNbtTagByteArray.h \
+    src/TreeItemNbtTagList.h \
+    src/TreeItemNbtTagCompound.h \
+    src/TreeItemNbtTagIntArray.h \
+    src/TreeItemJsonFile.h \
+    src/TreeItemJsonPair.h \
+    src/TreeItemJsonArray.h \
+    src/TreeItemJsonObject.h \
+    src/TreeItemRegionFile.h \
+    src/TreeItemRegionChunk.h
 
 FORMS += \
     src/MainWindow.ui \

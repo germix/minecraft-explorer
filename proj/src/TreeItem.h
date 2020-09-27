@@ -11,6 +11,32 @@ class TreeItemNbtTag;
 extern QString readStringUTF8(QDataStream& in);
 extern TreeItemNbtTag* createItemTag(TreeItem* parent, quint8 type);
 extern bool gzipDecompress(QByteArray input, QByteArray &output);
+extern void readValidFilesInFolder(TreeItem* parent, const QString& folder);
+extern bool readNbtFromData(TreeItem* parent, QByteArray data);
+
+enum NBTTAG
+{
+    NBTTAG_END = 0,
+    NBTTAG_BYTE = 1,
+    NBTTAG_SHORT = 2,
+    NBTTAG_INT = 3,
+    NBTTAG_LONG = 4,
+    NBTTAG_FLOAT = 5,
+    NBTTAG_DOUBLE = 6,
+    NBTTAG_BYTE_ARRAY = 7,
+    NBTTAG_STRING = 8,
+    NBTTAG_LIST = 9,
+    NBTTAG_COMPOUND = 10,
+    NBTTAG_INT_ARRAY = 11,
+};
+
+enum
+{
+    COMPRESSION_METHOD_UNDEFINED = -1,
+    COMPRESSION_METHOD_NONE = 0,
+    COMPRESSION_METHOD_GZIP = 1,
+    COMPRESSION_METHOD_ZLIB = 2,
+};
 
 class TreeItem
 {
@@ -24,283 +50,36 @@ public:
     void sort();
     virtual QIcon getIcon() const;
     virtual QString getLabel() const;
-};
 
-class TreeItemWorld : public TreeItem
-{
-public:
-    QString worldName;
-    QString worldFolder;
-public:
-    TreeItemWorld(TreeItem* parent, const QString& worldNameIn, const QString& worldFolderIn);
-public:
-    virtual QIcon getIcon() const override
+    virtual void fetchMore()
     {
-        return QIcon(":/images/treeitem-world-folder.png");
     }
-    virtual QString getLabel() const override;
-};
-
-class TreeItemFolder : public TreeItem
-{
-public:
-    QString folderName;
-public:
-    TreeItemFolder(TreeItem* parent, const QString& folderName);
-public:
-    virtual QIcon getIcon() const override
+    virtual bool canFetchMore() const
     {
-        return QIcon(":/images/treeitem-folder.png");
-    }
-    virtual QString getLabel() const override
-    {
-        return folderName;
+        return false;
     }
 };
 
-class TreeItemNbtFile : public TreeItem
-{
-public:
-    QString name;
-    bool isCompressed;
-public:
-    TreeItemNbtFile(TreeItem* parent, const QString& folder, const QString& fileName);
-public:
-    virtual QIcon getIcon() const override;
-    virtual QString getLabel() const override;
-};
-
-class TreeItemNbtTag : public TreeItem
-{
-public:
-    QString name;
-public:
-    TreeItemNbtTag(TreeItem* parent) : TreeItem(parent)
-    {
-    }
-public:
-    virtual void read(QDataStream& in) = 0;
-};
-class TreeItemNbtTagEnd : public TreeItemNbtTag
-{
-public:
-    TreeItemNbtTagEnd(TreeItem* parent) : TreeItemNbtTag(parent)
-    {
-    }
-public:
-    virtual void read(QDataStream& in) override
-    {
-        Q_UNUSED(in);
-    }
-};
-class TreeItemNbtTagByte : public TreeItemNbtTag
-{
-    quint8 value;
-public:
-    TreeItemNbtTagByte(TreeItem* parent);
-    ~TreeItemNbtTagByte();
-public:
-    virtual QIcon getIcon() const override;
-    virtual QString getLabel() const override;
-
-    virtual void read(QDataStream& in) override;
-};
-class TreeItemNbtTagShort : public TreeItemNbtTag
-{
-    quint16 value;
-public:
-    TreeItemNbtTagShort(TreeItem* parent);
-    ~TreeItemNbtTagShort();
-public:
-    virtual QIcon getIcon() const override;
-    virtual QString getLabel() const override;
-
-    virtual void read(QDataStream& in) override;
-};
-class TreeItemNbtTagInt : public TreeItemNbtTag
-{
-    quint32 value;
-public:
-    TreeItemNbtTagInt(TreeItem* parent);
-    ~TreeItemNbtTagInt();
-public:
-    virtual QIcon getIcon() const override;
-    virtual QString getLabel() const override;
-
-    virtual void read(QDataStream& in) override;
-};
-class TreeItemNbtTagLong : public TreeItemNbtTag
-{
-    quint64 value;
-public:
-    TreeItemNbtTagLong(TreeItem* parent);
-    ~TreeItemNbtTagLong();
-public:
-    virtual QIcon getIcon() const override;
-    virtual QString getLabel() const override;
-
-    virtual void read(QDataStream& in) override;
-};
-class TreeItemNbtTagFloat : public TreeItemNbtTag
-{
-    float value;
-public:
-    TreeItemNbtTagFloat(TreeItem* parent);
-    ~TreeItemNbtTagFloat();
-public:
-    virtual QIcon getIcon() const override;
-    virtual QString getLabel() const override;
-
-    virtual void read(QDataStream& in) override;
-};
-class TreeItemNbtTagDouble : public TreeItemNbtTag
-{
-    double value;
-public:
-    TreeItemNbtTagDouble(TreeItem* parent);
-    ~TreeItemNbtTagDouble();
-public:
-    virtual QIcon getIcon() const override;
-    virtual QString getLabel() const override;
-
-    virtual void read(QDataStream& in) override;
-};
-class TreeItemNbtTagByteArray : public TreeItemNbtTag
-{
-public:
-    QVector<quint8> data;
-public:
-    TreeItemNbtTagByteArray(TreeItem* parent);
-    ~TreeItemNbtTagByteArray();
-public:
-    virtual QIcon getIcon() const override;
-    virtual QString getLabel() const override;
-
-    virtual void read(QDataStream& in) override;
-};
-class TreeItemNbtTagString : public TreeItemNbtTag
-{
-public:
-    QString value;
-public:
-    TreeItemNbtTagString(TreeItem* parent);
-    ~TreeItemNbtTagString();
-public:
-    virtual QIcon getIcon() const override;
-    virtual QString getLabel() const override;
-
-    virtual void read(QDataStream& in) override;
-};
-class TreeItemNbtTagList : public TreeItemNbtTag
-{
-public:
-    TreeItemNbtTagList(TreeItem* parent);
-    ~TreeItemNbtTagList();
-public:
-    virtual QIcon getIcon() const override;
-    virtual QString getLabel() const override;
-
-    virtual void read(QDataStream& in) override;
-};
-class TreeItemNbtTagCompound : public TreeItemNbtTag
-{
-public:
-    TreeItemNbtTagCompound(TreeItem* parent);
-    ~TreeItemNbtTagCompound();
-public:
-    virtual QIcon getIcon() const override;
-    virtual QString getLabel() const override;
-
-    virtual void read(QDataStream& in) override;
-};
-class TreeItemNbtTagIntArray : public TreeItemNbtTag
-{
-public:
-    QVector<quint32> data;
-public:
-    TreeItemNbtTagIntArray(TreeItem* parent);
-    ~TreeItemNbtTagIntArray();
-public:
-    virtual QIcon getIcon() const override;
-    virtual QString getLabel() const override;
-
-    virtual void read(QDataStream& in) override;
-};
-
-class TreeItemJsonFile : public TreeItem
-{
-public:
-    QString name;
-public:
-    TreeItemJsonFile(TreeItem* parent, const QString& folder, const QString& fileName);
-public:
-    virtual QIcon getIcon() const override;
-    virtual QString getLabel() const override;
-};
-
-class TreeItemJsonPair : public TreeItem
-{
-public:
-    QString name;
-    QString value;
-public:
-    TreeItemJsonPair(TreeItem* parent, const QString& nameIn, const QString& valueIn);
-public:
-    virtual QIcon getIcon() const override;
-    virtual QString getLabel() const override;
-};
-class TreeItemJsonArray : public TreeItem
-{
-public:
-    QString name;
-public:
-    TreeItemJsonArray(TreeItem* parent, const QString& nameIn)
-        : TreeItem(parent)
-        , name(nameIn)
-    {
-    }
-public:
-    virtual QIcon getIcon() const override;
-    virtual QString getLabel() const override;
-};
-class TreeItemJsonObject : public TreeItem
-{
-public:
-    QString name;
-public:
-    TreeItemJsonObject(TreeItem* parent, const QString& nameIn)
-        : TreeItem(parent)
-        , name(nameIn)
-    {
-        sort();
-    }
-public:
-    virtual QIcon getIcon() const override;
-    virtual QString getLabel() const override;
-};
-
-class TreeItemRegionFile : public TreeItem
-{
-public:
-    QString name;
-public:
-    TreeItemRegionFile(TreeItem* parent, const QString& folder, const QString& fileName);
-public:
-    virtual QIcon getIcon() const override;
-    virtual QString getLabel() const override;
-};
-class QFile;
-class TreeItemRegionChunk : public TreeItem
-{
-public:
-    int chunkX;
-    int chunkZ;
-    bool isCompressed;
-public:
-    TreeItemRegionChunk(TreeItemRegionFile* parent, QFile& file, int x, int z, quint32 location, quint32 timestamps);
-public:
-    virtual QIcon getIcon() const override;
-    virtual QString getLabel() const override;
-};
+#include "TreeItemWorld.h"
+#include "TreeItemFolder.h"
+#include "TreeItemNbtFile.h"
+#include "TreeItemNbtTagEnd.h"
+#include "TreeItemNbtTagByte.h"
+#include "TreeItemNbtTagShort.h"
+#include "TreeItemNbtTagInt.h"
+#include "TreeItemNbtTagLong.h"
+#include "TreeItemNbtTagFloat.h"
+#include "TreeItemNbtTagDouble.h"
+#include "TreeItemNbtTagByteArray.h"
+#include "TreeItemNbtTagString.h"
+#include "TreeItemNbtTagList.h"
+#include "TreeItemNbtTagCompound.h"
+#include "TreeItemNbtTagIntArray.h"
+#include "TreeItemJsonFile.h"
+#include "TreeItemJsonPair.h"
+#include "TreeItemJsonArray.h"
+#include "TreeItemJsonObject.h"
+#include "TreeItemRegionFile.h"
+#include "TreeItemRegionChunk.h"
 
 #endif // TREEITEM_H

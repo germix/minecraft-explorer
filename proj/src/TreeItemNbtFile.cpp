@@ -1,36 +1,13 @@
 #include "TreeItem.h"
 #include <QFile>
 
-extern void readNbtFromData(TreeItem* parent, QByteArray data);
-
-TreeItemNbtFile::TreeItemNbtFile(TreeItem* parent, const QString& folder, const QString& fileName)
+TreeItemNbtFile::TreeItemNbtFile(TreeItem* parent, const QString& fileNameIn, const QString& parentFolderPathIn)
     : TreeItem(parent)
+    , canFetchData(true)
+    , fileName(fileNameIn)
+    , parentFolderPath(parentFolderPathIn)
+    , compressionMethod(COMPRESSION_METHOD_UNDEFINED)
 {
-    QFile file(folder + "/" + fileName);
-
-    name = fileName;
-    if(file.open(QFile::ReadOnly))
-    {
-        QByteArray data;
-
-        data = file.read(2);
-        quint8 ch1 = (quint8)data[0];
-        quint8 ch2 = (quint8)data[1];
-        isCompressed = (ch1 == 0x1f && ch2 == 0x8b);
-        data.clear();
-        file.seek(0);
-        if(!isCompressed)
-        {
-            data = file.readAll();
-        }
-        else
-        {
-            gzipDecompress(file.readAll(), data);
-        }
-
-        readNbtFromData(this, data);
-    }
-    sort();
 }
 
 QIcon TreeItemNbtFile::getIcon() const
@@ -40,9 +17,63 @@ QIcon TreeItemNbtFile::getIcon() const
 
 QString TreeItemNbtFile::getLabel() const
 {
-    return name
-            + " "
-            + (isCompressed
-                ? QObject::tr("(compressed)")
-                : QObject::tr("(uncompressed)"));
+    QString s = fileName;
+
+    if(compressionMethod != COMPRESSION_METHOD_UNDEFINED)
+    {
+        s += " ";
+        switch(compressionMethod)
+        {
+            case COMPRESSION_METHOD_NONE:
+                s += QObject::tr("(uncompressed)");
+                break;
+            case COMPRESSION_METHOD_GZIP:
+                s += QObject::tr("(compressed with GZIP)");
+                break;
+            case COMPRESSION_METHOD_ZLIB:
+                s += QObject::tr("(compressed with ZLIB)");
+                break;
+        }
+    }
+    return s;
 }
+
+void TreeItemNbtFile::fetchMore()
+{
+    canFetchData = false;
+
+    QFile file(parentFolderPath + "/" + fileName);
+    if(file.open(QFile::ReadOnly))
+    {
+        QByteArray data;
+
+        data = file.read(2);
+        quint8 ch1 = (quint8)data[0];
+        quint8 ch2 = (quint8)data[1];
+        quint8 method = (ch1 == 0x1f && ch2 == 0x8b)
+                    ? COMPRESSION_METHOD_GZIP
+                    : COMPRESSION_METHOD_NONE;
+        data.clear();
+        file.seek(0);
+        if(method == COMPRESSION_METHOD_NONE)
+        {
+            data = file.readAll();
+        }
+        else
+        {
+            gzipDecompress(file.readAll(), data);
+        }
+
+        if(readNbtFromData(this, data))
+        {
+            compressionMethod = method;
+            sort();
+        }
+    }
+}
+
+bool TreeItemNbtFile::canFetchMore() const
+{
+    return canFetchData;
+}
+

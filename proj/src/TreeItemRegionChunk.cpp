@@ -2,8 +2,6 @@
 #include <QFile>
 #include <QtEndian>
 
-extern void readNbtFromData(TreeItem* parent, QByteArray data);
-
 #include <zlib.h>
 
 // https://stackoverflow.com/questions/2690328/qt-quncompress-gzip-data
@@ -61,8 +59,12 @@ TreeItemRegionChunk::TreeItemRegionChunk(TreeItemRegionFile *parent,
                                          QFile& file,
                                          int x,
                                          int z,
-                                         quint32 location, quint32 timestamps)
+                                         quint32 locationIn,
+                                         quint32 timestampIn)
     : TreeItem(parent)
+    , location(locationIn)
+    , timestamp(timestampIn)
+    , compressionMethod(COMPRESSION_METHOD_UNDEFINED)
 {
     quint16 offset = location >> 8;
     quint16 length = location & 255;
@@ -70,30 +72,38 @@ TreeItemRegionChunk::TreeItemRegionChunk(TreeItemRegionFile *parent,
     chunkX = x;
     chunkZ = z;
 
-    QByteArray data;
-
     file.seek(offset*4096);
+    QByteArray data;
     QDataStream stream(&file);
-    quint32 j1; //size
-    quint8 b0;
+    quint32 size;
+    quint8 method;
 
-    stream >> j1;
-    stream >> b0;
+    stream >> size;
+    stream >> method;
 
     data.clear();
-    file.seek(offset*4096 + (4+1));
-    if(b0 == 1) // GZIP
+    quint32 dataLength = size - 1;
+    if(method == COMPRESSION_METHOD_NONE)
     {
-        gzipDecompress(file.read(j1 - 1), data);
-        readNbtFromData(this, data);
+        data = file.read(dataLength);
     }
-    else if(b0 == 2) // ZLIB
+    else if(method == COMPRESSION_METHOD_GZIP)
     {
-        data = gUncompress(file.read(j1 - 1));
-        readNbtFromData(this, data);
+        gzipDecompress(file.read(dataLength), data);
     }
-
-    sort();
+    else if(method == COMPRESSION_METHOD_ZLIB)
+    {
+        data = gUncompress(file.read(dataLength));
+    }
+    else
+    {
+        // TODO
+    }
+    if(readNbtFromData(this, data))
+    {
+        compressionMethod = method;
+        sort();
+    }
 }
 
 QIcon TreeItemRegionChunk::getIcon() const
@@ -103,5 +113,27 @@ QIcon TreeItemRegionChunk::getIcon() const
 
 QString TreeItemRegionChunk::getLabel() const
 {
-    return "Chunk [" + QString::number(chunkX) + "," + QString::number(chunkZ) + "]";
+    QString s;
+
+    s = "Chunk [" + QString::number(chunkX) + "," + QString::number(chunkZ) + "]";
+
+#if 1
+    if(compressionMethod != COMPRESSION_METHOD_UNDEFINED)
+    {
+        s += " ";
+        switch(compressionMethod)
+        {
+            case COMPRESSION_METHOD_NONE:
+                s += QObject::tr("(uncompressed)");
+                break;
+            case COMPRESSION_METHOD_GZIP:
+                s += QObject::tr("(compressed with GZIP)");
+                break;
+            case COMPRESSION_METHOD_ZLIB:
+                s += QObject::tr("(compressed with ZLIB)");
+                break;
+        }
+    }
+#endif
+    return s;
 }

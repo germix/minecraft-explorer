@@ -7,13 +7,54 @@
 #include <QFile>
 #include <QDataStream>
 
+bool isValidNbt(const QString& fileName)
+{
+    QFile file(fileName);
+    if(file.open(QFile::ReadOnly) && file.size() > 2)
+    {
+        QByteArray data;
+        data = file.read(2);
+
+        quint8 ch1 = (quint8)data[0];
+        quint8 ch2 = (quint8)data[1];
+        quint8 compressionMethod = (ch1 == 0x1f && ch2 == 0x8b)
+                    ? COMPRESSION_METHOD_GZIP
+                    : COMPRESSION_METHOD_NONE;
+        data.clear();
+        file.seek(0);
+        if(compressionMethod == COMPRESSION_METHOD_NONE)
+        {
+            data = file.readAll();
+        }
+        else
+        {
+            gzipDecompress(file.readAll(), data);
+        }
+        QDataStream stream(data);
+        quint8 tagType;
+
+        stream >> tagType;
+        if(tagType == NBTTAG_COMPOUND)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
 bool loadWorld(TreeItem* parent, const QString& worldFolderPath)
 {
     QFileInfo levelDat(worldFolderPath + "/level.dat");
 
-    if(levelDat.exists())
+    if(levelDat.exists() && isValidNbt(levelDat.absoluteFilePath()))
     {
-        new TreeItemWorld(parent, QFileInfo(worldFolderPath).fileName(), worldFolderPath);
+        QDir dir(worldFolderPath);
+        QString worldName = dir.dirName();
+        dir.cdUp();
+        QString parentPath = dir.absolutePath();
+        dir.cd(worldName);
+
+        new TreeItemWorld(parent, worldName, parentPath);
         return true;
     }
     return false;
@@ -47,16 +88,11 @@ void TreeModel::load(const QString& worldOrSavesPath)
     if(!loadWorld(root, worldOrSavesPath))
     {
         QDir dir(worldOrSavesPath);
-        TreeItemFolder* savesFolderItem = new TreeItemFolder(root, dir.dirName());
-
-        foreach(QString worldName, dir.entryList(QStringList(), QDir::AllDirs))
-        {
-            if(worldName == "." || worldName == "..")
-            {
-                continue;
-            }
-            loadWorld(savesFolderItem, worldOrSavesPath + '/' + worldName);
-        }
+        QString dirName = dir.dirName();
+        dir.cdUp();
+        QString parentPath = dir.absolutePath();
+        dir.cd(dirName);
+        new TreeItemFolder(root, parentPath, dirName);
     }
     root->sort();
     endResetModel();
@@ -149,4 +185,39 @@ QVariant TreeModel::data(const QModelIndex& index, int role) const
         }
     }
     return QVariant();
+}
+
+bool TreeModel::hasChildren(const QModelIndex& parent) const
+{
+    if(!root)
+        return 0;
+    if(!parent.isValid())
+        return (root->children.count() > 0);
+    TreeItem* item = toItem(parent);
+    if(!item)
+        return false;
+    return (item->children.count() > 0 || item->canFetchMore());
+}
+
+void TreeModel::fetchMore(const QModelIndex& parent)
+{
+    TreeItem* parentItem;
+
+    if(nullptr != (parentItem = toItem(parent)))
+    {
+        parentItem->fetchMore();
+        beginInsertRows(parent, 0, parentItem->children.size());
+        endInsertRows();
+    }
+}
+
+bool TreeModel::canFetchMore(const QModelIndex& parent) const
+{
+    TreeItem* parentItem;
+
+    if(nullptr != (parentItem = toItem(parent)))
+    {
+        return parentItem->canFetchMore();
+    }
+    return true;
 }

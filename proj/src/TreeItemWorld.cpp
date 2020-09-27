@@ -15,7 +15,7 @@ void readValidFilesInFolder(TreeItem* parent, const QString& folder)
         }
         if(!loadWorld(parent, folder + "/" + subDirName))
         {
-            readValidFilesInFolder(new TreeItemFolder(parent, subDirName), folder + "/" + subDirName);
+            new TreeItemFolder(parent, folder, subDirName);
         }
     }
     foreach(QFileInfo fileInfo, dir.entryList
@@ -23,33 +23,54 @@ void readValidFilesInFolder(TreeItem* parent, const QString& folder)
                     << "*.dat"
                     << "*.mca"
                     << "*.json"
+                    << "*.dat_old"
+                    << "*.dat_mcr"
                 , QDir::Files))
     {
-        if(fileInfo.suffix() == "dat")
+        if(fileInfo.suffix() == "dat"
+                || fileInfo.suffix() == "dat_old"
+                || fileInfo.suffix() == "dat_mcr")
         {
-            new TreeItemNbtFile(parent, folder, fileInfo.fileName());
+            new TreeItemNbtFile(parent, fileInfo.fileName(), folder);
         }
         else if(fileInfo.suffix() == "mca")
         {
-            new TreeItemRegionFile(parent, folder, fileInfo.fileName());
+            new TreeItemRegionFile(parent, fileInfo.fileName(), folder);
         }
         else if(fileInfo.suffix() == "json")
         {
-            new TreeItemJsonFile(parent, folder, fileInfo.fileName());
+            new TreeItemJsonFile(parent, fileInfo.fileName(), folder);
         }
     }
 }
 
-TreeItemWorld::TreeItemWorld(TreeItem* parent, const QString& worldNameIn, const QString& worldFolderIn)
+TreeItemWorld::TreeItemWorld(TreeItem* parent, const QString& worldNameIn, const QString& parentFolderPathIn)
     : TreeItem(parent)
+    , canFetchData(true)
     , worldName(worldNameIn)
-    , worldFolder(worldFolderIn)
+    , parentFolderPath(parentFolderPathIn)
 {
-    readValidFilesInFolder(this, worldFolderIn);
-    sort();
+}
+
+QIcon TreeItemWorld::getIcon() const
+{
+    return QIcon(":/images/treeitem-world-folder.png");
 }
 
 QString TreeItemWorld::getLabel() const
 {
     return worldName;
 }
+
+void TreeItemWorld::fetchMore()
+{
+    canFetchData = false;
+    readValidFilesInFolder(this, parentFolderPath + "/" + worldName);
+    sort();
+}
+
+bool TreeItemWorld::canFetchMore() const
+{
+    return canFetchData;
+}
+

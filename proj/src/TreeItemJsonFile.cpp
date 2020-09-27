@@ -4,7 +4,6 @@
 #include <QJsonObject>
 #include <QJsonDocument>
 
-
 void parseJsonArray(TreeItem* parent, QJsonArray arr);
 void parseJsonObject(TreeItem* parent, QJsonObject obj);
 
@@ -52,13 +51,29 @@ void parseJsonObject(TreeItem* parent, QJsonObject obj)
     }
 }
 
-TreeItemJsonFile::TreeItemJsonFile(TreeItem* parent, const QString& folder, const QString& fileName)
+TreeItemJsonFile::TreeItemJsonFile(TreeItem* parent, const QString& fileNameIn, const QString& parentFolderPathIn)
     : TreeItem(parent)
+    , canFetchData(true)
+    , fileName(fileNameIn)
+    , parentFolderPath(parentFolderPathIn)
 {
-    QFile file(folder + "/" + fileName);
+}
 
-    name = fileName;
+QIcon TreeItemJsonFile::getIcon() const
+{
+    return QIcon(":/images/treeitem-json-file.png");
+}
 
+QString TreeItemJsonFile::getLabel() const
+{
+    return fileName;
+}
+
+void TreeItemJsonFile::fetchMore()
+{
+    canFetchData = false;
+
+    QFile file(parentFolderPath + "/" + fileName);
     if(file.open(QFile::ReadOnly))
     {
         QJsonDocument json = QJsonDocument::fromJson(file.readAll());
@@ -70,12 +85,7 @@ TreeItemJsonFile::TreeItemJsonFile(TreeItem* parent, const QString& folder, cons
     }
 }
 
-QIcon TreeItemJsonFile::getIcon() const
+bool TreeItemJsonFile::canFetchMore() const
 {
-    return QIcon(":/images/treeitem-json-file.png");
-}
-
-QString TreeItemJsonFile::getLabel() const
-{
-    return name;
+    return canFetchData;
 }
