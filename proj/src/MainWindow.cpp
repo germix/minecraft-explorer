@@ -38,6 +38,8 @@ MainWindow::MainWindow(QWidget* parent)
     splitter->setOrientation(Qt::Horizontal);
     setCentralWidget(splitter);
 
+    ui->menu_View->addAction(ui->mainToolBar->toggleViewAction());
+
     //
     // Actions
     //
