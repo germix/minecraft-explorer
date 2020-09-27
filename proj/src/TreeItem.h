@@ -60,7 +60,7 @@ public:
     }
 };
 
-#include "TreeItemWorld.h"
+#include "TreeItemFolderWorld.h"
 #include "TreeItemFolder.h"
 #include "TreeItemNbtFile.h"
 #include "TreeItemNbtTagEnd.h"

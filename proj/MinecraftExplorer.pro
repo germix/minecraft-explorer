@@ -67,21 +67,19 @@ SOURCES += \
     src/TreeItemNbtTagIntArray.cpp \
     src/TreeItemNbtFile.cpp \
     src/TreeItemJsonFile.cpp \
-    src/TreeItemWorld.cpp \
     src/TreeItemJsonObject.cpp \
     src/TreeItemJsonPair.cpp \
     src/TreeItemJsonArray.cpp \
     src/TreeItemRegionFile.cpp \
     src/TreeItemRegionChunk.cpp \
-    src/TreeItemFolder.cpp
+    src/TreeItemFolder.cpp \
+    src/TreeItemFolderWorld.cpp
 
 HEADERS += \
     src/MainWindow.h \
     src/AboutDialog.h \
     src/TreeItem.h \
     src/TreeModel.h \
-    src/TreeItemWorld.h \
-    src/TreeItemFolder.h \
     src/TreeItemNbtFile.h \
     src/TreeItemNbtTag.h \
     src/TreeItemNbtTagEnd.h \
@@ -101,7 +99,9 @@ HEADERS += \
     src/TreeItemJsonArray.h \
     src/TreeItemJsonObject.h \
     src/TreeItemRegionFile.h \
-    src/TreeItemRegionChunk.h
+    src/TreeItemRegionChunk.h \
+    src/TreeItemFolder.h \
+    src/TreeItemFolderWorld.h
 
 FORMS += \
     src/MainWindow.ui \

@@ -54,7 +54,7 @@ bool loadWorld(TreeItem* parent, const QString& worldFolderPath)
         QString parentPath = dir.absolutePath();
         dir.cd(worldName);
 
-        new TreeItemWorld(parent, worldName, parentPath);
+        new TreeItemFolderWorld(parent, worldName, parentPath);
         return true;
     }
     return false;
@@ -92,7 +92,7 @@ void TreeModel::load(const QString& worldOrSavesPath)
         dir.cdUp();
         QString parentPath = dir.absolutePath();
         dir.cd(dirName);
-        new TreeItemFolder(root, parentPath, dirName);
+        new TreeItemFolder(root, dirName, parentPath);
     }
     root->sort();
     endResetModel();

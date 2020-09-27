@@ -15,7 +15,7 @@ void readValidFilesInFolder(TreeItem* parent, const QString& folder)
         }
         if(!loadWorld(parent, folder + "/" + subDirName))
         {
-            new TreeItemFolder(parent, folder, subDirName);
+            new TreeItemFolder(parent, subDirName, folder);
         }
     }
     foreach(QFileInfo fileInfo, dir.entryList
@@ -44,33 +44,12 @@ void readValidFilesInFolder(TreeItem* parent, const QString& folder)
     }
 }
 
-TreeItemWorld::TreeItemWorld(TreeItem* parent, const QString& worldNameIn, const QString& parentFolderPathIn)
-    : TreeItem(parent)
-    , canFetchData(true)
-    , worldName(worldNameIn)
-    , parentFolderPath(parentFolderPathIn)
+TreeItemFolderWorld::TreeItemFolderWorld(TreeItem* parent, const QString& worldNameIn, const QString& parentFolderPathIn)
+    : TreeItemFolder(parent, worldNameIn, parentFolderPathIn)
 {
 }
 
-QIcon TreeItemWorld::getIcon() const
+QIcon TreeItemFolderWorld::getIcon() const
 {
     return QIcon(":/images/treeitem-world-folder.png");
 }
-
-QString TreeItemWorld::getLabel() const
-{
-    return worldName;
-}
-
-void TreeItemWorld::fetchMore()
-{
-    canFetchData = false;
-    readValidFilesInFolder(this, parentFolderPath + "/" + worldName);
-    sort();
-}
-
-bool TreeItemWorld::canFetchMore() const
-{
-    return canFetchData;
-}
-

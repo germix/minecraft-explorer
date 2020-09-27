@@ -23,5 +23,7 @@
         <file>images/treeitem-json-array.png</file>
         <file>images/treeitem-json-object.png</file>
         <file>images/treeitem-json-pair.png</file>
+        <file>images/nav-enter.png</file>
+        <file>images/nav-up.png</file>
     </qresource>
 </RCC>

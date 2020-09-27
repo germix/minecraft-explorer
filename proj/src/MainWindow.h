@@ -24,13 +24,18 @@ class MainWindow : public QMainWindow
 
     TreeModel* treeModel;
     QTreeView* treeModelView;
+
+    QAction* actionDirUp;
+    QAction* actionDirEnter;
 public:
     explicit MainWindow(QWidget* parent = 0);
     ~MainWindow();
-private slots:
-    void slotAction();
 private:
     void reloadWorlds();
+private slots:
+    void slotAction();
+
+    void slotTreeView_customContextMenuRequested(const QPoint& pos);
 };
 
 #endif // MAINWINDOW_H

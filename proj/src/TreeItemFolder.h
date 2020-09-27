@@ -9,7 +9,7 @@ public:
     QString folderName;
     QString parentFolderPath;
 public:
-    TreeItemFolder(TreeItem* parent, const QString& parentFolderPath, const QString& folderName);
+    TreeItemFolder(TreeItem* parent, const QString& folderName, const QString& parentFolderPath);
 public:
     virtual QIcon getIcon() const override;
     virtual QString getLabel() const override;

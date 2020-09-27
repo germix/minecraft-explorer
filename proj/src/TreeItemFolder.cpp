@@ -1,13 +1,11 @@
 #include "TreeItem.h"
 
-TreeItemFolder::TreeItemFolder(TreeItem* parent, const QString& parentFolderPathIn, const QString& folderNameIn)
+TreeItemFolder::TreeItemFolder(TreeItem* parent, const QString& folderNameIn, const QString& parentFolderPathIn)
     : TreeItem(parent)
     , canFetchData(true)
     , folderName(folderNameIn)
     , parentFolderPath(parentFolderPathIn)
 {
-    canFetchData = true;
-    sort();
 }
 
 QIcon TreeItemFolder::getIcon() const
@@ -24,6 +22,7 @@ void TreeItemFolder::fetchMore()
 {
     canFetchData = false;
     readValidFilesInFolder(this, parentFolderPath + "/" + folderName);
+    sort();
 }
 
 bool TreeItemFolder::canFetchMore() const
