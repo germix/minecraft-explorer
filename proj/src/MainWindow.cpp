@@ -240,7 +240,7 @@ void MainWindow::slotTreeView_customContextMenuRequested(const QPoint& pos)
                             tr("Name"),
                             QLineEdit::Normal,
                             treeItem->getName());
-        if(treeItem->getName() != newName)
+        if(!newName.isEmpty() && treeItem->getName() != newName)
         {
             treeModel->renameItem(index, newName);
         }
