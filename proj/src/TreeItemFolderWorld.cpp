@@ -22,6 +22,7 @@ void readValidFilesInFolder(TreeItem* parent, const QString& folder)
                 (QStringList()
                     << "*.dat"
                     << "*.mca"
+                    << "*.mcr"
                     << "*.json"
                     << "*.dat_old"
                     << "*.dat_mcr"
@@ -33,7 +34,7 @@ void readValidFilesInFolder(TreeItem* parent, const QString& folder)
         {
             new TreeItemNbtFile(parent, fileInfo.fileName(), folder);
         }
-        else if(fileInfo.suffix() == "mca")
+        else if(fileInfo.suffix() == "mca" || fileInfo.suffix() == "mcr")
         {
             new TreeItemRegionFile(parent, fileInfo.fileName(), folder);
         }
