@@ -15,6 +15,7 @@ extern bool gzipCompress(QByteArray input, QByteArray &output, int level);
 extern bool gzipDecompress(QByteArray input, QByteArray &output);
 extern void readValidFilesInFolder(TreeItem* parent, const QString& folder);
 extern bool readNbtFromData(TreeItem* parent, QByteArray data);
+extern QByteArray nbtTagsToByteArray(QVector<TreeItem*>& children, int compressionMethod);
 
 enum NBTTAG
 {

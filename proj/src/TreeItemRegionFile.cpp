@@ -24,55 +24,22 @@ void TreeItemRegionFile::fetchMore()
 {
     canFetchData = false;
 
-    enum
+    if(regionFile.open(parentFolderPath + "/" + fileName))
     {
-        CHUNK_COUNT = 1024,
-    };
-    quint32 locations[CHUNK_COUNT];
-    quint32 timestamps[CHUNK_COUNT];
-
-    memset(locations, 0, sizeof(locations));
-    memset(timestamps, 0, sizeof(timestamps));
-
-    QFile file(parentFolderPath + "/" + fileName);
-    if(file.open(QFile::ReadOnly))
-    {
-        if(file.size() < 8192)
+        for(int i = 0; i < RegionFile::CHUNK_COUNT; i++)
         {
-            // TODO
-        }
-        else
-        {
-            QDataStream stream(&file);
+            quint16 offset = regionFile.locations[i];
 
-            // Read locations
-            for(int i = 0; i < CHUNK_COUNT; i++)
+            if(offset != 0)
             {
-                stream >> locations[i];
-            }
-            // Read timestamps
-            for(int i = 0; i < CHUNK_COUNT; i++)
-            {
-                stream >> timestamps[i];
-            }
-
-            for(int i = 0; i < CHUNK_COUNT; i++)
-            {
-                quint16 offset = locations[i] & 0xffff;
-
-                if(offset != 0)
-                {
-                    new TreeItemRegionChunk(
-                                this,
-                                file,
-                                i&31,
-                                i/32,
-                                locations[i], timestamps[i]);
-                }
+                new TreeItemRegionChunk(
+                            this,
+                            i,
+                            regionFile);
             }
         }
+        sort();
     }
-    sort();
 }
 
 bool TreeItemRegionFile::canFetchMore() const
@@ -82,4 +49,13 @@ bool TreeItemRegionFile::canFetchMore() const
 
 void TreeItemRegionFile::saveItem()
 {
+    for(int i = 0; i < children.size(); i++)
+    {
+        TreeItemRegionChunk* regionChunk = (TreeItemRegionChunk*)children[i];
+
+        if(regionChunk->modified)
+        {
+            regionChunk->saveChunk();
+        }
+    }
 }

@@ -72,6 +72,40 @@ void TreeItemNbtFile::fetchMore()
     }
 }
 
+QByteArray nbtTagsToByteArray(QVector<TreeItem*>& children, int compressionMethod)
+{
+    QByteArray data;
+    QDataStream dataStream(&data, QIODevice::WriteOnly);
+
+    dataStream << (quint8)NBTTAG_COMPOUND;
+    writeStringUTF8("", dataStream);
+
+    for(int i = 0; i < children.size(); i++)
+    {
+        TreeItemNbtTag* tag = (TreeItemNbtTag*)children[i];
+
+        dataStream << (quint8)tag->nbtType();
+        writeStringUTF8(tag->name, dataStream);
+        tag->writeNbt(dataStream);
+    }
+    dataStream << (quint8)NBTTAG_END;
+
+    if(compressionMethod == COMPRESSION_METHOD_GZIP)
+    {
+        QByteArray gzipData;
+        gzipCompress(data, gzipData, 9);
+        return gzipData;
+    }
+    if(compressionMethod == COMPRESSION_METHOD_ZLIB)
+    {
+        QByteArray compressedData = qCompress(data);
+        compressedData.remove(0, 4);
+        return compressedData;
+    }
+
+    return data;
+}
+
 bool TreeItemNbtFile::canFetchMore() const
 {
     return canFetchData;
@@ -82,28 +116,7 @@ void TreeItemNbtFile::saveItem()
     QFile file(parentFolderPath + "/" + fileName);
     if(file.open(QFile::WriteOnly))
     {
-        QByteArray data;
-        QDataStream dataStream(&data, QIODevice::WriteOnly);
-
-        dataStream << (quint8)NBTTAG_COMPOUND;
-        writeStringUTF8("", dataStream);
-
-        for(int i = 0; i < children.size(); i++)
-        {
-            TreeItemNbtTag* tag = (TreeItemNbtTag*)children[i];
-
-            dataStream << (quint8)tag->nbtType();
-            writeStringUTF8(tag->name, dataStream);
-            tag->writeNbt(dataStream);
-        }
-        dataStream << (quint8)NBTTAG_END;
-/*
-        QByteArray output;
-        gzipCompress(data, output, 0);
-
-        file.write(output);
-        */
-        file.write(data);
+        file.write(nbtTagsToByteArray(children, COMPRESSION_METHOD_NONE));
     }
 }
 

@@ -1,6 +1,7 @@
 #ifndef TREEITEMREGIONFILE_H
 #define TREEITEMREGIONFILE_H
 #include "TreeItem.h"
+#include "RegionFile.h"
 
 class TreeItemRegionFile : public TreeItem
 {
@@ -8,6 +9,7 @@ public:
     bool canFetchData;
     QString fileName;
     QString parentFolderPath;
+    RegionFile regionFile;
 public:
     TreeItemRegionFile(TreeItem* parent, const QString& fileNameIn, const QString& parentFolderPathIn);
 public:

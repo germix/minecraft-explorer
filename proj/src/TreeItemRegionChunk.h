@@ -8,14 +8,20 @@ class TreeItemRegionChunk : public TreeItem
 public:
     int chunkX;
     int chunkZ;
-    quint32 location;
-    quint32 timestamp;
+    int chunkIndex;
+    RegionFile& regionFile;
+    bool canFetchData;
     int compressionMethod;
+    bool modified;
 public:
-    TreeItemRegionChunk(TreeItemRegionFile* parent, QFile& file, int x, int z, quint32 locationIn, quint32 timestampIn);
+    TreeItemRegionChunk(TreeItemRegionFile* parent, int chunkIndexIn, RegionFile& regionFileIn);
 public:
     virtual QIcon getIcon() const override;
     virtual QString getLabel() const override;
+    virtual void fetchMore() override;
+    virtual bool canFetchMore() const override;
+
+    void saveChunk();
 };
 
 #endif // TREEITEMREGIONCHUNK_H
