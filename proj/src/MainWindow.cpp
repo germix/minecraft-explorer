@@ -11,6 +11,7 @@
 #include "AboutDialog.h"
 #include "TreeModel.h"
 #include "TreeItem.h"
+#include "RenameDialog.h"
 
 #define TITLE "Minecraft Explorer"
 
@@ -234,15 +235,17 @@ void MainWindow::slotTreeView_customContextMenuRequested(const QPoint& pos)
     }
     else if(action == actionRename)
     {
-        QString newName = QInputDialog::getText(
-                            this,
-                            tr("Rename"),
-                            tr("Name"),
-                            QLineEdit::Normal,
-                            treeItem->getName());
-        if(!newName.isEmpty() && treeItem->getName() != newName)
+        QString oldName = treeItem->getName();
+        RenameDialog renameDialog(oldName);
+
+        if(renameDialog.exec() == QDialog::Accepted)
         {
-            treeModel->renameItem(index, newName);
+            QString newName = renameDialog.getName();
+
+            if(newName != oldName)
+            {
+                treeModel->renameItem(index, newName);
+            }
         }
     }
     else if(action == actionRefresh)

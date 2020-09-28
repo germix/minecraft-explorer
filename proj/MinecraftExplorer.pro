@@ -76,7 +76,8 @@ SOURCES += \
     src/TreeItemFolderWorld.cpp \
     src/TreeItemNbtTag.cpp \
     src/TreeItemNbtTagLongArray.cpp \
-    src/RegionFile.cpp
+    src/RegionFile.cpp \
+    src/RenameDialog.cpp
 
 HEADERS += \
     src/MainWindow.h \
@@ -106,11 +107,13 @@ HEADERS += \
     src/TreeItemFolder.h \
     src/TreeItemFolderWorld.h \
     src/TreeItemNbtTagLongArray.h \
-    src/RegionFile.h
+    src/RegionFile.h \
+    src/RenameDialog.h
 
 FORMS += \
     src/MainWindow.ui \
-    src/AboutDialog.ui
+    src/AboutDialog.ui \
+    src/RenameDialog.ui
 
 
 #---------------------------------------------------------------------------------------------------
