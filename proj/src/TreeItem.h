@@ -16,11 +16,11 @@ public:
     TreeItem(TreeItem* parent);
     virtual ~TreeItem();
 public:
+    static QString validPasteName(const TreeItem *parent, const QString& name);
+    static bool hasChildrenWithName(const TreeItem* parent, const QString& name);
 
     void sort();
     void clear();
-    QString validPasteName(const QString& name) const;
-    bool hasChildrenWithName(const QString& name) const;
 
     virtual QIcon getIcon() const
     {

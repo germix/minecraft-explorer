@@ -20,7 +20,7 @@ public:
     virtual QString getLabel() const override;
     virtual void fetchMore() override;
     virtual bool canFetchMore() const override;
-    virtual bool canFind() const
+    virtual bool canFind() const override
     {
         return true;
     }

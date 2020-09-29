@@ -15,7 +15,7 @@ public:
         Q_UNUSED(type);
         return true;
     }
-    virtual bool canFind() const
+    virtual bool canFind() const override
     {
         return true;
     }
