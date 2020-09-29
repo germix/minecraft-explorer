@@ -14,21 +14,21 @@
    <string/>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="4" column="1">
-    <widget class="QPushButton" name="btnCancel">
+   <item row="4" column="0">
+    <widget class="QPushButton" name="btnImport">
      <property name="text">
-      <string>Cancel</string>
+      <string>Import</string>
      </property>
     </widget>
    </item>
-   <item row="4" column="2">
+   <item row="4" column="4">
     <widget class="QPushButton" name="btnOk">
      <property name="text">
       <string>Ok</string>
      </property>
     </widget>
    </item>
-   <item row="4" column="0">
+   <item row="4" column="2">
     <spacer name="horizontalSpacer">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -41,30 +41,21 @@
      </property>
     </spacer>
    </item>
-   <item row="0" column="0" colspan="3">
-    <widget class="QTabWidget" name="tabWidget">
-     <property name="currentIndex">
-      <number>0</number>
+   <item row="4" column="3">
+    <widget class="QPushButton" name="btnCancel">
+     <property name="text">
+      <string>Cancel</string>
      </property>
-     <widget class="QWidget" name="tab">
-      <attribute name="title">
-       <string>Text View</string>
-      </attribute>
-      <layout class="QHBoxLayout" name="horizontalLayout">
-       <item>
-        <widget class="QPlainTextEdit" name="plainTextEdit">
-         <property name="font">
-          <font>
-           <pointsize>9</pointsize>
-          </font>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
     </widget>
    </item>
-   <item row="2" column="0" colspan="3">
+   <item row="4" column="1">
+    <widget class="QPushButton" name="btnExport">
+     <property name="text">
+      <string>Export</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0" colspan="5">
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
       <widget class="QLabel" name="lblLength">
@@ -87,6 +78,29 @@
       </widget>
      </item>
     </layout>
+   </item>
+   <item row="0" column="0" colspan="5">
+    <widget class="QTabWidget" name="tabWidget">
+     <property name="currentIndex">
+      <number>0</number>
+     </property>
+     <widget class="QWidget" name="tab">
+      <attribute name="title">
+       <string>Text View</string>
+      </attribute>
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <item>
+        <widget class="QPlainTextEdit" name="plainTextEdit">
+         <property name="font">
+          <font>
+           <pointsize>9</pointsize>
+          </font>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
    </item>
   </layout>
  </widget>
@@ -129,5 +143,41 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>btnImport</sender>
+   <signal>clicked()</signal>
+   <receiver>EditBinaryValueDialog</receiver>
+   <slot>slotImport()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>57</x>
+     <y>344</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>414</x>
+     <y>184</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnExport</sender>
+   <signal>clicked()</signal>
+   <receiver>EditBinaryValueDialog</receiver>
+   <slot>slotExport()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>157</x>
+     <y>344</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>414</x>
+     <y>184</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
+ <slots>
+  <slot>slotImport()</slot>
+  <slot>slotExport()</slot>
+ </slots>
 </ui>

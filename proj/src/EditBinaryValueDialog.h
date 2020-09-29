@@ -9,6 +9,7 @@ class EditBinaryValueDialog;
 class HexView;
 class TreeItem;
 class TreeModel;
+class QFile;
 
 class EditBinaryValueDialog : public QDialog
 {
@@ -18,13 +19,23 @@ class EditBinaryValueDialog : public QDialog
     TreeModel* model;
     TreeItem* treeItem;
     QByteArray currentData;
+    QStringList dataFilters;
 public:
     explicit EditBinaryValueDialog(TreeModel* modelIn, TreeItem* treeItemIn, QWidget* parent = 0);
     ~EditBinaryValueDialog();
-public:
+private:
     void updateLength();
+    void importTextData(QFile& file);
+    void importBinaryData(QFile& file);
+    void exportAsTextData(QFile& file);
+    void exportAsBinaryData(QFile& file);
+    bool dataToText(QByteArray data, QString* output);
+    void updateDataFromText();
+    void updateTextFromData();
 private slots:
     void accept();
+    void slotImport();
+    void slotExport();
     void slotTextEdit_textChanged();
 };
 
