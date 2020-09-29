@@ -278,14 +278,14 @@ QByteArray decompressGZIP(QByteArray data)
 
 QByteArray compressZLIB(QByteArray data)
 {
-    return gUncompress(data);
+    QByteArray compressedData = qCompress(data);
+    compressedData.remove(0, 4);
+    return compressedData;
 }
 
 QByteArray decompressZLIB(QByteArray data)
 {
-    QByteArray decompressedData = qCompress(data);
-    decompressedData.remove(0, 4);
-    return decompressedData;
+    return gUncompress(data);
 }
 
 QString readStringUTF8(QDataStream& in)
