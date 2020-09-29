@@ -16,6 +16,7 @@
 #include "RenameDialog.h"
 #include "NewTagDialog.h"
 #include "FindDialog.h"
+#include "FindChunkDialog.h"
 #include "RecentFilesMenu.h"
 
 #define TITLE "Minecraft Explorer"
@@ -110,6 +111,7 @@ void MainWindow::updateActions()
     {
         ui->actionFind->setEnabled(item->canFind());
         ui->actionFindNext->setEnabled(item == lastFindItem);
+        ui->actionFindChunk->setEnabled(item->canFindChunk());
 
         ui->actionCut->setEnabled(item->canCutItem());
         ui->actionCopy->setEnabled(item->canCopyItem());
@@ -401,6 +403,33 @@ void MainWindow::slotAction()
     else if(action == ui->actionFindNext)
     {
         findNextItem();
+    }
+    else if(action == ui->actionFindChunk)
+    {
+        QModelIndex index = treeModelView->currentIndex();
+        if(index.isValid())
+        {
+            FindChunkDialog dlg;
+
+            if(dlg.exec() == FindDialog::Accepted)
+            {
+                lastFindItem = nullptr;
+                lastFindIndex = QModelIndex();
+                lastFindName = QString();
+                lastFindValue = QString();
+                lastFindPosition = -1;
+
+                QModelIndex indexFound = treeModel->findChunk(index, dlg.getChunkX(), dlg.getChunkZ());
+                if(indexFound.isValid())
+                {
+                    treeModelView->setCurrentIndex(indexFound);
+                }
+                else
+                {
+                    QMessageBox::information(this, tr("Find chunk"), tr("Chunk not found"));
+                }
+            }
+        }
     }
 }
 

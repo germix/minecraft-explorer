@@ -4,11 +4,13 @@
 
 #include <zlib.h>
 
-TreeItemRegionChunk::TreeItemRegionChunk(TreeItemRegionFile *parent, int chunkIndexIn, RegionFile& regionFileIn)
+TreeItemRegionChunk::TreeItemRegionChunk(TreeItemRegionFile *parent, int chunkIndexIn, int regionXIn, int regionZIn, RegionFile& regionFileIn)
     : TreeItem(parent)
-    , chunkX(chunkIndexIn&31)
-    , chunkZ(chunkIndexIn/32)
+    , chunkX((regionXIn*32) + (chunkIndexIn&31))
+    , chunkZ((regionZIn*32) + (chunkIndexIn/32))
     , chunkIndex(chunkIndexIn)
+    , localChunkX(chunkIndexIn&31)
+    , localChunkZ(chunkIndexIn/32)
     , regionFile(regionFileIn)
     , canFetchData(true)
     , compressionMethod(COMPRESSION_METHOD_UNDEFINED)
@@ -25,7 +27,8 @@ QString TreeItemRegionChunk::getLabel() const
 {
     QString s;
 
-    s = "Chunk [" + QString::number(chunkX) + "," + QString::number(chunkZ) + "]";
+    s = "Chunk [" + QString::number(localChunkX) + "," + QString::number(localChunkZ) + "]";
+    s += "    in world at (" + QString::number(chunkX) + "," + QString::number(chunkZ) + ")";
 
 #if 1
     if(compressionMethod != COMPRESSION_METHOD_UNDEFINED)

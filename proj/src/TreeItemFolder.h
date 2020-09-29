@@ -19,6 +19,7 @@ public:
     {
         return true;
     }
+    virtual bool canFindChunk() const;
 };
 
 #endif // TREEITEMFOLDER_H

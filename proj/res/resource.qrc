@@ -41,5 +41,6 @@
         <file>images/action-cut.png</file>
         <file>images/action-paste.png</file>
         <file>images/action-clear.png</file>
+        <file>images/action-find_chunk.png</file>
     </qresource>
 </RCC>

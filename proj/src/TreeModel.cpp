@@ -277,6 +277,61 @@ QModelIndex TreeModel::findItem(const QModelIndex& parent, int from, const QStri
     return QModelIndex();
 }
 
+QModelIndex TreeModel::findChunk(const QModelIndex& parent, int chunkX, int chunkZ)
+{
+    TreeItem* parentItem = toItem(parent);
+    QString regionFileNameBase = "r." + QString::number(chunkX >> 5) + "." + QString::number(chunkZ >> 5);
+    TreeItemRegionFile* foundRegionFileItem = nullptr;
+
+    if(dynamic_cast<TreeItemRegionFile*>(parentItem))
+    {
+        foundRegionFileItem = (TreeItemRegionFile*)parentItem;
+    }
+    else
+    {
+        for(int i = 0; i < parentItem->children.size() && !foundRegionFileItem; i++)
+        {
+            TreeItemRegionFile* regionFileItem = dynamic_cast<TreeItemRegionFile*>(parentItem->children[i]);
+
+            if(regionFileItem != nullptr && regionFileItem->fileName == regionFileNameBase + ".mca")
+            {
+                foundRegionFileItem = regionFileItem;
+            }
+        }
+        for(int i = 0; i < parentItem->children.size() && !foundRegionFileItem; i++)
+        {
+            TreeItemRegionFile* regionFileItem = dynamic_cast<TreeItemRegionFile*>(parentItem->children[i]);
+
+            if(regionFileItem != nullptr && regionFileItem->fileName == regionFileNameBase + ".mcr")
+            {
+                foundRegionFileItem = regionFileItem;
+            }
+        }
+    }
+
+    if(foundRegionFileItem != nullptr)
+    {
+        if(foundRegionFileItem->canFetchMore())
+        {
+            foundRegionFileItem->fetchMore();
+        }
+        for(int i = 0; i < foundRegionFileItem->children.size(); i++)
+        {
+            TreeItemRegionChunk* regionChunkItem = dynamic_cast<TreeItemRegionChunk*>(foundRegionFileItem->children[i]);
+
+            if(regionChunkItem != nullptr)
+            {
+                if(chunkX == regionChunkItem->chunkX && chunkZ == regionChunkItem->chunkZ)
+                {
+                    return toIndex(regionChunkItem);
+                }
+            }
+        }
+    }
+
+    return QModelIndex();
+}
+
 void TreeModel::cutItem(const QModelIndex& index)
 {
     TreeItem* item = toItem(index);

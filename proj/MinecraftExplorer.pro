@@ -85,7 +85,8 @@ SOURCES += \
     src/FindDialog.cpp \
     src/HexView.cpp \
     src/EditBinaryValueDialog.cpp \
-    src/RecentFilesMenu.cpp
+    src/RecentFilesMenu.cpp \
+    src/FindChunkDialog.cpp
 
 HEADERS += \
     src/MainWindow.h \
@@ -123,7 +124,8 @@ HEADERS += \
     src/FindDialog.h \
     src/HexView.h \
     src/EditBinaryValueDialog.h \
-    src/RecentFilesMenu.h
+    src/RecentFilesMenu.h \
+    src/FindChunkDialog.h
 
 FORMS += \
     src/MainWindow.ui \
@@ -133,7 +135,8 @@ FORMS += \
     src/EditNumericValueDialog.ui \
     src/EditStringValueDialog.ui \
     src/FindDialog.ui \
-    src/EditBinaryValueDialog.ui
+    src/EditBinaryValueDialog.ui \
+    src/FindChunkDialog.ui
 
 
 #---------------------------------------------------------------------------------------------------

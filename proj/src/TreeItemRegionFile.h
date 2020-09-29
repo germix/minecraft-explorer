@@ -9,6 +9,8 @@ public:
     bool canFetchData;
     QString fileName;
     QString parentFolderPath;
+    int regionX;
+    int regionZ;
     RegionFile regionFile;
 public:
     TreeItemRegionFile(TreeItem* parent, const QString& fileNameIn, const QString& parentFolderPathIn);
@@ -19,6 +21,10 @@ public:
     virtual bool canFetchMore() const override;
     virtual void saveItem() override;
     virtual bool canRefresh() const override
+    {
+        return true;
+    }
+    virtual bool canFindChunk() const override
     {
         return true;
     }

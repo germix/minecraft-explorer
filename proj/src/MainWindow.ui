@@ -64,6 +64,8 @@
     </property>
     <addaction name="actionFind"/>
     <addaction name="actionFindNext"/>
+    <addaction name="separator"/>
+    <addaction name="actionFindChunk"/>
    </widget>
    <addaction name="menu_File"/>
    <addaction name="menu_Edit"/>
@@ -94,6 +96,8 @@
    <addaction name="separator"/>
    <addaction name="actionFind"/>
    <addaction name="actionFindNext"/>
+   <addaction name="separator"/>
+   <addaction name="actionFindChunk"/>
    <addaction name="separator"/>
    <addaction name="actionCut"/>
    <addaction name="actionCopy"/>
@@ -361,6 +365,15 @@
    </property>
    <property name="text">
     <string>&amp;Paste</string>
+   </property>
+  </action>
+  <action name="actionFindChunk">
+   <property name="icon">
+    <iconset resource="../res/resource.qrc">
+     <normaloff>:/images/action-find_chunk.png</normaloff>:/images/action-find_chunk.png</iconset>
+   </property>
+   <property name="text">
+    <string>Find &amp;chunk</string>
    </property>
   </action>
  </widget>
@@ -787,6 +800,22 @@
   </connection>
   <connection>
    <sender>actionPaste</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>slotAction()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>484</x>
+     <y>233</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionFindChunk</sender>
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
    <slot>slotAction()</slot>

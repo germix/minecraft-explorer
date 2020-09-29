@@ -8,6 +8,10 @@ TreeItemRegionFile::TreeItemRegionFile(TreeItem* parent, const QString& fileName
     , fileName(fileNameIn)
     , parentFolderPath(parentFolderPathIn)
 {
+    QStringList parts = fileName.split(".");
+
+    regionX = parts[1].toInt();
+    regionZ = parts[2].toInt();
 }
 
 QIcon TreeItemRegionFile::getIcon() const
@@ -35,6 +39,8 @@ void TreeItemRegionFile::fetchMore()
                 new TreeItemRegionChunk(
                             this,
                             i,
+                            regionX,
+                            regionZ,
                             regionFile);
             }
         }

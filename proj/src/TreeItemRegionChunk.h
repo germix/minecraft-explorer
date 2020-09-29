@@ -9,12 +9,14 @@ public:
     int chunkX;
     int chunkZ;
     int chunkIndex;
+    int localChunkX;
+    int localChunkZ;
     RegionFile& regionFile;
     bool canFetchData;
     int compressionMethod;
     bool modified;
 public:
-    TreeItemRegionChunk(TreeItemRegionFile* parent, int chunkIndexIn, RegionFile& regionFileIn);
+    TreeItemRegionChunk(TreeItemRegionFile* parent, int chunkIndexIn, int regionXIn, int regionZIn, RegionFile& regionFileIn);
 public:
     virtual QIcon getIcon() const override;
     virtual QString getLabel() const override;

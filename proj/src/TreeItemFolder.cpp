@@ -29,3 +29,8 @@ bool TreeItemFolder::canFetchMore() const
 {
     return canFetchData;
 }
+
+bool TreeItemFolder::canFindChunk() const
+{
+    return folderName == "region";
+}

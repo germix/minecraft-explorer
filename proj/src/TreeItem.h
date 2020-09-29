@@ -136,6 +136,11 @@ public:
     {
         return false;
     }
+
+    virtual bool canFindChunk() const
+    {
+        return false;
+    }
 };
 
 #include "utils.h"

@@ -34,6 +34,7 @@ public:
     bool hasChildrenWithName(const QModelIndex& parent, const QString& name) const;
     void itemChanged(TreeItem* item);
     QModelIndex findItem(const QModelIndex& parent, int from, const QString& name, const QString& value);
+    QModelIndex findChunk(const QModelIndex& parent, int chunkX, int chunkZ);
     void cutItem(const QModelIndex& index);
     void copyItem(const QModelIndex& index);
     void pasteIntoItem(const QModelIndex& parent);
