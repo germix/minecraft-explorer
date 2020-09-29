@@ -5,6 +5,8 @@
 #include <QString>
 #include <QDataStream>
 
+class TreeModel;
+
 class TreeItem
 {
 public:
@@ -80,6 +82,15 @@ public:
     {
         Q_UNUSED(type);
         return false;
+    }
+
+    virtual bool canEdit() const
+    {
+        return false;
+    }
+    virtual void openEditor(TreeModel* treeModel)
+    {
+        Q_UNUSED(treeModel);
     }
 };
 

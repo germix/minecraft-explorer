@@ -43,6 +43,7 @@ private slots:
     void slotModelModified();
 
     void slotTreeView_customContextMenuRequested(const QPoint& pos);
+    void slotTreeView_doubleClicked(const QModelIndex& index);
     void slotTreeView_currentChanged(const QModelIndex& current, const QModelIndex& previous);
 };
 

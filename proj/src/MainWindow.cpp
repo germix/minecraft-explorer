@@ -41,6 +41,7 @@ MainWindow::MainWindow(QWidget* parent)
         SIGNAL(currentChanged(QModelIndex,QModelIndex)),
         this,
         SLOT(slotTreeView_currentChanged(QModelIndex,QModelIndex)));
+    connect(treeModelView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(slotTreeView_doubleClicked(QModelIndex)));
 
     splitter = new QSplitter();
     splitter->addWidget(treeModelView);
@@ -100,6 +101,7 @@ void MainWindow::updateActions()
     TreeItem* item = treeModel->toItem(index);
     if(item != nullptr)
     {
+        ui->actionEdit->setEnabled(item->canEdit());
         ui->actionDelete->setEnabled(item->canDelete());
         ui->actionRename->setEnabled(item->canRename());
         ui->actionRefresh->setEnabled(item->canRefresh());
@@ -188,14 +190,6 @@ void MainWindow::slotAction()
             treeModelView->verticalScrollBar()->setValue(pos);
         }
     }
-    else if(action == ui->actionDelete)
-    {
-        QModelIndex index = treeModelView->currentIndex();
-        if(index.isValid())
-        {
-            treeModel->deleteItem(index);
-        }
-    }
     else if(action == ui->actionRename)
     {
         QModelIndex index = treeModelView->currentIndex();
@@ -214,6 +208,22 @@ void MainWindow::slotAction()
                     treeModel->renameItem(index, newName);
                 }
             }
+        }
+    }
+    else if(action == ui->actionEdit)
+    {
+        QModelIndex index = treeModelView->currentIndex();
+        if(index.isValid())
+        {
+            treeModel->editItem(index);
+        }
+    }
+    else if(action == ui->actionDelete)
+    {
+        QModelIndex index = treeModelView->currentIndex();
+        if(index.isValid())
+        {
+            treeModel->deleteItem(index);
         }
     }
     else if(action == ui->actionMoveItemUp)
@@ -328,6 +338,10 @@ void MainWindow::slotTreeView_customContextMenuRequested(const QPoint& pos)
     {
         menu.addAction(ui->actionRefresh);
     }
+    if(treeItem->canEdit())
+    {
+        menu.addAction(ui->actionEdit);
+    }
     if(treeItem->canDelete())
     {
         menu.addAction(ui->actionDelete);
@@ -390,6 +404,16 @@ void MainWindow::slotTreeView_customContextMenuRequested(const QPoint& pos)
         param += QDir::toNativeSeparators(folderPath);
 
         QProcess::startDetached("explorer.exe", QStringList(param));
+    }
+}
+
+void MainWindow::slotTreeView_doubleClicked(const QModelIndex& index)
+{
+    TreeItem* item;
+
+    if(nullptr != (item = treeModel->toItem(index)))
+    {
+        treeModel->editItem(index);
     }
 }
 

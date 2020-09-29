@@ -14,6 +14,13 @@ NewTagDialog::NewTagDialog(TreeModel* modelIn, int tagTypeIn, QModelIndex& paren
 
     ui->btnOk->setEnabled(false);
     connect(ui->txtName, SIGNAL(textEdited(QString)), this, SLOT(slotTextEdit_textEdited(QString)));
+
+    {
+        QSize s = sizeHint();
+        setMinimumSize(s);
+        setMaximumSize(s);
+        setWindowFlag(Qt::MSWindowsFixedSizeDialogHint);
+    }
 }
 
 NewTagDialog::~NewTagDialog()

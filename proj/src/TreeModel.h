@@ -23,14 +23,16 @@ public:
     }
 
     TreeItem* toItem(const QModelIndex& index) const;
-    QModelIndex toIndex(TreeItem* item, int column) const;
+    QModelIndex toIndex(TreeItem* item, int column = 0) const;
     void moveItemUp(const QModelIndex& index);
     void moveItemDown(const QModelIndex& index);
+    void editItem(const QModelIndex& index);
     void deleteItem(const QModelIndex& index);
     void renameItem(const QModelIndex& index, const QString& name);
     void refreshItem(const QModelIndex& index);
     void addNbtTag(const QModelIndex& parent, int type, const QString& name);
     bool hasChildrenWithName(const QModelIndex& parent, const QString& name) const;
+    void itemChanged(TreeItem* item);
 public:
     // Header:
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;

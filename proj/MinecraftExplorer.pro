@@ -79,7 +79,9 @@ SOURCES += \
     src/RegionFile.cpp \
     src/RenameDialog.cpp \
     src/NewTagDialog.cpp \
-    src/utils.cpp
+    src/utils.cpp \
+    src/EditNumericValueDialog.cpp \
+    src/EditStringValueDialog.cpp
 
 HEADERS += \
     src/MainWindow.h \
@@ -111,13 +113,17 @@ HEADERS += \
     src/RegionFile.h \
     src/RenameDialog.h \
     src/NewTagDialog.h \
-    src/utils.h
+    src/utils.h \
+    src/EditNumericValueDialog.h \
+    src/EditStringValueDialog.h
 
 FORMS += \
     src/MainWindow.ui \
     src/AboutDialog.ui \
     src/RenameDialog.ui \
-    src/NewTagDialog.ui
+    src/NewTagDialog.ui \
+    src/EditNumericValueDialog.ui \
+    src/EditStringValueDialog.ui
 
 
 #---------------------------------------------------------------------------------------------------

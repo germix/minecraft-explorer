@@ -184,6 +184,11 @@ void TreeModel::moveItemDown(const QModelIndex& index)
     markDirty(parent);
 }
 
+void TreeModel::editItem(const QModelIndex& index)
+{
+    toItem(index)->openEditor(this);
+}
+
 void TreeModel::deleteItem(const QModelIndex& index)
 {
     TreeItem* item = toItem(index);
@@ -244,6 +249,13 @@ bool TreeModel::hasChildrenWithName(const QModelIndex& parent, const QString& na
         }
     }
     return false;
+}
+
+void TreeModel::itemChanged(TreeItem* item)
+{
+    QModelIndex index = toIndex(item);
+
+    emit dataChanged(index, index);
 }
 
 QVariant TreeModel::headerData(int section, Qt::Orientation orientation, int role) const

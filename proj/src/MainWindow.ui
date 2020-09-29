@@ -47,8 +47,9 @@
     <property name="title">
      <string>&amp;Edit</string>
     </property>
-    <addaction name="actionDelete"/>
     <addaction name="actionRename"/>
+    <addaction name="actionEdit"/>
+    <addaction name="actionDelete"/>
     <addaction name="separator"/>
     <addaction name="actionMoveItemUp"/>
     <addaction name="actionMoveItemDown"/>
@@ -80,6 +81,7 @@
    <addaction name="actionRefresh"/>
    <addaction name="separator"/>
    <addaction name="actionRename"/>
+   <addaction name="actionEdit"/>
    <addaction name="actionDelete"/>
    <addaction name="separator"/>
    <addaction name="actionMoveItemUp"/>
@@ -286,6 +288,15 @@
    </property>
    <property name="text">
     <string>Move &amp;down</string>
+   </property>
+  </action>
+  <action name="actionEdit">
+   <property name="icon">
+    <iconset resource="../res/resource.qrc">
+     <normaloff>:/images/action-edit.png</normaloff>:/images/action-edit.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Edit</string>
    </property>
   </action>
  </widget>
@@ -616,6 +627,22 @@
   </connection>
   <connection>
    <sender>actionAddLongArrayTag</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>slotAction()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>380</x>
+     <y>149</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionEdit</sender>
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
    <slot>slotAction()</slot>

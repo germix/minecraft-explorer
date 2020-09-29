@@ -1,4 +1,5 @@
 #include "TreeItem.h"
+#include "EditNumericValueDialog.h"
 
 TreeItemNbtTagLong::TreeItemNbtTagLong(TreeItem* parent) : TreeItemNbtTag(parent)
 {
@@ -22,6 +23,16 @@ QString TreeItemNbtTagLong::getLabel() const
         s += ": " + QString::number(value);
     }
     return s;
+}
+
+bool TreeItemNbtTagLong::canEdit() const
+{
+    return true;
+}
+
+void TreeItemNbtTagLong::openEditor(TreeModel* treeModel)
+{
+    EditNumericValueDialog(treeModel, this).exec();
 }
 
 void TreeItemNbtTagLong::readNbt(QDataStream& in)
