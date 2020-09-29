@@ -1,4 +1,5 @@
 #include "TreeItem.h"
+#include "EditBinaryValueDialog.h"
 
 TreeItemNbtTagLongArray::TreeItemNbtTagLongArray(TreeItem* parent) : TreeItemNbtTag(parent)
 {
@@ -26,6 +27,16 @@ QString TreeItemNbtTagLongArray::getLabel() const
     else
         s += QObject::tr("%1 longs").arg(data.size());
     return s;
+}
+
+bool TreeItemNbtTagLongArray::canEdit() const
+{
+    return true;
+}
+
+void TreeItemNbtTagLongArray::openEditor(TreeModel* treeModel)
+{
+    EditBinaryValueDialog(treeModel, this).exec();
 }
 
 void TreeItemNbtTagLongArray::readNbt(QDataStream& in)

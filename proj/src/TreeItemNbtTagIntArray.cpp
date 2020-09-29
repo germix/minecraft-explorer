@@ -1,4 +1,5 @@
 #include "TreeItem.h"
+#include "EditBinaryValueDialog.h"
 
 TreeItemNbtTagIntArray::TreeItemNbtTagIntArray(TreeItem* parent) : TreeItemNbtTag(parent)
 {
@@ -26,6 +27,16 @@ QString TreeItemNbtTagIntArray::getLabel() const
     else
         s += QObject::tr("%1 integers").arg(data.size());
     return s;
+}
+
+bool TreeItemNbtTagIntArray::canEdit() const
+{
+    return true;
+}
+
+void TreeItemNbtTagIntArray::openEditor(TreeModel* treeModel)
+{
+    EditBinaryValueDialog(treeModel, this).exec();
 }
 
 void TreeItemNbtTagIntArray::readNbt(QDataStream& in)

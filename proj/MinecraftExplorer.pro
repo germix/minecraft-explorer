@@ -82,7 +82,9 @@ SOURCES += \
     src/utils.cpp \
     src/EditNumericValueDialog.cpp \
     src/EditStringValueDialog.cpp \
-    src/FindDialog.cpp
+    src/FindDialog.cpp \
+    src/HexView.cpp \
+    src/EditBinaryValueDialog.cpp
 
 HEADERS += \
     src/MainWindow.h \
@@ -117,7 +119,9 @@ HEADERS += \
     src/utils.h \
     src/EditNumericValueDialog.h \
     src/EditStringValueDialog.h \
-    src/FindDialog.h
+    src/FindDialog.h \
+    src/HexView.h \
+    src/EditBinaryValueDialog.h
 
 FORMS += \
     src/MainWindow.ui \
@@ -126,7 +130,8 @@ FORMS += \
     src/NewTagDialog.ui \
     src/EditNumericValueDialog.ui \
     src/EditStringValueDialog.ui \
-    src/FindDialog.ui
+    src/FindDialog.ui \
+    src/EditBinaryValueDialog.ui
 
 
 #---------------------------------------------------------------------------------------------------
