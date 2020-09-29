@@ -31,6 +31,9 @@ RecentFilesMenu::~RecentFilesMenu()
 
 void RecentFilesMenu::addFile(const QString& fileName)
 {
+    if(fileName.isEmpty())
+        return;
+
     files.removeAll(fileName);
     files.prepend(fileName);
 
