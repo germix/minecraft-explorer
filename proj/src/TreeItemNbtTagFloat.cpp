@@ -2,6 +2,7 @@
 
 TreeItemNbtTagFloat::TreeItemNbtTagFloat(TreeItem* parent) : TreeItemNbtTag(parent)
 {
+    value = 0;
 }
 
 TreeItemNbtTagFloat::~TreeItemNbtTagFloat()
@@ -15,7 +16,12 @@ QIcon TreeItemNbtTagFloat::getIcon() const
 
 QString TreeItemNbtTagFloat::getLabel() const
 {
-    return name + ": " + QString::number(value);
+    QString s = name;
+    if(!name.isEmpty())
+    {
+        s += ": ";
+    }
+    return s + QString::number(value);
 }
 
 void TreeItemNbtTagFloat::readNbt(QDataStream& in)

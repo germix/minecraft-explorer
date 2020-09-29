@@ -11,6 +11,7 @@ class WorldModel;
 class QTreeView;
 class QSplitter;
 class TreeModel;
+class TreeItem;
 
 class MainWindow : public QMainWindow
 {
@@ -28,23 +29,21 @@ class MainWindow : public QMainWindow
     QAction* actionDirUp;
     QAction* actionDirEnter;
     QAction* actionOpenContainerFolder;
-    QAction* actionListItemUp;
-    QAction* actionListItemDown;
-    QAction* actionDelete;
-    QAction* actionRename;
-    QAction* actionRefresh;
 public:
     explicit MainWindow(QWidget* parent = 0);
     ~MainWindow();
 private:
     void reloadWorlds();
     void updateActions();
+    void addNbtTag(int type);
+    void checkNbtTag(TreeItem* parent, QAction* action, int type);
 private slots:
     void slotAction();
 
     void slotModelModified();
 
     void slotTreeView_customContextMenuRequested(const QPoint& pos);
+    void slotTreeView_currentChanged(const QModelIndex& current, const QModelIndex& previous);
 };
 
 #endif // MAINWINDOW_H

@@ -29,6 +29,8 @@ public:
     void deleteItem(const QModelIndex& index);
     void renameItem(const QModelIndex& index, const QString& name);
     void refreshItem(const QModelIndex& index);
+    void addNbtTag(const QModelIndex& parent, int type, const QString& name);
+    bool hasChildrenWithName(const QModelIndex& parent, const QString& name) const;
 public:
     // Header:
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;

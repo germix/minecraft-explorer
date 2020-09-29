@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
+    <width>761</width>
     <height>300</height>
    </rect>
   </property>
@@ -19,7 +19,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>400</width>
+     <width>761</width>
      <height>25</height>
     </rect>
    </property>
@@ -43,13 +43,30 @@
      <string>&amp;View</string>
     </property>
    </widget>
+   <widget class="QMenu" name="menu_Edit">
+    <property name="title">
+     <string>&amp;Edit</string>
+    </property>
+    <addaction name="actionDelete"/>
+    <addaction name="actionRename"/>
+    <addaction name="separator"/>
+    <addaction name="actionMoveItemUp"/>
+    <addaction name="actionMoveItemDown"/>
+   </widget>
    <addaction name="menu_File"/>
+   <addaction name="menu_Edit"/>
    <addaction name="menu_View"/>
    <addaction name="menu_Help"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <property name="windowTitle">
     <string>Tool bar</string>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>24</width>
+     <height>24</height>
+    </size>
    </property>
    <attribute name="toolBarArea">
     <enum>TopToolBarArea</enum>
@@ -59,6 +76,27 @@
    </attribute>
    <addaction name="actionFileOpenFolder"/>
    <addaction name="actionFileSave"/>
+   <addaction name="separator"/>
+   <addaction name="actionRefresh"/>
+   <addaction name="separator"/>
+   <addaction name="actionRename"/>
+   <addaction name="actionDelete"/>
+   <addaction name="separator"/>
+   <addaction name="actionMoveItemUp"/>
+   <addaction name="actionMoveItemDown"/>
+   <addaction name="separator"/>
+   <addaction name="actionAddByteTag"/>
+   <addaction name="actionAddShortTag"/>
+   <addaction name="actionAddIntTag"/>
+   <addaction name="actionAddLongTag"/>
+   <addaction name="actionAddFloatTag"/>
+   <addaction name="actionAddDoubleTag"/>
+   <addaction name="actionAddStringTag"/>
+   <addaction name="actionAddByteArrayTag"/>
+   <addaction name="actionAddIntArrayTag"/>
+   <addaction name="actionAddLongArrayTag"/>
+   <addaction name="actionAddListTag"/>
+   <addaction name="actionAddCompoundTag"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionHelpAbout">
@@ -95,6 +133,159 @@
    </property>
    <property name="text">
     <string>&amp;Save</string>
+   </property>
+  </action>
+  <action name="actionAddByteTag">
+   <property name="icon">
+    <iconset resource="../res/resource.qrc">
+     <normaloff>:/images/treeitem-nbt-tag-byte.png</normaloff>:/images/treeitem-nbt-tag-byte.png</iconset>
+   </property>
+   <property name="text">
+    <string>Add byte tag</string>
+   </property>
+  </action>
+  <action name="actionAddShortTag">
+   <property name="icon">
+    <iconset resource="../res/resource.qrc">
+     <normaloff>:/images/treeitem-nbt-tag-short.png</normaloff>:/images/treeitem-nbt-tag-short.png</iconset>
+   </property>
+   <property name="text">
+    <string>Add short tag</string>
+   </property>
+  </action>
+  <action name="actionAddIntTag">
+   <property name="icon">
+    <iconset resource="../res/resource.qrc">
+     <normaloff>:/images/treeitem-nbt-tag-int.png</normaloff>:/images/treeitem-nbt-tag-int.png</iconset>
+   </property>
+   <property name="text">
+    <string>Add int tag</string>
+   </property>
+  </action>
+  <action name="actionAddLongTag">
+   <property name="icon">
+    <iconset resource="../res/resource.qrc">
+     <normaloff>:/images/treeitem-nbt-tag-long.png</normaloff>:/images/treeitem-nbt-tag-long.png</iconset>
+   </property>
+   <property name="text">
+    <string>Add long tag</string>
+   </property>
+  </action>
+  <action name="actionAddByteArrayTag">
+   <property name="icon">
+    <iconset resource="../res/resource.qrc">
+     <normaloff>:/images/treeitem-nbt-tag-byte-array.png</normaloff>:/images/treeitem-nbt-tag-byte-array.png</iconset>
+   </property>
+   <property name="text">
+    <string>Add byte array tag</string>
+   </property>
+  </action>
+  <action name="actionAddIntArrayTag">
+   <property name="icon">
+    <iconset resource="../res/resource.qrc">
+     <normaloff>:/images/treeitem-nbt-tag-int-array.png</normaloff>:/images/treeitem-nbt-tag-int-array.png</iconset>
+   </property>
+   <property name="text">
+    <string>Add int array tag</string>
+   </property>
+  </action>
+  <action name="actionAddLongArrayTag">
+   <property name="icon">
+    <iconset resource="../res/resource.qrc">
+     <normaloff>:/images/treeitem-nbt-tag-long-array.png</normaloff>:/images/treeitem-nbt-tag-long-array.png</iconset>
+   </property>
+   <property name="text">
+    <string>Add long array tag</string>
+   </property>
+  </action>
+  <action name="actionAddStringTag">
+   <property name="icon">
+    <iconset resource="../res/resource.qrc">
+     <normaloff>:/images/treeitem-nbt-tag-string.png</normaloff>:/images/treeitem-nbt-tag-string.png</iconset>
+   </property>
+   <property name="text">
+    <string>Add string tag</string>
+   </property>
+  </action>
+  <action name="actionAddListTag">
+   <property name="icon">
+    <iconset resource="../res/resource.qrc">
+     <normaloff>:/images/treeitem-nbt-tag-list.png</normaloff>:/images/treeitem-nbt-tag-list.png</iconset>
+   </property>
+   <property name="text">
+    <string>Add list tag</string>
+   </property>
+  </action>
+  <action name="actionAddCompoundTag">
+   <property name="icon">
+    <iconset resource="../res/resource.qrc">
+     <normaloff>:/images/treeitem-nbt-tag-compound.png</normaloff>:/images/treeitem-nbt-tag-compound.png</iconset>
+   </property>
+   <property name="text">
+    <string>Add compound tag</string>
+   </property>
+  </action>
+  <action name="actionAddFloatTag">
+   <property name="icon">
+    <iconset resource="../res/resource.qrc">
+     <normaloff>:/images/treeitem-nbt-tag-float.png</normaloff>:/images/treeitem-nbt-tag-float.png</iconset>
+   </property>
+   <property name="text">
+    <string>Add float tag</string>
+   </property>
+  </action>
+  <action name="actionAddDoubleTag">
+   <property name="icon">
+    <iconset resource="../res/resource.qrc">
+     <normaloff>:/images/treeitem-nbt-tag-double.png</normaloff>:/images/treeitem-nbt-tag-double.png</iconset>
+   </property>
+   <property name="text">
+    <string>Add double tag</string>
+   </property>
+  </action>
+  <action name="actionDelete">
+   <property name="icon">
+    <iconset resource="../res/resource.qrc">
+     <normaloff>:/images/action-delete.png</normaloff>:/images/action-delete.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Delete</string>
+   </property>
+  </action>
+  <action name="actionRename">
+   <property name="icon">
+    <iconset resource="../res/resource.qrc">
+     <normaloff>:/images/action-rename.png</normaloff>:/images/action-rename.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Rename</string>
+   </property>
+  </action>
+  <action name="actionRefresh">
+   <property name="icon">
+    <iconset resource="../res/resource.qrc">
+     <normaloff>:/images/action-refresh.png</normaloff>:/images/action-refresh.png</iconset>
+   </property>
+   <property name="text">
+    <string>Refresh</string>
+   </property>
+  </action>
+  <action name="actionMoveItemUp">
+   <property name="icon">
+    <iconset resource="../res/resource.qrc">
+     <normaloff>:/images/action-move-up.png</normaloff>:/images/action-move-up.png</iconset>
+   </property>
+   <property name="text">
+    <string>Move &amp;up</string>
+   </property>
+  </action>
+  <action name="actionMoveItemDown">
+   <property name="icon">
+    <iconset resource="../res/resource.qrc">
+     <normaloff>:/images/action-move-down.png</normaloff>:/images/action-move-down.png</iconset>
+   </property>
+   <property name="text">
+    <string>Move &amp;down</string>
    </property>
   </action>
  </widget>
@@ -163,6 +354,278 @@
     </hint>
     <hint type="destinationlabel">
      <x>199</x>
+     <y>149</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionAddByteTag</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>slotAction()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>259</x>
+     <y>149</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionAddShortTag</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>slotAction()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>259</x>
+     <y>149</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionAddIntTag</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>slotAction()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>259</x>
+     <y>149</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionAddLongTag</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>slotAction()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>259</x>
+     <y>149</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionAddStringTag</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>slotAction()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>259</x>
+     <y>149</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionAddByteArrayTag</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>slotAction()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>259</x>
+     <y>149</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionAddIntArrayTag</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>slotAction()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>259</x>
+     <y>149</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionAddListTag</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>slotAction()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>259</x>
+     <y>149</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionAddCompoundTag</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>slotAction()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>259</x>
+     <y>149</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionAddFloatTag</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>slotAction()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>259</x>
+     <y>149</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionAddDoubleTag</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>slotAction()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>259</x>
+     <y>149</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionDelete</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>slotAction()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>259</x>
+     <y>149</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionRename</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>slotAction()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>259</x>
+     <y>149</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionRefresh</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>slotAction()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>380</x>
+     <y>149</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionMoveItemUp</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>slotAction()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>380</x>
+     <y>149</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionMoveItemDown</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>slotAction()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>380</x>
+     <y>149</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionAddLongArrayTag</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>slotAction()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>380</x>
      <y>149</y>
     </hint>
    </hints>

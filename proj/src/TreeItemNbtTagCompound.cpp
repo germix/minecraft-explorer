@@ -2,7 +2,6 @@
 
 TreeItemNbtTagCompound::TreeItemNbtTagCompound(TreeItem* parent) : TreeItemNbtTag(parent)
 {
-    sort();
 }
 
 TreeItemNbtTagCompound::~TreeItemNbtTagCompound()
@@ -55,7 +54,7 @@ void TreeItemNbtTagCompound::readNbt(QDataStream& in)
 
 void TreeItemNbtTagCompound::writeNbt(QDataStream& out)
 {
-    for(quint32 i = 0; i < children.size(); i++)
+    for(int i = 0; i < children.size(); i++)
     {
         TreeItemNbtTag* childTag = (TreeItemNbtTag*)children[i];
 

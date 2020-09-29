@@ -22,9 +22,9 @@ QString TreeItemNbtTagLongArray::getLabel() const
         s = name + ": ";
     }
     if(data.size() == 1)
-        s += "1 byte";
+        s += "1 long";
     else
-        s += QObject::tr("%1 bytes").arg(data.size());
+        s += QObject::tr("%1 longs").arg(data.size());
     return s;
 }
 

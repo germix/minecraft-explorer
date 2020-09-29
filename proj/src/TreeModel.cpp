@@ -20,7 +20,7 @@ bool isValidNbt(const QString& fileName)
         quint8 compressionMethod = (ch1 == 0x1f && ch2 == 0x8b)
                     ? COMPRESSION_METHOD_GZIP
                     : COMPRESSION_METHOD_NONE;
-        data.clear();
+
         file.seek(0);
         if(compressionMethod == COMPRESSION_METHOD_NONE)
         {
@@ -28,7 +28,7 @@ bool isValidNbt(const QString& fileName)
         }
         else
         {
-            gzipDecompress(file.readAll(), data);
+            data = decompressGZIP(file.readAll());
         }
         QDataStream stream(data);
         quint8 tagType;
@@ -218,6 +218,32 @@ void TreeModel::refreshItem(const QModelIndex& index)
     item->fetchMore();
     beginInsertRows(index.parent(), 0, item->children.size());
     endInsertRows();
+}
+
+void TreeModel::addNbtTag(const QModelIndex& parent, int type, const QString& name)
+{
+    TreeItem* parentItem = toItem(parent);
+    int pos = parentItem->children.size();
+
+    beginInsertRows(parent, pos, pos);
+    createItemTag(parentItem, type)->name = name;
+    endInsertRows();
+
+    markDirty(parentItem);
+}
+
+bool TreeModel::hasChildrenWithName(const QModelIndex& parent, const QString& name) const
+{
+    TreeItem* parentItem = toItem(parent);
+
+    for(int i = 0; i < parentItem->children.size(); i++)
+    {
+        if(parentItem->children[i]->getName() == name)
+        {
+            return true;
+        }
+    }
+    return false;
 }
 
 QVariant TreeModel::headerData(int section, Qt::Orientation orientation, int role) const

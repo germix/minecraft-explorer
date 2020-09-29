@@ -22,6 +22,15 @@ public:
     }
     virtual bool canRename() const override;
 
+    virtual bool canDelete() const
+    {
+        return true;
+    }
+
+    virtual bool canMoveUp() const;
+
+    virtual bool canMoveDown() const;
+
     virtual quint8 nbtType() const = 0;
     virtual void readNbt(QDataStream& in) = 0;
     virtual void writeNbt(QDataStream& out) = 0;

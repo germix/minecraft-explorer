@@ -30,9 +30,10 @@
         <file>images/action-move-down.png</file>
         <file>images/action-move-up.png</file>
         <file>images/file-save.png</file>
-        <file>images/edit-delete.png</file>
+        <file>images/action-delete.png</file>
         <file>images/action-refresh.png</file>
         <file>images/action-rename.png</file>
         <file>images/treeitem-region-chunk.png</file>
+        <file>images/action-edit.png</file>
     </qresource>
 </RCC>

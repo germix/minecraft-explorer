@@ -2,6 +2,7 @@
 
 TreeItemNbtTagInt::TreeItemNbtTagInt(TreeItem* parent) : TreeItemNbtTag(parent)
 {
+    value = 0;
 }
 
 TreeItemNbtTagInt::~TreeItemNbtTagInt()
@@ -15,7 +16,12 @@ QIcon TreeItemNbtTagInt::getIcon() const
 
 QString TreeItemNbtTagInt::getLabel() const
 {
-    return name + ": " + QString::number(value);
+    QString s = name;
+    if(!name.isEmpty())
+    {
+        s += ": ";
+    }
+    return s + QString::number(value);
 }
 
 void TreeItemNbtTagInt::readNbt(QDataStream& in)

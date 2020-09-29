@@ -4,57 +4,6 @@
 
 #include <zlib.h>
 
-// https://stackoverflow.com/questions/2690328/qt-quncompress-gzip-data
-QByteArray gUncompress(const QByteArray &data)
-{
-    if (data.size() <= 4) {
-        qWarning("gUncompress: Input data is truncated");
-        return QByteArray();
-    }
-
-    QByteArray result;
-
-    int ret;
-    z_stream strm;
-    static const int CHUNK_SIZE = 1024;
-    char out[CHUNK_SIZE];
-
-    /* allocate inflate state */
-    strm.zalloc = Z_NULL;
-    strm.zfree = Z_NULL;
-    strm.opaque = Z_NULL;
-    strm.avail_in = data.size();
-    strm.next_in = (Bytef*)(data.data());
-
-    ret = inflateInit2(&strm, 15 +  32); // gzip decoding
-    if (ret != Z_OK)
-        return QByteArray();
-
-    // run inflate()
-    do {
-        strm.avail_out = CHUNK_SIZE;
-        strm.next_out = (Bytef*)(out);
-
-        ret = inflate(&strm, Z_NO_FLUSH);
-        Q_ASSERT(ret != Z_STREAM_ERROR);  // state not clobbered
-
-        switch (ret) {
-        case Z_NEED_DICT:
-            ret = Z_DATA_ERROR;     // and fall through
-        case Z_DATA_ERROR:
-        case Z_MEM_ERROR:
-            (void)inflateEnd(&strm);
-            return QByteArray();
-        }
-
-        result.append(out, CHUNK_SIZE - strm.avail_out);
-    } while (strm.avail_out == 0);
-
-    // clean up and return
-    inflateEnd(&strm);
-    return result;
-}
-
 TreeItemRegionChunk::TreeItemRegionChunk(TreeItemRegionFile *parent, int chunkIndexIn, RegionFile& regionFileIn)
     : TreeItem(parent)
     , chunkX(chunkIndexIn&31)
@@ -124,11 +73,11 @@ void TreeItemRegionChunk::fetchMore()
     }
     else if(method == COMPRESSION_METHOD_GZIP)
     {
-        gzipDecompress(file.read(dataLength), data);
+        data = decompressGZIP(file.read(dataLength));
     }
     else if(method == COMPRESSION_METHOD_ZLIB)
     {
-        data = gUncompress(file.read(dataLength));
+        data = decompressZLIB(file.read(dataLength));
     }
     else
     {
@@ -153,13 +102,13 @@ void TreeItemRegionChunk::saveChunk()
     quint16 offset = location >> 8;
     quint16 length = location & 255;
     QByteArray data = nbtTagsToByteArray(children, COMPRESSION_METHOD_GZIP);
-    int k1 = (data.size() + 5) / 4096 + 1;
+    int dataSectorCount = (data.size() + 5) / 4096 + 1;
 
-    if(k1 >= 256)
+    if(dataSectorCount >= 256)
     {
         return;
     }
-    if(offset != 0 && length == k1)
+    if(offset != 0 && length == dataSectorCount)
     {
         QDataStream stream(&file);
 

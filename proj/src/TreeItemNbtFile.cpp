@@ -53,7 +53,7 @@ void TreeItemNbtFile::fetchMore()
         quint8 method = (ch1 == 0x1f && ch2 == 0x8b)
                     ? COMPRESSION_METHOD_GZIP
                     : COMPRESSION_METHOD_NONE;
-        data.clear();
+
         file.seek(0);
         if(method == COMPRESSION_METHOD_NONE)
         {
@@ -61,7 +61,7 @@ void TreeItemNbtFile::fetchMore()
         }
         else
         {
-            gzipDecompress(file.readAll(), data);
+            data = decompressGZIP(file.readAll());
         }
 
         if(readNbtFromData(this, data))
@@ -92,15 +92,11 @@ QByteArray nbtTagsToByteArray(QVector<TreeItem*>& children, int compressionMetho
 
     if(compressionMethod == COMPRESSION_METHOD_GZIP)
     {
-        QByteArray gzipData;
-        gzipCompress(data, gzipData, 9);
-        return gzipData;
+        return compressGZIP(data, 9);
     }
     if(compressionMethod == COMPRESSION_METHOD_ZLIB)
     {
-        QByteArray compressedData = qCompress(data);
-        compressedData.remove(0, 4);
-        return compressedData;
+        return decompressZLIB(data);
     }
 
     return data;

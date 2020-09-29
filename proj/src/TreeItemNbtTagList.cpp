@@ -2,7 +2,6 @@
 
 TreeItemNbtTagList::TreeItemNbtTagList(TreeItem* parent) : TreeItemNbtTag(parent)
 {
-    sort();
 }
 
 TreeItemNbtTagList::~TreeItemNbtTagList()
@@ -27,6 +26,15 @@ QString TreeItemNbtTagList::getLabel() const
     else
         s += QObject::tr("%1 entries").arg(children.size());
     return s;
+}
+
+bool TreeItemNbtTagList::canAddNbtTag(int type) const
+{
+    if(children.size() > 0)
+    {
+        return ((TreeItemNbtTag*)children[0])->nbtType() == type;
+    }
+    return true;
 }
 
 void TreeItemNbtTagList::readNbt(QDataStream& in)

@@ -15,7 +15,12 @@ QIcon TreeItemNbtTagString::getIcon() const
 
 QString TreeItemNbtTagString::getLabel() const
 {
-    return name + ": " + value;
+    QString s = name;
+    if(!name.isEmpty())
+    {
+        s += ": ";
+    }
+    return s + value;
 }
 
 void TreeItemNbtTagString::readNbt(QDataStream& in)

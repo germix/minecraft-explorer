@@ -12,6 +12,7 @@
 #include "TreeModel.h"
 #include "TreeItem.h"
 #include "RenameDialog.h"
+#include "NewTagDialog.h"
 
 #define TITLE "Minecraft Explorer"
 
@@ -36,6 +37,10 @@ MainWindow::MainWindow(QWidget* parent)
             this,
             SLOT(slotTreeView_customContextMenuRequested(QPoint)));
     connect(treeModel, SIGNAL(onModified()), this, SLOT(slotModelModified()));
+    connect(treeModelView->selectionModel(),
+        SIGNAL(currentChanged(QModelIndex,QModelIndex)),
+        this,
+        SLOT(slotTreeView_currentChanged(QModelIndex,QModelIndex)));
 
     splitter = new QSplitter();
     splitter->addWidget(treeModelView);
@@ -52,12 +57,6 @@ MainWindow::MainWindow(QWidget* parent)
     actionDirUp = new QAction(QIcon(":/images/nav-up.png"), tr("Move up"));
     actionDirEnter = new QAction(QIcon(":/images/nav-enter.png"), tr("Enter directory"));
     actionOpenContainerFolder = new QAction(QIcon(":/images/file-open-container-folder.png"), tr("Open container folder"));
-
-    actionListItemUp = new QAction(QIcon(":/images/action-move-up.png"), tr("Move up"));
-    actionListItemDown = new QAction(QIcon(":/images/action-move-down.png"), tr("Move down"));
-    actionDelete = new QAction(QIcon(":/images/edit-delete.png"), tr("Delete"));
-    actionRename = new QAction(QIcon(":/images/action-rename.png"), tr("Rename"));
-    actionRefresh = new QAction(QIcon(":/images/action-refresh.png"), tr("Refresh"));
 
     //
     // Load settings
@@ -96,6 +95,55 @@ void MainWindow::reloadWorlds()
 void MainWindow::updateActions()
 {
     ui->actionFileSave->setEnabled(treeModel->isModified());
+
+    QModelIndex index = treeModelView->currentIndex();
+    TreeItem* item = treeModel->toItem(index);
+    if(item != nullptr)
+    {
+        ui->actionDelete->setEnabled(item->canDelete());
+        ui->actionRename->setEnabled(item->canRename());
+        ui->actionRefresh->setEnabled(item->canRefresh());
+        ui->actionMoveItemUp->setEnabled(item->canMoveUp());
+        ui->actionMoveItemDown->setEnabled(item->canMoveDown());
+
+        checkNbtTag(item, ui->actionAddByteTag, NBTTAG_BYTE);
+        checkNbtTag(item, ui->actionAddShortTag, NBTTAG_SHORT);
+        checkNbtTag(item, ui->actionAddIntTag, NBTTAG_INT);
+        checkNbtTag(item, ui->actionAddLongTag, NBTTAG_LONG);
+        checkNbtTag(item, ui->actionAddFloatTag, NBTTAG_FLOAT);
+        checkNbtTag(item, ui->actionAddDoubleTag, NBTTAG_DOUBLE);
+        checkNbtTag(item, ui->actionAddByteArrayTag, NBTTAG_BYTE_ARRAY);
+        checkNbtTag(item, ui->actionAddStringTag, NBTTAG_STRING);
+        checkNbtTag(item, ui->actionAddListTag, NBTTAG_LIST);
+        checkNbtTag(item, ui->actionAddCompoundTag, NBTTAG_COMPOUND);
+        checkNbtTag(item, ui->actionAddIntArrayTag, NBTTAG_INT_ARRAY);
+        checkNbtTag(item, ui->actionAddLongArrayTag, NBTTAG_LONG_ARRAY);
+    }
+}
+
+void MainWindow::addNbtTag(int type)
+{
+    QModelIndex index = treeModelView->currentIndex();
+
+    if(index.isValid())
+    {
+        TreeItem* item = treeModel->toItem(index);
+
+        if(dynamic_cast<TreeItemNbtTagList*>(item) != nullptr)
+        {
+            treeModel->addNbtTag(index, type, QString());
+        }
+        else
+        {
+            NewTagDialog(treeModel, type, index).exec();
+        }
+    }
+}
+
+void MainWindow::checkNbtTag(TreeItem* parent, QAction* action, int type)
+{
+    action->setVisible(parent->canAddNbtTag(type));
+    action->setEnabled(parent->canAddNbtTag(type));
 }
 
 void MainWindow::slotAction()
@@ -128,6 +176,110 @@ void MainWindow::slotAction()
     {
         AboutDialog().exec();
     }
+    else if(action == ui->actionRefresh)
+    {
+        QModelIndex index = treeModelView->currentIndex();
+        if(index.isValid())
+        {
+            int pos = treeModelView->verticalScrollBar()->value();
+            treeModel->refreshItem(index);
+            treeModelView->setCurrentIndex(index);
+            treeModelView->expand(index);
+            treeModelView->verticalScrollBar()->setValue(pos);
+        }
+    }
+    else if(action == ui->actionDelete)
+    {
+        QModelIndex index = treeModelView->currentIndex();
+        if(index.isValid())
+        {
+            treeModel->deleteItem(index);
+        }
+    }
+    else if(action == ui->actionRename)
+    {
+        QModelIndex index = treeModelView->currentIndex();
+        if(index.isValid())
+        {
+            TreeItem* treeItem = treeModel->toItem(index);
+            QString oldName = treeItem->getName();
+            RenameDialog renameDialog(oldName);
+
+            if(renameDialog.exec() == QDialog::Accepted)
+            {
+                QString newName = renameDialog.getName();
+
+                if(newName != oldName)
+                {
+                    treeModel->renameItem(index, newName);
+                }
+            }
+        }
+    }
+    else if(action == ui->actionMoveItemUp)
+    {
+        QModelIndex index = treeModelView->currentIndex();
+        if(index.isValid())
+        {
+            treeModel->moveItemUp(index);
+        }
+    }
+    else if(action == ui->actionMoveItemDown)
+    {
+        QModelIndex index = treeModelView->currentIndex();
+        if(index.isValid())
+        {
+            treeModel->moveItemDown(index);
+        }
+    }
+    else if(action == ui->actionAddByteTag)
+    {
+        addNbtTag(NBTTAG_BYTE);
+    }
+    else if(action == ui->actionAddShortTag)
+    {
+        addNbtTag(NBTTAG_SHORT);
+    }
+    else if(action == ui->actionAddIntTag)
+    {
+        addNbtTag(NBTTAG_INT);
+    }
+    else if(action == ui->actionAddLongTag)
+    {
+        addNbtTag(NBTTAG_LONG);
+    }
+    else if(action == ui->actionAddFloatTag)
+    {
+        addNbtTag(NBTTAG_FLOAT);
+    }
+    else if(action == ui->actionAddDoubleTag)
+    {
+        addNbtTag(NBTTAG_DOUBLE);
+    }
+    else if(action == ui->actionAddStringTag)
+    {
+        addNbtTag(NBTTAG_STRING);
+    }
+    else if(action == ui->actionAddByteArrayTag)
+    {
+        addNbtTag(NBTTAG_BYTE_ARRAY);
+    }
+    else if(action == ui->actionAddIntArrayTag)
+    {
+        addNbtTag(NBTTAG_INT_ARRAY);
+    }
+    else if(action == ui->actionAddLongArrayTag)
+    {
+        addNbtTag(NBTTAG_LONG_ARRAY);
+    }
+    else if(action == ui->actionAddListTag)
+    {
+        addNbtTag(NBTTAG_LIST);
+    }
+    else if(action == ui->actionAddCompoundTag)
+    {
+        addNbtTag(NBTTAG_COMPOUND);
+    }
 }
 
 void MainWindow::slotModelModified()
@@ -146,12 +298,12 @@ void MainWindow::slotModelModified()
 
 void MainWindow::slotTreeView_customContextMenuRequested(const QPoint& pos)
 {
+    Q_UNUSED(pos);
+
     QMenu menu;
     QModelIndex index = treeModelView->currentIndex();
     TreeItem* treeItem = treeModel->toItem(index);
     TreeItemFolder* treeItemFolder = dynamic_cast<TreeItemFolder*>(treeItem);
-    TreeItemNbtTagList* parentItemTagList = dynamic_cast<TreeItemNbtTagList*>(treeItem->parent);
-    TreeItemNbtTag* treeItemNbtTag = dynamic_cast<TreeItemNbtTag*>(treeItem);
 
     if(!treeItem)
     {
@@ -171,29 +323,47 @@ void MainWindow::slotTreeView_customContextMenuRequested(const QPoint& pos)
         menu.addSeparator();
         menu.addAction(actionOpenContainerFolder);
     }
-    if(parentItemTagList != nullptr)
-    {
-        if(parentItemTagList->children.indexOf(treeItem) > 0)
-        {
-            menu.addAction(actionListItemUp);
-        }
-        if(parentItemTagList->children.indexOf(treeItem) < parentItemTagList->children.size()-1)
-        {
-            menu.addAction(actionListItemDown);
-        }
-    }
-    if(treeItemNbtTag != nullptr)
-    {
-        menu.addAction(actionDelete);
-    }
 
-    if(treeItem->canRename())
-    {
-        menu.addAction(actionRename);
-    }
     if(treeItem->canRefresh())
     {
-        menu.addAction(actionRefresh);
+        menu.addAction(ui->actionRefresh);
+    }
+    if(treeItem->canDelete())
+    {
+        menu.addAction(ui->actionDelete);
+    }
+    if(treeItem->canRename())
+    {
+        menu.addAction(ui->actionRename);
+    }
+
+    QList<QAction*> moveActions;
+    if(treeItem->canMoveUp()) moveActions.append(ui->actionMoveItemUp);
+    if(treeItem->canMoveDown()) moveActions.append(ui->actionMoveItemDown);
+
+    QList<QAction*> addNbtTagActions;
+    if(treeItem->canAddNbtTag(NBTTAG_BYTE)) addNbtTagActions.append(ui->actionAddByteTag);
+    if(treeItem->canAddNbtTag(NBTTAG_SHORT)) addNbtTagActions.append(ui->actionAddShortTag);
+    if(treeItem->canAddNbtTag(NBTTAG_INT)) addNbtTagActions.append(ui->actionAddIntTag);
+    if(treeItem->canAddNbtTag(NBTTAG_LONG)) addNbtTagActions.append(ui->actionAddLongTag);
+    if(treeItem->canAddNbtTag(NBTTAG_FLOAT)) addNbtTagActions.append(ui->actionAddFloatTag);
+    if(treeItem->canAddNbtTag(NBTTAG_DOUBLE)) addNbtTagActions.append(ui->actionAddDoubleTag);
+    if(treeItem->canAddNbtTag(NBTTAG_BYTE_ARRAY)) addNbtTagActions.append(ui->actionAddByteArrayTag);
+    if(treeItem->canAddNbtTag(NBTTAG_STRING)) addNbtTagActions.append(ui->actionAddStringTag);
+    if(treeItem->canAddNbtTag(NBTTAG_LIST)) addNbtTagActions.append(ui->actionAddListTag);
+    if(treeItem->canAddNbtTag(NBTTAG_COMPOUND)) addNbtTagActions.append(ui->actionAddCompoundTag);
+    if(treeItem->canAddNbtTag(NBTTAG_INT_ARRAY)) addNbtTagActions.append(ui->actionAddIntArrayTag);
+    if(treeItem->canAddNbtTag(NBTTAG_LONG_ARRAY)) addNbtTagActions.append(ui->actionAddLongArrayTag);
+
+    if(moveActions.size())
+    {
+        menu.addSeparator();
+        menu.addActions(moveActions);
+    }
+    if(addNbtTagActions.size())
+    {
+        menu.addSeparator();
+        menu.addActions(addNbtTagActions);
     }
 
     QAction* action = menu.exec(QCursor::pos());
@@ -221,39 +391,11 @@ void MainWindow::slotTreeView_customContextMenuRequested(const QPoint& pos)
 
         QProcess::startDetached("explorer.exe", QStringList(param));
     }
-    else if(action == actionListItemUp)
-    {
-        treeModel->moveItemUp(index);
-    }
-    else if(action == actionListItemDown)
-    {
-        treeModel->moveItemDown(index);
-    }
-    else if(action == actionDelete)
-    {
-        treeModel->deleteItem(index);
-    }
-    else if(action == actionRename)
-    {
-        QString oldName = treeItem->getName();
-        RenameDialog renameDialog(oldName);
+}
 
-        if(renameDialog.exec() == QDialog::Accepted)
-        {
-            QString newName = renameDialog.getName();
-
-            if(newName != oldName)
-            {
-                treeModel->renameItem(index, newName);
-            }
-        }
-    }
-    else if(action == actionRefresh)
-    {
-        int pos = treeModelView->verticalScrollBar()->value();
-        treeModel->refreshItem(index);
-        treeModelView->setCurrentIndex(index);
-        treeModelView->expand(index);
-        treeModelView->verticalScrollBar()->setValue(pos);
-    }
+void MainWindow::slotTreeView_currentChanged(const QModelIndex& current, const QModelIndex& previous)
+{
+    Q_UNUSED(current);
+    Q_UNUSED(previous);
+    updateActions();
 }
