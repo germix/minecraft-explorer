@@ -35,5 +35,7 @@
         <file>images/action-rename.png</file>
         <file>images/treeitem-region-chunk.png</file>
         <file>images/action-edit.png</file>
+        <file>images/action-find.png</file>
+        <file>images/action-find_next.png</file>
     </qresource>
 </RCC>

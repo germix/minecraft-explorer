@@ -7,12 +7,14 @@
 #include <QProcess>
 #include <QScrollBar>
 #include <QInputDialog>
+#include <QMessageBox>
 
 #include "AboutDialog.h"
 #include "TreeModel.h"
 #include "TreeItem.h"
 #include "RenameDialog.h"
 #include "NewTagDialog.h"
+#include "FindDialog.h"
 
 #define TITLE "Minecraft Explorer"
 
@@ -24,6 +26,9 @@ MainWindow::MainWindow(QWidget* parent)
 , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
+    lastFindItem = nullptr;
+    lastFindPosition = -1;
 
     viewWidget = new QWidget();
 
@@ -91,6 +96,8 @@ void MainWindow::reloadWorlds()
     {
         treeModel->load(currentSavesFolder);
     }
+    lastFindItem = nullptr;
+    lastFindPosition = -1;
 }
 
 void MainWindow::updateActions()
@@ -101,6 +108,9 @@ void MainWindow::updateActions()
     TreeItem* item = treeModel->toItem(index);
     if(item != nullptr)
     {
+        ui->actionFind->setEnabled(item->canFind());
+        ui->actionFindNext->setEnabled(item == lastFindItem);
+
         ui->actionEdit->setEnabled(item->canEdit());
         ui->actionDelete->setEnabled(item->canDelete());
         ui->actionRename->setEnabled(item->canRename());
@@ -146,6 +156,31 @@ void MainWindow::checkNbtTag(TreeItem* parent, QAction* action, int type)
 {
     action->setVisible(parent->canAddNbtTag(type));
     action->setEnabled(parent->canAddNbtTag(type));
+}
+
+void MainWindow::findNextItem()
+{
+    if(lastFindIndex.isValid())
+    {
+        QModelIndex indexFound = treeModel->findItem(lastFindIndex, lastFindPosition+1, lastFindName, lastFindValue);
+        if(indexFound.isValid())
+        {
+            lastFindItem = treeModel->toItem(indexFound);
+            lastFindIndex = indexFound.parent();
+            lastFindPosition = indexFound.row();
+            treeModelView->setCurrentIndex(indexFound);
+        }
+        else
+        {
+            lastFindItem = nullptr;
+            lastFindIndex = QModelIndex();
+            lastFindPosition = -1;
+            lastFindName = QString();
+            lastFindValue = QString();
+            updateActions();
+            QMessageBox::information(this, tr("Find"), tr("Item not found"));
+        }
+    }
 }
 
 void MainWindow::slotAction()
@@ -289,6 +324,29 @@ void MainWindow::slotAction()
     else if(action == ui->actionAddCompoundTag)
     {
         addNbtTag(NBTTAG_COMPOUND);
+    }
+    else if(action == ui->actionFind)
+    {
+        QModelIndex index = treeModelView->currentIndex();
+        if(index.isValid())
+        {
+            FindDialog dlg;
+
+            if(dlg.exec() == FindDialog::Accepted)
+            {
+                lastFindItem = treeModel->toItem(index);
+                lastFindIndex = index;
+                lastFindName = dlg.getName();
+                lastFindValue = dlg.getValue();
+                lastFindPosition = -1;
+
+                findNextItem();
+            }
+        }
+    }
+    else if(action == ui->actionFindNext)
+    {
+        findNextItem();
     }
 }
 

@@ -18,11 +18,11 @@ QIcon TreeItemNbtTagLong::getIcon() const
 QString TreeItemNbtTagLong::getLabel() const
 {
     QString s = name;
-    if(!s.isEmpty())
+    if(!name.isEmpty())
     {
-        s += ": " + QString::number(value);
+        s += ": ";
     }
-    return s;
+    return s + stringifyValue();
 }
 
 bool TreeItemNbtTagLong::canEdit() const
@@ -33,6 +33,11 @@ bool TreeItemNbtTagLong::canEdit() const
 void TreeItemNbtTagLong::openEditor(TreeModel* treeModel)
 {
     EditNumericValueDialog(treeModel, this).exec();
+}
+
+QString TreeItemNbtTagLong::stringifyValue() const
+{
+    return QString::number(value);
 }
 
 void TreeItemNbtTagLong::readNbt(QDataStream& in)

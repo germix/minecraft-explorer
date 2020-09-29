@@ -34,6 +34,11 @@ void TreeItemNbtTagString::openEditor(TreeModel* treeModel)
     EditStringValueDialog(treeModel, this).exec();
 }
 
+QString TreeItemNbtTagString::stringifyValue() const
+{
+    return value;
+}
+
 void TreeItemNbtTagString::readNbt(QDataStream& in)
 {
     value = readStringUTF8(in);

@@ -22,7 +22,7 @@ QString TreeItemNbtTagFloat::getLabel() const
     {
         s += ": ";
     }
-    return s + QString::number(value);
+    return s + stringifyValue();
 }
 
 bool TreeItemNbtTagFloat::canEdit() const
@@ -33,6 +33,11 @@ bool TreeItemNbtTagFloat::canEdit() const
 void TreeItemNbtTagFloat::openEditor(TreeModel* treeModel)
 {
     EditNumericValueDialog(treeModel, this).exec();
+}
+
+QString TreeItemNbtTagFloat::stringifyValue() const
+{
+    return QString::number(value);
 }
 
 void TreeItemNbtTagFloat::readNbt(QDataStream& in)

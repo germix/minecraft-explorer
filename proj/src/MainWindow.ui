@@ -80,6 +80,9 @@
    <addaction name="separator"/>
    <addaction name="actionRefresh"/>
    <addaction name="separator"/>
+   <addaction name="actionFind"/>
+   <addaction name="actionFindNext"/>
+   <addaction name="separator"/>
    <addaction name="actionRename"/>
    <addaction name="actionEdit"/>
    <addaction name="actionDelete"/>
@@ -297,6 +300,24 @@
    </property>
    <property name="text">
     <string>&amp;Edit</string>
+   </property>
+  </action>
+  <action name="actionFind">
+   <property name="icon">
+    <iconset resource="../res/resource.qrc">
+     <normaloff>:/images/action-find.png</normaloff>:/images/action-find.png</iconset>
+   </property>
+   <property name="text">
+    <string>Find</string>
+   </property>
+  </action>
+  <action name="actionFindNext">
+   <property name="icon">
+    <iconset resource="../res/resource.qrc">
+     <normaloff>:/images/action-find_next.png</normaloff>:/images/action-find_next.png</iconset>
+   </property>
+   <property name="text">
+    <string>Find next</string>
    </property>
   </action>
  </widget>
@@ -643,6 +664,38 @@
   </connection>
   <connection>
    <sender>actionEdit</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>slotAction()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>380</x>
+     <y>149</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionFindNext</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>slotAction()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>380</x>
+     <y>149</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionFind</sender>
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
    <slot>slotAction()</slot>

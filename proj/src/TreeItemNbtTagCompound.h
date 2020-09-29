@@ -15,6 +15,10 @@ public:
         Q_UNUSED(type);
         return true;
     }
+    virtual bool canFind() const
+    {
+        return true;
+    }
 
     virtual quint8 nbtType() const override
     {

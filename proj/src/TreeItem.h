@@ -92,6 +92,23 @@ public:
     {
         Q_UNUSED(treeModel);
     }
+
+    virtual bool canFind() const
+    {
+        return false;
+    }
+
+    virtual int find(const QString& text, int index)
+    {
+        Q_UNUSED(text);
+        Q_UNUSED(index);
+        return -1;
+    }
+
+    virtual QString stringifyValue() const
+    {
+        return QString();
+    }
 };
 
 #include "utils.h"

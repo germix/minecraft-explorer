@@ -33,6 +33,7 @@ public:
     void addNbtTag(const QModelIndex& parent, int type, const QString& name);
     bool hasChildrenWithName(const QModelIndex& parent, const QString& name) const;
     void itemChanged(TreeItem* item);
+    QModelIndex findItem(const QModelIndex& parent, int from, const QString& name, const QString& value);
 public:
     // Header:
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;

@@ -22,6 +22,10 @@ public:
     {
         return true;
     }
+    virtual bool canFind() const
+    {
+        return true;
+    }
 };
 
 #endif // TREEITEMNBTFILE_H

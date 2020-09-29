@@ -14,6 +14,7 @@ public:
     virtual QString getLabel() const override;
     virtual bool canEdit() const override;
     virtual void openEditor(TreeModel* treeModel) override;
+    virtual QString stringifyValue() const override;
 
     virtual quint8 nbtType() const override
     {

@@ -20,6 +20,15 @@ TreeItem* TreeItemNbtTag::markDirty()
     return nullptr;
 }
 
+QString TreeItemNbtTag::getName() const
+{
+    if(dynamic_cast<TreeItemNbtTagList*>(parent))
+    {
+        return QString();
+    }
+    return name;
+}
+
 bool TreeItemNbtTag::canRename() const
 {
     return dynamic_cast<TreeItemNbtTagList*>(parent) == nullptr;

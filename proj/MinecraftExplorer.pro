@@ -81,7 +81,8 @@ SOURCES += \
     src/NewTagDialog.cpp \
     src/utils.cpp \
     src/EditNumericValueDialog.cpp \
-    src/EditStringValueDialog.cpp
+    src/EditStringValueDialog.cpp \
+    src/FindDialog.cpp
 
 HEADERS += \
     src/MainWindow.h \
@@ -115,7 +116,8 @@ HEADERS += \
     src/NewTagDialog.h \
     src/utils.h \
     src/EditNumericValueDialog.h \
-    src/EditStringValueDialog.h
+    src/EditStringValueDialog.h \
+    src/FindDialog.h
 
 FORMS += \
     src/MainWindow.ui \
@@ -123,7 +125,8 @@ FORMS += \
     src/RenameDialog.ui \
     src/NewTagDialog.ui \
     src/EditNumericValueDialog.ui \
-    src/EditStringValueDialog.ui
+    src/EditStringValueDialog.ui \
+    src/FindDialog.ui
 
 
 #---------------------------------------------------------------------------------------------------

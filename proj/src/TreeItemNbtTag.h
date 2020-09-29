@@ -12,10 +12,7 @@ public:
     }
 public:
     virtual TreeItem* markDirty() override;
-    virtual QString getName() const override
-    {
-        return name;
-    }
+    virtual QString getName() const override;
     virtual void renameItem(const QString& newName) override
     {
         name = newName;

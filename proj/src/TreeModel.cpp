@@ -258,6 +258,34 @@ void TreeModel::itemChanged(TreeItem* item)
     emit dataChanged(index, index);
 }
 
+QModelIndex TreeModel::findItem(const QModelIndex& parent, int from, const QString& name, const QString& value)
+{
+    TreeItem* parentItem = toItem(parent);
+
+    for(int i = from; i < parentItem->children.size(); i++)
+    {
+        QString childName = parentItem->children[i]->getName();
+        QString childValue = parentItem->children[i]->stringifyValue();
+
+        if(!name.isNull() && !childName.isNull())
+        {
+            if(childName.contains(name, Qt::CaseInsensitive))
+            {
+                return toIndex(parentItem->children[i]);
+            }
+        }
+        if(!value.isNull() && !childValue.isNull())
+        {
+            if(childValue.contains(value, Qt::CaseInsensitive))
+            {
+                return toIndex(parentItem->children[i]);
+            }
+        }
+
+    }
+    return QModelIndex();
+}
+
 QVariant TreeModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     Q_UNUSED(section);

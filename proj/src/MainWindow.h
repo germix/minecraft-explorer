@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QModelIndex>
 
 namespace Ui {
 class MainWindow;
@@ -29,6 +30,12 @@ class MainWindow : public QMainWindow
     QAction* actionDirUp;
     QAction* actionDirEnter;
     QAction* actionOpenContainerFolder;
+
+    TreeItem* lastFindItem;
+    QModelIndex lastFindIndex;
+    int lastFindPosition;
+    QString lastFindName;
+    QString lastFindValue;
 public:
     explicit MainWindow(QWidget* parent = 0);
     ~MainWindow();
@@ -37,6 +44,7 @@ private:
     void updateActions();
     void addNbtTag(int type);
     void checkNbtTag(TreeItem* parent, QAction* action, int type);
+    void findNextItem();
 private slots:
     void slotAction();
 
