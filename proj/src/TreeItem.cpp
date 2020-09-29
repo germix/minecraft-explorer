@@ -45,6 +45,36 @@ static bool treeItemLessThan(TreeItem* item1, TreeItem* item2)
     return item1->getLabel() < item2->getLabel();
 }
 
+QString TreeItem::validPasteName(const QString& name) const
+{
+    if(!hasChildrenWithName(name))
+    {
+        return name;
+    }
+    int index = 1;
+    QString validName;
+
+    do
+    {
+        validName = name + " " + QObject::tr("(Copy %1)").arg(QString::number(index++));
+    }
+    while(hasChildrenWithName(validName));
+
+    return validName;
+}
+
+bool TreeItem::hasChildrenWithName(const QString& name) const
+{
+    for(int i = 0; i < children.size(); i++)
+    {
+        if(children[i]->getName() == name)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
 void TreeItem::sort()
 {
     std::sort(children.begin(), children.end(), treeItemLessThan);

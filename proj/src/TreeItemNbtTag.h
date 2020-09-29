@@ -31,6 +31,19 @@ public:
     virtual quint8 nbtType() const = 0;
     virtual void readNbt(QDataStream& in) = 0;
     virtual void writeNbt(QDataStream& out) = 0;
+
+    virtual void cutItem() override;
+    virtual void copyItem() override;
+    virtual void pasteIntoItem() override;
+
+    virtual bool canCutItem() const override
+    {
+        return true;
+    }
+    virtual bool canCopyItem() const override
+    {
+        return true;
+    }
 };
 
 #endif // TREEITEMNBTTAG_H

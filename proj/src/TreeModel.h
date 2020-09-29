@@ -34,6 +34,10 @@ public:
     bool hasChildrenWithName(const QModelIndex& parent, const QString& name) const;
     void itemChanged(TreeItem* item);
     QModelIndex findItem(const QModelIndex& parent, int from, const QString& name, const QString& value);
+    void cutItem(const QModelIndex& index);
+    void copyItem(const QModelIndex& index);
+    void pasteIntoItem(const QModelIndex& parent);
+    QString validPasteName(TreeItem* parent, const QString& name);
 public:
     // Header:
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;

@@ -8,6 +8,7 @@
 #include <QScrollBar>
 #include <QInputDialog>
 #include <QMessageBox>
+#include <QClipboard>
 
 #include "AboutDialog.h"
 #include "TreeModel.h"
@@ -65,6 +66,12 @@ MainWindow::MainWindow(QWidget* parent)
     actionOpenContainerFolder = new QAction(QIcon(":/images/file-open-container-folder.png"), tr("Open container folder"));
 
     //
+    // Clipboard
+    //
+    const QClipboard* cb = QApplication::clipboard();
+    connect(cb, SIGNAL(dataChanged()), this, SLOT(slotClipboard_dataChanged()));
+
+    //
     // Load settings
     //
     QSettings s(SETTINGS_ORGANIZATION, SETTINGS_APPLICATION);
@@ -110,6 +117,10 @@ void MainWindow::updateActions()
     {
         ui->actionFind->setEnabled(item->canFind());
         ui->actionFindNext->setEnabled(item == lastFindItem);
+
+        ui->actionCut->setEnabled(item->canCutItem());
+        ui->actionCopy->setEnabled(item->canCopyItem());
+        ui->actionPaste->setEnabled(item->canPasteIntoItem());
 
         ui->actionEdit->setEnabled(item->canEdit());
         ui->actionDelete->setEnabled(item->canDelete());
@@ -223,6 +234,30 @@ void MainWindow::slotAction()
             treeModelView->setCurrentIndex(index);
             treeModelView->expand(index);
             treeModelView->verticalScrollBar()->setValue(pos);
+        }
+    }
+    else if(action == ui->actionCut)
+    {
+        QModelIndex index = treeModelView->currentIndex();
+        if(index.isValid())
+        {
+            treeModel->cutItem(index);
+        }
+    }
+    else if(action == ui->actionCopy)
+    {
+        QModelIndex index = treeModelView->currentIndex();
+        if(index.isValid())
+        {
+            treeModel->copyItem(index);
+        }
+    }
+    else if(action == ui->actionPaste)
+    {
+        QModelIndex index = treeModelView->currentIndex();
+        if(index.isValid())
+        {
+            treeModel->pasteIntoItem(index);
         }
     }
     else if(action == ui->actionRename)
@@ -361,6 +396,11 @@ void MainWindow::slotModelModified()
     setWindowTitle(s);
     setWindowModified(treeModel->isModified());
 
+    updateActions();
+}
+
+void MainWindow::slotClipboard_dataChanged()
+{
     updateActions();
 }
 

@@ -1,4 +1,7 @@
 #include "TreeItem.h"
+#include <QMimeData>
+#include <QClipboard>
+#include <QApplication>
 
 TreeItemNbtTagList::TreeItemNbtTagList(TreeItem* parent) : TreeItemNbtTag(parent)
 {
@@ -35,6 +38,26 @@ bool TreeItemNbtTagList::canAddNbtTag(int type) const
         return ((TreeItemNbtTag*)children[0])->nbtType() == type;
     }
     return true;
+}
+
+bool TreeItemNbtTagList::canPasteIntoItem() const
+{
+    const QMimeData* md = qApp->clipboard()->mimeData();
+
+    if(md->hasFormat("minecraft/nbt-tag"))
+    {
+        if(children.size() == 0)
+        {
+            return true;
+        }
+        QByteArray data = md->data("minecraft/nbt-tag");
+
+        if(data.size() > 0)
+        {
+            return ((TreeItemNbtTag*)children[0])->nbtType() == data.at(0);
+        }
+    }
+    return false;
 }
 
 void TreeItemNbtTagList::readNbt(QDataStream& in)

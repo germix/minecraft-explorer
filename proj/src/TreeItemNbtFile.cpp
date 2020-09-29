@@ -120,3 +120,8 @@ TreeItem* TreeItemNbtFile::markDirty()
 {
     return this;
 }
+
+void TreeItemNbtFile::pasteIntoItem()
+{
+    parseNbtTagFromClipboard(this);
+}

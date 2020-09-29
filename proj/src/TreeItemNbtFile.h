@@ -26,6 +26,11 @@ public:
     {
         return true;
     }
+    virtual void pasteIntoItem() override;
+    virtual bool canPasteIntoItem() const override
+    {
+        return true;
+    }
 };
 
 #endif // TREEITEMNBTFILE_H

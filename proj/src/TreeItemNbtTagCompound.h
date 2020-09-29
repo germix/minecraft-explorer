@@ -19,6 +19,7 @@ public:
     {
         return true;
     }
+    virtual bool canPasteIntoItem() const override;
 
     virtual quint8 nbtType() const override
     {

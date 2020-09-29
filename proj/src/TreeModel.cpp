@@ -239,16 +239,7 @@ void TreeModel::addNbtTag(const QModelIndex& parent, int type, const QString& na
 
 bool TreeModel::hasChildrenWithName(const QModelIndex& parent, const QString& name) const
 {
-    TreeItem* parentItem = toItem(parent);
-
-    for(int i = 0; i < parentItem->children.size(); i++)
-    {
-        if(parentItem->children[i]->getName() == name)
-        {
-            return true;
-        }
-    }
-    return false;
+    return toItem(parent)->hasChildrenWithName(name);
 }
 
 void TreeModel::itemChanged(TreeItem* item)
@@ -284,6 +275,43 @@ QModelIndex TreeModel::findItem(const QModelIndex& parent, int from, const QStri
 
     }
     return QModelIndex();
+}
+
+void TreeModel::cutItem(const QModelIndex& index)
+{
+    TreeItem* item = toItem(index);
+    TreeItem* parentItem = item->parent;
+
+    if(item->canCutItem())
+    {
+        beginRemoveRows(index.parent(), index.row(), index.row());
+        item->cutItem();
+        endRemoveRows();
+
+        markDirty(parentItem);
+    }
+}
+
+void TreeModel::copyItem(const QModelIndex& index)
+{
+    TreeItem* item = toItem(index);
+
+    if(item->canCopyItem())
+    {
+        item->copyItem();
+    }
+}
+
+void TreeModel::pasteIntoItem(const QModelIndex& parent)
+{
+    TreeItem* parentItem = toItem(parent);
+    int pos = parentItem->children.size();
+
+    beginInsertRows(parent, pos, pos);
+    parentItem->pasteIntoItem();
+    endInsertRows();
+
+    markDirty(parentItem);
 }
 
 QVariant TreeModel::headerData(int section, Qt::Orientation orientation, int role) const

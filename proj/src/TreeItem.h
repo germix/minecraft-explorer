@@ -16,8 +16,11 @@ public:
     TreeItem(TreeItem* parent);
     virtual ~TreeItem();
 public:
+
     void sort();
     void clear();
+    QString validPasteName(const QString& name) const;
+    bool hasChildrenWithName(const QString& name) const;
 
     virtual QIcon getIcon() const
     {
@@ -108,6 +111,30 @@ public:
     virtual QString stringifyValue() const
     {
         return QString();
+    }
+
+    virtual void cutItem()
+    {
+    }
+    virtual bool canCutItem() const
+    {
+        return false;
+    }
+
+    virtual void copyItem()
+    {
+    }
+    virtual bool canCopyItem() const
+    {
+        return false;
+    }
+
+    virtual void pasteIntoItem()
+    {
+    }
+    virtual bool canPasteIntoItem() const
+    {
+        return false;
     }
 };
 

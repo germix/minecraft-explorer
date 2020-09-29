@@ -1,4 +1,7 @@
 #include "TreeItem.h"
+#include <QMimeData>
+#include <QClipboard>
+#include <QApplication>
 
 TreeItemNbtTagCompound::TreeItemNbtTagCompound(TreeItem* parent) : TreeItemNbtTag(parent)
 {
@@ -26,6 +29,13 @@ QString TreeItemNbtTagCompound::getLabel() const
     else
         s += QObject::tr("%1 entries").arg(children.size());
     return s;
+}
+
+bool TreeItemNbtTagCompound::canPasteIntoItem() const
+{
+    const QMimeData* md = qApp->clipboard()->mimeData();
+
+    return md->hasFormat("minecraft/nbt-tag");
 }
 
 void TreeItemNbtTagCompound::readNbt(QDataStream& in)

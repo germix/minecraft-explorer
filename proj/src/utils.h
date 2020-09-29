@@ -46,4 +46,6 @@ extern void readValidFilesInFolder(TreeItem* parent, const QString& folder);
 extern bool readNbtFromData(TreeItem* parent, QByteArray data);
 extern QByteArray nbtTagsToByteArray(QVector<TreeItem*>& children, int compressionMethod);
 
+void parseNbtTagFromClipboard(TreeItem* parent);
+
 #endif // UTILS_H

@@ -4,6 +4,9 @@
 #include <QDir>
 #include <QFile>
 #include <QDataStream>
+#include <QMimeData>
+#include <QClipboard>
+#include <QApplication>
 
 #include <zlib.h>
 
@@ -375,4 +378,33 @@ bool readNbtFromData(TreeItem* parent, QByteArray data)
         return true;
     }
     return false;
+}
+
+void parseNbtTagFromClipboard(TreeItem* parent)
+{
+    const QMimeData* md = qApp->clipboard()->mimeData();
+
+    if(md->hasFormat("minecraft/nbt-tag"))
+    {
+        quint8 type;
+        QString name;
+        QByteArray data = md->data("minecraft/nbt-tag");
+        QDataStream dataStream(data);
+
+        dataStream >> type;
+        while(type != NBTTAG_END)
+        {
+            name = readStringUTF8(dataStream);
+            if(name.isEmpty() && dynamic_cast<TreeItemNbtTagList*>(parent) == nullptr)
+            {
+                name = QObject::tr("UNNAMED");
+            }
+
+            TreeItemNbtTag* tag = createItemTag(parent, type);
+            tag->name = parent->validPasteName(name);
+            tag->readNbt(dataStream);
+
+            dataStream >> type;
+        }
+    }
 }
