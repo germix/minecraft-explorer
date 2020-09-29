@@ -16,6 +16,7 @@
 #include "RenameDialog.h"
 #include "NewTagDialog.h"
 #include "FindDialog.h"
+#include "RecentFilesMenu.h"
 
 #define TITLE "Minecraft Explorer"
 
@@ -80,10 +81,10 @@ MainWindow::MainWindow(QWidget* parent)
     restoreState(s.value("WindowState").toByteArray());
     splitter->restoreGeometry(s.value("SplitterGeometry").toByteArray());
     splitter->restoreState(s.value("SplitterState").toByteArray());
-    currentSavesFolder = s.value("SaveFolder", "").toString();
 
-    reloadWorlds();
-    updateActions();
+    initRecentFilesMenu(s.value("RecentFiles").toByteArray());
+
+    openFolder(s.value("CurrentFolder", "").toString());
 }
 
 MainWindow::~MainWindow()
@@ -93,18 +94,10 @@ MainWindow::~MainWindow()
     s.setValue("WindowGeometry", saveGeometry());
     s.setValue("SplitterState", splitter->saveState());
     s.setValue("SplitterGeometry", splitter->saveGeometry());
-    s.setValue("SaveFolder", currentSavesFolder);
-    delete ui;
-}
+    s.setValue("RecentFiles", recentFiles->saveState());
+    s.setValue("CurrentFolder", currentFolder);
 
-void MainWindow::reloadWorlds()
-{
-    if(!currentSavesFolder.isEmpty())
-    {
-        treeModel->load(currentSavesFolder);
-    }
-    lastFindItem = nullptr;
-    lastFindPosition = -1;
+    delete ui;
 }
 
 void MainWindow::updateActions()
@@ -194,6 +187,34 @@ void MainWindow::findNextItem()
     }
 }
 
+void MainWindow::openFolder(const QString& folder)
+{
+    recentFiles->addFile(QFileInfo(currentFolder).absoluteFilePath());
+    recentFiles->removeFile(QFileInfo(folder).absoluteFilePath());
+    currentFolder = folder;
+
+    if(!currentFolder.isEmpty())
+    {
+        treeModel->load(currentFolder);
+    }
+    lastFindItem = nullptr;
+    lastFindPosition = -1;
+
+    updateActions();
+}
+
+void MainWindow::initRecentFilesMenu(const QByteArray& state)
+{
+    recentFiles = new RecentFilesMenu(20, 10, tr("Recent folders"), QIcon(":/images/action-clear.png"));
+
+    ui->menu_File->insertMenu(ui->actionFileExit, recentFiles);
+    ui->menu_File->insertSeparator(ui->actionFileExit);
+
+    connect(recentFiles, SIGNAL(onFileTriggered(QString)), this, SLOT(slotRecentFiles_fileTriggered(QString)));
+
+    recentFiles->restoreState(state);
+}
+
 void MainWindow::slotAction()
 {
     QAction* action = qobject_cast<QAction*>(sender());
@@ -208,16 +229,14 @@ void MainWindow::slotAction()
     }
     else if(action == ui->actionFileOpenFolder)
     {
-        QString newSavesFolder = QFileDialog::getExistingDirectory(
+        QString newFolder = QFileDialog::getExistingDirectory(
                                     this,
-                                    tr("Open saves folder"),
-                                    currentSavesFolder);
+                                    tr("Open folder"),
+                                    currentFolder);
 
-        if(!newSavesFolder.isEmpty() && newSavesFolder != currentSavesFolder)
+        if(!newFolder.isEmpty() && newFolder != currentFolder)
         {
-            currentSavesFolder = newSavesFolder;
-
-            reloadWorlds();
+            openFolder(newFolder);
         }
     }
     else if(action == ui->actionHelpAbout)
@@ -404,6 +423,11 @@ void MainWindow::slotClipboard_dataChanged()
     updateActions();
 }
 
+void MainWindow::slotRecentFiles_fileTriggered(const QString& fileName)
+{
+    openFolder(fileName);
+}
+
 void MainWindow::slotTreeView_customContextMenuRequested(const QPoint& pos)
 {
     Q_UNUSED(pos);
@@ -481,15 +505,13 @@ void MainWindow::slotTreeView_customContextMenuRequested(const QPoint& pos)
     QAction* action = menu.exec(QCursor::pos());
     if(action == actionDirUp)
     {
-        QDir dir(currentSavesFolder);
+        QDir dir(currentFolder);
         dir.cdUp();
-        currentSavesFolder = dir.absolutePath();
-        reloadWorlds();
+        openFolder(dir.absolutePath());
     }
     else if(action == actionDirEnter)
     {
-        currentSavesFolder = treeItemFolder->parentFolderPath + '/' + treeItemFolder->folderName;
-        reloadWorlds();
+        openFolder(treeItemFolder->parentFolderPath + '/' + treeItemFolder->folderName);
     }
     else if(action == actionOpenContainerFolder)
     {

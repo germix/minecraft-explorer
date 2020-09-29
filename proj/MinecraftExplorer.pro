@@ -84,7 +84,8 @@ SOURCES += \
     src/EditStringValueDialog.cpp \
     src/FindDialog.cpp \
     src/HexView.cpp \
-    src/EditBinaryValueDialog.cpp
+    src/EditBinaryValueDialog.cpp \
+    src/RecentFilesMenu.cpp
 
 HEADERS += \
     src/MainWindow.h \
@@ -121,7 +122,8 @@ HEADERS += \
     src/EditStringValueDialog.h \
     src/FindDialog.h \
     src/HexView.h \
-    src/EditBinaryValueDialog.h
+    src/EditBinaryValueDialog.h \
+    src/RecentFilesMenu.h
 
 FORMS += \
     src/MainWindow.ui \
