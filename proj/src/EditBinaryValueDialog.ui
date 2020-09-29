@@ -108,6 +108,9 @@
   <tabstop>tabWidget</tabstop>
   <tabstop>btnOk</tabstop>
   <tabstop>btnCancel</tabstop>
+  <tabstop>btnExport</tabstop>
+  <tabstop>btnImport</tabstop>
+  <tabstop>plainTextEdit</tabstop>
  </tabstops>
  <resources/>
  <connections>
