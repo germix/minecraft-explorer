@@ -58,8 +58,16 @@
     <addaction name="actionMoveItemUp"/>
     <addaction name="actionMoveItemDown"/>
    </widget>
+   <widget class="QMenu" name="menu_Find">
+    <property name="title">
+     <string>&amp;Find</string>
+    </property>
+    <addaction name="actionFind"/>
+    <addaction name="actionFindNext"/>
+   </widget>
    <addaction name="menu_File"/>
    <addaction name="menu_Edit"/>
+   <addaction name="menu_Find"/>
    <addaction name="menu_View"/>
    <addaction name="menu_Help"/>
   </widget>
