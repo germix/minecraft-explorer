@@ -17,7 +17,9 @@ public:
 public:
     int getChunkX() const;
     int getChunkZ() const;
-private:
+private slots:
+    void slotChunkTextEdit_textChanged(const QString& text);
+    void slotBlockTextEdit_textChanged(const QString& text);
 };
 
 #endif // FINDCHUNKDIALOG_H
