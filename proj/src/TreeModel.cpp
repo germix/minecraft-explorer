@@ -246,6 +246,8 @@ void TreeModel::itemChanged(TreeItem* item)
 {
     QModelIndex index = toIndex(item);
 
+    markDirty(item);
+
     emit dataChanged(index, index);
 }
 
