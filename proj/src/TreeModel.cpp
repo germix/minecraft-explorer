@@ -80,6 +80,8 @@ void TreeModel::clear()
     }
     root = nullptr;
     modified = false;
+
+    emit onModified();
 }
 
 void TreeModel::markDirty(TreeItem* item)
