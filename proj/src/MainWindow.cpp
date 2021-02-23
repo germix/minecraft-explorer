@@ -338,7 +338,7 @@ bool MainWindow::checkForUnsavedChanges()
     {
         switch(QMessageBox::question(this,
                 tr("Unsaved changes"),
-                tr("You have unsaved changes. Close anyway?"),
+                tr("There are unsaved changes. Close anyway?"),
                 QMessageBox::Save | QMessageBox::Yes | QMessageBox::Cancel))
         {
             case QMessageBox::Save:

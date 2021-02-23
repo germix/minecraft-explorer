@@ -484,7 +484,7 @@
     </message>
     <message>
         <location filename="../src/MainWindow.cpp" line="341"/>
-        <source>You have unsaved changes. Close anyway?</source>
+        <source>There are unsaved changes. Close anyway?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
