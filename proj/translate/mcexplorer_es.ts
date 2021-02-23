@@ -526,7 +526,7 @@
     <message>
         <location filename="../src/TreeItem.cpp" line="59"/>
         <source>(Copy %1)</source>
-        <translation>(Copiar %1)</translation>
+        <translation>(Copia %1)</translation>
     </message>
     <message>
         <location filename="../src/TreeItemNbtFile.cpp" line="28"/>
