@@ -293,6 +293,7 @@
     </message>
     <message>
         <location filename="../src/MainWindow.ui" line="63"/>
+        <location filename="../src/MainWindow.ui" line="347"/>
         <source>&amp;Find</source>
         <translation type="unfinished"></translation>
     </message>
@@ -413,18 +414,17 @@
     </message>
     <message>
         <location filename="../src/MainWindow.ui" line="329"/>
-        <source>Move &amp;down</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/MainWindow.ui" line="347"/>
-        <location filename="../src/MainWindow.cpp" line="205"/>
-        <source>Find</source>
+        <source>Move do&amp;wn</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/MainWindow.ui" line="356"/>
-        <source>Find next</source>
+        <source>Find &amp;next</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/MainWindow.cpp" line="214"/>
+        <source>Find</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -463,32 +463,42 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="113"/>
+        <location filename="../src/MainWindow.cpp" line="122"/>
         <source>Recent files</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="205"/>
+        <location filename="../src/MainWindow.cpp" line="214"/>
         <source>Item not found</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="228"/>
+        <location filename="../src/MainWindow.cpp" line="241"/>
         <source>Recent folders</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="338"/>
+        <location filename="../src/MainWindow.cpp" line="340"/>
+        <source>Unsaved changes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/MainWindow.cpp" line="341"/>
+        <source>You have unsaved changes. Close anyway?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/MainWindow.cpp" line="374"/>
         <source>Open folder</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="531"/>
+        <location filename="../src/MainWindow.cpp" line="567"/>
         <source>Find chunk</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="531"/>
+        <location filename="../src/MainWindow.cpp" line="567"/>
         <source>Chunk not found</source>
         <translation type="unfinished"></translation>
     </message>

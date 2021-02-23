@@ -326,7 +326,7 @@
      <normaloff>:/images/action-move-down.png</normaloff>:/images/action-move-down.png</iconset>
    </property>
    <property name="text">
-    <string>Move &amp;down</string>
+    <string>Move do&amp;wn</string>
    </property>
   </action>
   <action name="actionEdit">
@@ -344,7 +344,7 @@
      <normaloff>:/images/action-find.png</normaloff>:/images/action-find.png</iconset>
    </property>
    <property name="text">
-    <string>Find</string>
+    <string>&amp;Find</string>
    </property>
   </action>
   <action name="actionFindNext">
@@ -353,7 +353,7 @@
      <normaloff>:/images/action-find_next.png</normaloff>:/images/action-find_next.png</iconset>
    </property>
    <property name="text">
-    <string>Find next</string>
+    <string>Find &amp;next</string>
    </property>
   </action>
   <action name="actionCut">

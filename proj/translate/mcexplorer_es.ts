@@ -293,6 +293,7 @@
     </message>
     <message>
         <location filename="../src/MainWindow.ui" line="63"/>
+        <location filename="../src/MainWindow.ui" line="347"/>
         <source>&amp;Find</source>
         <translation>&amp;Buscar</translation>
     </message>
@@ -394,7 +395,7 @@
     <message>
         <location filename="../src/MainWindow.ui" line="293"/>
         <source>&amp;Delete</source>
-        <translation>&amp;Eliminar</translation>
+        <translation>Elimi&amp;nar</translation>
     </message>
     <message>
         <location filename="../src/MainWindow.ui" line="302"/>
@@ -413,19 +414,18 @@
     </message>
     <message>
         <location filename="../src/MainWindow.ui" line="329"/>
-        <source>Move &amp;down</source>
+        <source>Move do&amp;wn</source>
         <translation>Mover hacia aba&amp;jo</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.ui" line="347"/>
-        <location filename="../src/MainWindow.cpp" line="205"/>
-        <source>Find</source>
-        <translation>Buscar</translation>
+        <location filename="../src/MainWindow.ui" line="356"/>
+        <source>Find &amp;next</source>
+        <translation>Buscar &amp;siguiente</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.ui" line="356"/>
-        <source>Find next</source>
-        <translation>Buscar siguiente</translation>
+        <location filename="../src/MainWindow.cpp" line="214"/>
+        <source>Find</source>
+        <translation>Buscar</translation>
     </message>
     <message>
         <location filename="../src/MainWindow.ui" line="365"/>
@@ -445,7 +445,7 @@
     <message>
         <location filename="../src/MainWindow.ui" line="392"/>
         <source>Find &amp;chunk</source>
-        <translation>&amp;Buscar chunk</translation>
+        <translation>Buscar &amp;chunk</translation>
     </message>
     <message>
         <location filename="../src/MainWindow.ui" line="401"/>
@@ -463,32 +463,42 @@
         <translation>Abrir carpeta contenedora</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="113"/>
+        <location filename="../src/MainWindow.cpp" line="122"/>
         <source>Recent files</source>
         <translation>Archivos recientes</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="205"/>
+        <location filename="../src/MainWindow.cpp" line="214"/>
         <source>Item not found</source>
         <translation>No se encontró el item</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="228"/>
+        <location filename="../src/MainWindow.cpp" line="241"/>
         <source>Recent folders</source>
         <translation>Carpetas recientes</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="338"/>
+        <location filename="../src/MainWindow.cpp" line="340"/>
+        <source>Unsaved changes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/MainWindow.cpp" line="341"/>
+        <source>You have unsaved changes. Close anyway?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/MainWindow.cpp" line="374"/>
         <source>Open folder</source>
         <translation>Abrir carpeta</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="531"/>
+        <location filename="../src/MainWindow.cpp" line="567"/>
         <source>Find chunk</source>
         <translation>Buscar chunk</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="531"/>
+        <location filename="../src/MainWindow.cpp" line="567"/>
         <source>Chunk not found</source>
         <translation>No se encontró el chunk</translation>
     </message>
