@@ -26,11 +26,13 @@ void readValidFilesInFolder(TreeItem* parent, const QString& folder)
                     << "*.json"
                     << "*.dat_old"
                     << "*.dat_mcr"
+                    << "*.schematic"
                 , QDir::Files))
     {
         if(fileInfo.suffix() == "dat"
                 || fileInfo.suffix() == "dat_old"
-                || fileInfo.suffix() == "dat_mcr")
+                || fileInfo.suffix() == "dat_mcr"
+                || fileInfo.suffix() == "schematic")
         {
             new TreeItemNbtFile(parent, fileInfo.fileName(), folder);
         }
