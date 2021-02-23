@@ -42,5 +42,6 @@
         <file>images/action-paste.png</file>
         <file>images/action-clear.png</file>
         <file>images/action-find_chunk.png</file>
+        <file>images/settings-languages.png</file>
     </qresource>
 </RCC>

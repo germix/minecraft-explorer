@@ -1,0 +1,1 @@
+"lupdate.exe" MinecraftExplorer.pro

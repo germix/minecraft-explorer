@@ -61,13 +61,6 @@ MainWindow::MainWindow(QWidget* parent)
     ui->menu_View->addAction(ui->mainToolBar->toggleViewAction());
 
     //
-    // Actions
-    //
-    actionDirUp = new QAction(QIcon(":/images/nav-up.png"), tr("Move up"));
-    actionDirEnter = new QAction(QIcon(":/images/nav-enter.png"), tr("Enter directory"));
-    actionOpenContainerFolder = new QAction(QIcon(":/images/file-open-container-folder.png"), tr("Open container folder"));
-
-    //
     // Clipboard
     //
     const QClipboard* cb = QApplication::clipboard();
@@ -85,6 +78,8 @@ MainWindow::MainWindow(QWidget* parent)
 
     initRecentFilesMenu(s.value("RecentFiles").toByteArray());
 
+    initLanguages(s.value("Language").toString());
+
     openFolder(s.value("CurrentFolder", "").toString());
 }
 
@@ -99,6 +94,29 @@ MainWindow::~MainWindow()
     s.setValue("CurrentFolder", currentFolder);
 
     delete ui;
+}
+
+void MainWindow::changeEvent(QEvent* e)
+{
+    if(e != NULL)
+    {
+        switch(e->type())
+        {
+            case QEvent::LocaleChange:
+                {
+                    QString locale = QLocale::system().name();
+                    loadLanguage(locale);
+                }
+                break;
+            case QEvent::LanguageChange:
+                ui->retranslateUi(this);
+                recentFiles->rebuild(tr("Recent files"));
+                break;
+            default:
+                break;
+        }
+    }
+    QMainWindow::changeEvent(e);
 }
 
 void MainWindow::updateActions()
@@ -215,6 +233,90 @@ void MainWindow::initRecentFilesMenu(const QByteArray& state)
     connect(recentFiles, SIGNAL(onFileTriggered(QString)), this, SLOT(slotRecentFiles_fileTriggered(QString)));
 
     recentFiles->restoreState(state);
+}
+
+void MainWindow::loadLanguage(QString language)
+{
+    if(currentLanguage != language)
+    {
+        currentLanguage = language;
+
+        QLocale locale = QLocale(language);
+        QLocale::setDefault(locale);
+
+        QString fileName = languagesPath + "/" + QString("mcexplorer_%1.qm").arg(language);
+
+        // Remove old translator
+        qApp->removeTranslator(&currentTranslator);
+
+        // Load new translator
+        if(currentTranslator.load(fileName))
+        {
+            qApp->installTranslator(&currentTranslator);
+        }
+    }
+}
+
+void MainWindow::initLanguages(QString initialLocale)
+{
+    QActionGroup* langGroup = new QActionGroup(this);
+    langGroup->setExclusive(true);
+
+    connect(langGroup, SIGNAL(triggered(QAction*)), this, SLOT(slotLanguageChanged(QAction*)));
+
+    //
+    // Si no hay un lenguaje inicial, usar el del sistema
+    //
+    if(initialLocale.isEmpty())
+    {
+        QString defaultLocale = QLocale::system().name();
+        defaultLocale.truncate(defaultLocale.lastIndexOf('_'));
+
+        initialLocale = defaultLocale;
+    }
+
+    //
+    // Obtener la carpeta de donde están los lenguajes
+    //
+    languagesPath = QApplication::applicationDirPath();
+    languagesPath.append("/translations");
+
+    //
+    // Obtener el listado de los archivos de lenguaje
+    //
+    QDir dir(languagesPath);
+    QStringList fileNames = dir.entryList(QStringList("mcexplorer_*.qm"));
+
+    //
+    // Enumarar cada uno e ir creando una acción para ir agregandola al menú
+    //
+    for(int i = 0; i < fileNames.size(); i++)
+    {
+        QString locale;
+
+        locale = fileNames[i];
+        locale.truncate(locale.lastIndexOf('.'));
+        locale.remove(0, locale.indexOf('_') + 1);
+
+        QString lang = QLocale::languageToString(QLocale(locale).language());
+        QIcon ico(QString("%1/%2.png").arg(languagesPath).arg(locale));
+
+        QAction* action = new QAction(ico, lang, this);
+        action->setCheckable(true);
+        action->setData(locale);
+
+        ui->menuSettingsLanguage->addAction(action);
+        langGroup->addAction(action);
+
+        if(initialLocale == locale)
+        {
+            action->setChecked(true);
+        }
+    }
+    //
+    // Cargar lenguaje inicial
+    //
+    loadLanguage(initialLocale);
 }
 
 void MainWindow::slotAction()
@@ -447,6 +549,14 @@ void MainWindow::slotModelModified()
     updateActions();
 }
 
+void MainWindow::slotLanguageChanged(QAction* action)
+{
+    if(action != NULL)
+    {
+        loadLanguage(action->data().toString());
+    }
+}
+
 void MainWindow::slotClipboard_dataChanged()
 {
     updateActions();
@@ -475,14 +585,14 @@ void MainWindow::slotTreeView_customContextMenuRequested(const QPoint& pos)
     {
         if(!index.parent().isValid())
         {
-            menu.addAction(actionDirUp);
+            menu.addAction(ui->actionDirUp);
         }
         if(index.parent().isValid())
         {
-            menu.addAction(actionDirEnter);
+            menu.addAction(ui->actionDirEnter);
         }
         menu.addSeparator();
-        menu.addAction(actionOpenContainerFolder);
+        menu.addAction(ui->actionOpenContainerFolder);
     }
 
     if(treeItem->canRefresh())
@@ -532,17 +642,17 @@ void MainWindow::slotTreeView_customContextMenuRequested(const QPoint& pos)
     }
 
     QAction* action = menu.exec(QCursor::pos());
-    if(action == actionDirUp)
+    if(action == ui->actionDirUp)
     {
         QDir dir(currentFolder);
         dir.cdUp();
         openFolder(dir.absolutePath());
     }
-    else if(action == actionDirEnter)
+    else if(action == ui->actionDirEnter)
     {
         openFolder(treeItemFolder->parentFolderPath + '/' + treeItemFolder->folderName);
     }
-    else if(action == actionOpenContainerFolder)
+    else if(action == ui->actionOpenContainerFolder)
     {
         QString folderPath = treeItemFolder->parentFolderPath + '/' + treeItemFolder->folderName;
         QString param;

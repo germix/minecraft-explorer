@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QModelIndex>
+#include <QTranslator>
 
 namespace Ui {
 class MainWindow;
@@ -28,10 +29,6 @@ class MainWindow : public QMainWindow
     TreeModel* treeModel;
     QTreeView* treeModelView;
 
-    QAction* actionDirUp;
-    QAction* actionDirEnter;
-    QAction* actionOpenContainerFolder;
-
     TreeItem* lastFindItem;
     QModelIndex lastFindIndex;
     int lastFindPosition;
@@ -39,9 +36,15 @@ class MainWindow : public QMainWindow
     QString lastFindValue;
 
     RecentFilesMenu* recentFiles;
+
+    QString languagesPath;
+    QString currentLanguage;
+    QTranslator currentTranslator;
 public:
     explicit MainWindow(QWidget* parent = 0);
     ~MainWindow();
+public:
+    void changeEvent(QEvent* e);
 private:
     void updateActions();
     void addNbtTag(int type);
@@ -49,10 +52,14 @@ private:
     void findNextItem();
     void openFolder(const QString& folder);
     void initRecentFilesMenu(const QByteArray& state);
+    void loadLanguage(QString language);
+    void initLanguages(QString initialLocale);
 private slots:
     void slotAction();
 
     void slotModelModified();
+
+    void slotLanguageChanged(QAction* action);
 
     void slotClipboard_dataChanged();
 

@@ -67,10 +67,26 @@
     <addaction name="separator"/>
     <addaction name="actionFindChunk"/>
    </widget>
+   <widget class="QMenu" name="menu_Settings">
+    <property name="title">
+     <string>&amp;Settings</string>
+    </property>
+    <widget class="QMenu" name="menuSettingsLanguage">
+     <property name="title">
+      <string>&amp;Language</string>
+     </property>
+     <property name="icon">
+      <iconset resource="../res/resource.qrc">
+       <normaloff>:/images/settings-languages.png</normaloff>:/images/settings-languages.png</iconset>
+     </property>
+    </widget>
+    <addaction name="menuSettingsLanguage"/>
+   </widget>
    <addaction name="menu_File"/>
    <addaction name="menu_Edit"/>
    <addaction name="menu_Find"/>
    <addaction name="menu_View"/>
+   <addaction name="menu_Settings"/>
    <addaction name="menu_Help"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
@@ -374,6 +390,33 @@
    </property>
    <property name="text">
     <string>Find &amp;chunk</string>
+   </property>
+  </action>
+  <action name="actionDirUp">
+   <property name="icon">
+    <iconset resource="../res/resource.qrc">
+     <normaloff>:/images/nav-up.png</normaloff>:/images/nav-up.png</iconset>
+   </property>
+   <property name="text">
+    <string>Folder up</string>
+   </property>
+  </action>
+  <action name="actionDirEnter">
+   <property name="icon">
+    <iconset resource="../res/resource.qrc">
+     <normaloff>:/images/nav-enter.png</normaloff>:/images/nav-enter.png</iconset>
+   </property>
+   <property name="text">
+    <string>Enter folder</string>
+   </property>
+  </action>
+  <action name="actionOpenContainerFolder">
+   <property name="icon">
+    <iconset resource="../res/resource.qrc">
+     <normaloff>:/images/file-open-container-folder.png</normaloff>:/images/file-open-container-folder.png</iconset>
+   </property>
+   <property name="text">
+    <string>Open container folder</string>
    </property>
   </action>
  </widget>

@@ -86,7 +86,8 @@ SOURCES += \
     src/HexView.cpp \
     src/EditBinaryValueDialog.cpp \
     src/RecentFilesMenu.cpp \
-    src/FindChunkDialog.cpp
+    src/FindChunkDialog.cpp \
+    src/Languages.cpp
 
 HEADERS += \
     src/MainWindow.h \
@@ -125,7 +126,8 @@ HEADERS += \
     src/HexView.h \
     src/EditBinaryValueDialog.h \
     src/RecentFilesMenu.h \
-    src/FindChunkDialog.h
+    src/FindChunkDialog.h \
+    src/Languages.h
 
 FORMS += \
     src/MainWindow.ui \
@@ -151,7 +153,7 @@ win32:RC_FILE = res/resource_win32.rc
 # Translate files
 #---------------------------------------------------------------------------------------------------
 TRANSLATIONS = \
-    translate/mcexplorer_en.ts
+    translate/mcexplorer_en.ts \
     translate/mcexplorer_es.ts
 
 DISTFILES += \
