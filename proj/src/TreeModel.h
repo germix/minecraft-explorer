@@ -10,7 +10,8 @@ class TreeModel : public QAbstractItemModel
     Q_OBJECT
     TreeItem* root;
     QSet<TreeItem*> dirtyItemSet;
-    bool modified;
+
+    friend class TreeItem;
 public:
     explicit TreeModel(QObject *parent = nullptr);
     ~TreeModel();
@@ -19,7 +20,7 @@ public:
     void save();
     bool isModified() const
     {
-        return modified;
+        return dirtyItemSet.size() > 0;
     }
 
     TreeItem* toItem(const QModelIndex& index) const;

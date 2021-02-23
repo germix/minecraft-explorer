@@ -60,11 +60,22 @@ bool loadWorld(TreeItem* parent, const QString& worldFolderPath)
     return false;
 }
 
+void clearDirtyItem(QSet<TreeItem*>& dirtyItemSet, TreeItem* item)
+{
+    if(dirtyItemSet.contains(item))
+    {
+        dirtyItemSet.remove(item);
+    }
+    for(int i = 0; i < item->children.size(); i++)
+    {
+        clearDirtyItem(dirtyItemSet, item->children[i]);
+    }
+}
+
 TreeModel::TreeModel(QObject *parent)
     : QAbstractItemModel(parent)
 {
     root = nullptr;
-    modified = false;
 }
 
 TreeModel::~TreeModel()
@@ -79,7 +90,7 @@ void TreeModel::clear()
         delete root;
     }
     root = nullptr;
-    modified = false;
+    dirtyItemSet.clear();
 
     emit onModified();
 }
@@ -91,8 +102,6 @@ void TreeModel::markDirty(TreeItem* item)
     if(nullptr != (dirtyItem = item->markDirty()))
     {
         dirtyItemSet.insert(dirtyItem);
-
-        modified = true;
 
         emit onModified();
     }
@@ -124,7 +133,6 @@ void TreeModel::save()
     }
     dirtyItemSet.clear();
 
-    modified = false;
     emit onModified();
 }
 
@@ -218,13 +226,14 @@ void TreeModel::refreshItem(const QModelIndex& index)
 {
     TreeItem* item = toItem(index);
 
-    beginRemoveRows(index.parent(), 0, item->children.size());
+    clearDirtyItem(dirtyItemSet, item);
+    emit onModified();
+
+    beginRemoveRows(index, 0, item->children.size());
     item->clear();
     endRemoveRows();
 
     item->fetchMore();
-    beginInsertRows(index.parent(), 0, item->children.size());
-    endInsertRows();
 }
 
 void TreeModel::addNbtTag(const QModelIndex& parent, int type, const QString& name)
@@ -432,7 +441,12 @@ QVariant TreeModel::data(const QModelIndex& index, int role) const
 
         if(role == Qt::DisplayRole)
         {
-            return item->getLabel();
+            QString s = item->getLabel();
+            if(dirtyItemSet.contains(item))
+            {
+                s = "* " + s;
+            }
+            return s;
         }
         else if(role == Qt::DecorationRole)
         {

@@ -15,10 +15,6 @@ TreeItem* TreeItemNbtTag::markDirty()
             return tmp;
         if(dynamic_cast<TreeItemRegionFile*>(tmp))
             return tmp;
-        if(dynamic_cast<TreeItemRegionChunk*>(tmp))
-        {
-            ((TreeItemRegionChunk*)tmp)->modified = true;
-        }
 
         tmp = tmp->parent;
     }

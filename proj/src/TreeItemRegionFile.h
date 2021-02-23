@@ -14,6 +14,7 @@ public:
     RegionFile regionFile;
 public:
     TreeItemRegionFile(TreeItem* parent, const QString& fileNameIn, const QString& parentFolderPathIn);
+    ~TreeItemRegionFile();
 public:
     virtual QIcon getIcon() const override;
     virtual QString getLabel() const override;

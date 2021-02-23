@@ -14,10 +14,10 @@ public:
     RegionFile& regionFile;
     bool canFetchData;
     int compressionMethod;
-    bool modified;
 public:
     TreeItemRegionChunk(TreeItemRegionFile* parent, int chunkIndexIn, int regionXIn, int regionZIn, RegionFile& regionFileIn);
 public:
+    virtual TreeItem* markDirty() override;
     virtual QIcon getIcon() const override;
     virtual QString getLabel() const override;
     virtual void fetchMore() override;

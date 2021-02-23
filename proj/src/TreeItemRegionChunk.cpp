@@ -14,8 +14,21 @@ TreeItemRegionChunk::TreeItemRegionChunk(TreeItemRegionFile *parent, int chunkIn
     , regionFile(regionFileIn)
     , canFetchData(true)
     , compressionMethod(COMPRESSION_METHOD_UNDEFINED)
-    , modified(false)
 {
+}
+
+TreeItem* TreeItemRegionChunk::markDirty()
+{
+    TreeItem* tmp = this;
+
+    while(tmp != nullptr)
+    {
+        if(dynamic_cast<TreeItemRegionFile*>(tmp))
+            return tmp;
+
+        tmp = tmp->parent;
+    }
+    return nullptr;
 }
 
 QIcon TreeItemRegionChunk::getIcon() const
@@ -123,6 +136,4 @@ void TreeItemRegionChunk::saveChunk()
     else
     {
     }
-
-    modified = false;
 }

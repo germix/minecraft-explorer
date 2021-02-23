@@ -14,6 +14,10 @@ TreeItemRegionFile::TreeItemRegionFile(TreeItem* parent, const QString& fileName
     regionZ = parts[2].toInt();
 }
 
+TreeItemRegionFile::~TreeItemRegionFile()
+{
+}
+
 QIcon TreeItemRegionFile::getIcon() const
 {
     return QIcon(":/images/treeitem-region-file.png");
@@ -59,9 +63,6 @@ void TreeItemRegionFile::saveItem()
     {
         TreeItemRegionChunk* regionChunk = (TreeItemRegionChunk*)children[i];
 
-        if(regionChunk->modified)
-        {
-            regionChunk->saveChunk();
-        }
+        regionChunk->saveChunk();
     }
 }
