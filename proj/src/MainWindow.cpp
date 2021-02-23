@@ -9,6 +9,7 @@
 #include <QInputDialog>
 #include <QMessageBox>
 #include <QClipboard>
+#include <QCloseEvent>
 
 #include "AboutDialog.h"
 #include "TreeModel.h"
@@ -94,6 +95,14 @@ MainWindow::~MainWindow()
     s.setValue("CurrentFolder", currentFolder);
 
     delete ui;
+}
+
+void MainWindow::closeEvent(QCloseEvent* e)
+{
+    if(checkForUnsavedChanges())
+        e->accept();
+    else
+        e->ignore();
 }
 
 void MainWindow::changeEvent(QEvent* e)
@@ -209,6 +218,10 @@ void MainWindow::findNextItem()
 
 void MainWindow::openFolder(const QString& folder)
 {
+    if(!checkForUnsavedChanges())
+    {
+        return;
+    }
     recentFiles->addFile(QFileInfo(currentFolder).absoluteFilePath());
     recentFiles->removeFile(QFileInfo(folder).absoluteFilePath());
     currentFolder = folder;
@@ -317,6 +330,29 @@ void MainWindow::initLanguages(QString initialLocale)
     // Cargar lenguaje inicial
     //
     loadLanguage(initialLocale);
+}
+
+bool MainWindow::checkForUnsavedChanges()
+{
+    if(treeModel->isModified())
+    {
+        switch(QMessageBox::question(this,
+                tr("Unsaved changes"),
+                tr("You have unsaved changes. Close anyway?"),
+                QMessageBox::Save | QMessageBox::Yes | QMessageBox::Cancel))
+        {
+            case QMessageBox::Save:
+                treeModel->save();
+                break;
+            case QMessageBox::Yes:
+                break;
+            case QMessageBox::Cancel:
+                return false;
+            default:
+                break;
+        }
+    }
+    return true;
 }
 
 void MainWindow::slotAction()

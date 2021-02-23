@@ -44,6 +44,7 @@ public:
     explicit MainWindow(QWidget* parent = 0);
     ~MainWindow();
 public:
+    void closeEvent(QCloseEvent* e);
     void changeEvent(QEvent* e);
 private:
     void updateActions();
@@ -54,6 +55,7 @@ private:
     void initRecentFilesMenu(const QByteArray& state);
     void loadLanguage(QString language);
     void initLanguages(QString initialLocale);
+    bool checkForUnsavedChanges();
 private slots:
     void slotAction();
 
