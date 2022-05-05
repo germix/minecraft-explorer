@@ -60,6 +60,13 @@ void TreeItemNbtTagCompound::readNbt(QDataStream& in)
         }
         in >> type;
     }
+
+    qSort(this->children.begin(), this->children.end(), [](const TreeItem* a, const TreeItem* b) -> bool
+    {
+        TreeItemNbtTag* aTag = (TreeItemNbtTag*)a;
+        TreeItemNbtTag* bTag = (TreeItemNbtTag*)b;
+        return aTag->name.toLower() < bTag->name.toLower();
+    });
 }
 
 void TreeItemNbtTagCompound::writeNbt(QDataStream& out)
