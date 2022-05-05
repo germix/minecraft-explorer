@@ -112,7 +112,7 @@ void TreeItemNbtFile::saveItem()
     QFile file(parentFolderPath + "/" + fileName);
     if(file.open(QFile::WriteOnly))
     {
-        file.write(nbtTagsToByteArray(children, COMPRESSION_METHOD_NONE));
+        file.write(nbtTagsToByteArray(children, compressionMethod));
     }
 }
 
