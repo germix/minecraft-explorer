@@ -31,35 +31,17 @@ MainWindow::MainWindow(QWidget* parent)
 {
     ui->setupUi(this);
 
-    lastFindItem = nullptr;
-    lastFindPosition = -1;
-
-    viewWidget = new QWidget();
-
-    treeModel = new TreeModel();
-    treeModelView = new QTreeView();
-    treeModelView->setModel(treeModel);
-    treeModelView->setHeaderHidden(true);
-    treeModelView->setContextMenuPolicy(Qt::CustomContextMenu);
-    connect(treeModelView,
-            SIGNAL(customContextMenuRequested(QPoint)),
-            this,
-            SLOT(slotTreeView_customContextMenuRequested(QPoint)));
-    connect(treeModel, SIGNAL(onModified()), this, SLOT(slotModelModified()));
-    connect(treeModelView->selectionModel(),
-        SIGNAL(currentChanged(QModelIndex,QModelIndex)),
-        this,
-        SLOT(slotTreeView_currentChanged(QModelIndex,QModelIndex)));
-    connect(treeModelView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(slotTreeView_doubleClicked(QModelIndex)));
-
-    splitter = new QSplitter();
-    splitter->addWidget(treeModelView);
-    splitter->setStretchFactor(0, 1);
-    splitter->setStretchFactor(1, 1);
-    splitter->setOrientation(Qt::Horizontal);
-    setCentralWidget(splitter);
-
     ui->menu_View->addAction(ui->mainToolBar->toggleViewAction());
+
+    //
+    // Init tab widget
+    //
+    ui->tabWidget->setTabsClosable(true);
+    ui->tabWidget->setDocumentMode(true);
+    ui->tabWidget->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(ui->tabWidget, SIGNAL(currentChanged(int)), this, SLOT(slotTabWidget_currentChanged(int)));
+    connect(ui->tabWidget, SIGNAL(tabCloseRequested(int)), this, SLOT(slotTabWidget_tabCloseRequested(int)));
+    connect(ui->tabWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(slotTabWidget_customContextMenuRequested(QPoint)));
 
     //
     // Clipboard
@@ -70,36 +52,26 @@ MainWindow::MainWindow(QWidget* parent)
     //
     // Load settings
     //
-    QSettings s(SETTINGS_ORGANIZATION, SETTINGS_APPLICATION);
-
-    restoreGeometry(s.value("WindowGeometry").toByteArray());
-    restoreState(s.value("WindowState").toByteArray());
-    splitter->restoreGeometry(s.value("SplitterGeometry").toByteArray());
-    splitter->restoreState(s.value("SplitterState").toByteArray());
-
-    initRecentFilesMenu(s.value("RecentFiles").toByteArray());
-
-    initLanguages(s.value("Language").toString());
-
-    openFolder(s.value("CurrentFolder", "").toString());
+    loadSettings();
 }
 
 MainWindow::~MainWindow()
 {
-    QSettings s(SETTINGS_ORGANIZATION, SETTINGS_APPLICATION);
-    s.setValue("WindowState", saveState());
-    s.setValue("WindowGeometry", saveGeometry());
-    s.setValue("SplitterState", splitter->saveState());
-    s.setValue("SplitterGeometry", splitter->saveGeometry());
-    s.setValue("RecentFiles", recentFiles->saveState());
-    s.setValue("CurrentFolder", currentFolder);
-
+    saveSettings();
     delete ui;
 }
 
 void MainWindow::closeEvent(QCloseEvent* e)
 {
-    if(checkForUnsavedChanges())
+    lastTabActive = ui->tabWidget->currentIndex();
+    lastOpenFolders.clear();
+    for(int i = 0; i < ui->tabWidget->count(); i++)
+    {
+        TreeModel* treeModel = getTreeModel((QTreeView*)ui->tabWidget->widget(i));
+        lastOpenFolders += treeModel->rootFolder;
+    }
+
+    if(closeAll())
         e->accept();
     else
         e->ignore();
@@ -128,16 +100,63 @@ void MainWindow::changeEvent(QEvent* e)
     QMainWindow::changeEvent(e);
 }
 
+void MainWindow::loadSettings()
+{
+    QSettings s(SETTINGS_ORGANIZATION, SETTINGS_APPLICATION);
+
+    restoreGeometry(s.value("WindowGeometry").toByteArray());
+    restoreState(s.value("WindowState").toByteArray());
+
+    initRecentFilesMenu(s.value("RecentFiles").toByteArray());
+
+    initLanguages(s.value("Language").toString());
+
+    //
+    // Reopen last open folders
+    //
+    lastOpenFolders = s.value("LastOpenFolders").toStringList();
+    for(int i = 0; i < lastOpenFolders.size(); i++)
+    {
+        openFolder(lastOpenFolders[i]);
+    }
+
+    lastTabActive = s.value("LastTabActive").toInt();
+    if(lastTabActive >= 0 && lastTabActive < ui->tabWidget->count())
+    {
+        ui->tabWidget->setCurrentIndex(lastTabActive);
+    }
+
+    lastTabActive = -1;
+    lastOpenFolders.clear();
+}
+
+void MainWindow::saveSettings()
+{
+    QSettings s(SETTINGS_ORGANIZATION, SETTINGS_APPLICATION);
+    s.setValue("WindowState", saveState());
+    s.setValue("WindowGeometry", saveGeometry());
+    s.setValue("RecentFiles", recentFiles->saveState());
+    s.setValue("LastFolder", lastFolder);
+    s.setValue("LastTabActive", lastTabActive);
+    s.setValue("LastOpenFolders", lastOpenFolders);
+}
+
 void MainWindow::updateActions()
 {
+    QTreeView* treeView = currentTreeView();
+    if(!treeView)
+        return;
+    TreeModel* treeModel = getTreeModel(treeView);
+
     ui->actionFileSave->setEnabled(treeModel->isModified());
 
-    QModelIndex index = treeModelView->currentIndex();
+    QModelIndex index = treeView->currentIndex();
     TreeItem* item = treeModel->toItem(index);
     if(item != nullptr)
     {
+        FindData* fd = getFindData(treeModel);
         ui->actionFind->setEnabled(item->canFind());
-        ui->actionFindNext->setEnabled(item == lastFindItem);
+        ui->actionFindNext->setEnabled(item == getFindData(treeModel)->lastFindItem);
         ui->actionFindChunk->setEnabled(item->canFindChunk());
 
         ui->actionCut->setEnabled(item->canCutItem());
@@ -166,9 +185,28 @@ void MainWindow::updateActions()
     }
 }
 
+void MainWindow::updateTabLabel()
+{
+    QTreeView* treeView = currentTreeView();
+    if(!treeView)
+        return;
+    TreeModel* treeModel = getTreeModel(treeView);
+    QString s = treeModel->rootName;
+    bool isModified = treeView != nullptr && treeModel->isModified();
+
+    if(isModified)
+    {
+        s += " *";
+    }
+
+    ui->tabWidget->setTabText(ui->tabWidget->currentIndex(), s);
+}
+
 void MainWindow::addNbtTag(int type)
 {
-    QModelIndex index = treeModelView->currentIndex();
+    QTreeView* treeView = currentTreeView();
+    TreeModel* treeModel = getTreeModel(treeView);
+    QModelIndex index = treeView->currentIndex();
 
     if(index.isValid())
     {
@@ -193,23 +231,25 @@ void MainWindow::checkNbtTag(TreeItem* parent, QAction* action, int type)
 
 void MainWindow::findNextItem()
 {
-    if(lastFindIndex.isValid())
+    QTreeView* treeView = currentTreeView();
+    if(!treeView)
+        return;
+    TreeModel* treeModel = getTreeModel(treeView);
+    FindData* fd = getFindData(treeModel);
+
+    if(fd->lastFindIndex.isValid())
     {
-        QModelIndex indexFound = treeModel->findItem(lastFindIndex, lastFindPosition+1, lastFindName, lastFindValue);
+        QModelIndex indexFound = treeModel->findItem(fd->lastFindIndex, fd->lastFindPosition+1, fd->lastFindName, fd->lastFindValue);
         if(indexFound.isValid())
         {
-            lastFindItem = treeModel->toItem(indexFound);
-            lastFindIndex = indexFound.parent();
-            lastFindPosition = indexFound.row();
-            treeModelView->setCurrentIndex(indexFound);
+            fd->lastFindItem = treeModel->toItem(indexFound);
+            fd->lastFindIndex = indexFound.parent();
+            fd->lastFindPosition = indexFound.row();
+            treeView->setCurrentIndex(indexFound);
         }
         else
         {
-            lastFindItem = nullptr;
-            lastFindIndex = QModelIndex();
-            lastFindPosition = -1;
-            lastFindName = QString();
-            lastFindValue = QString();
+            fd->clear();
             updateActions();
             QMessageBox::information(this, tr("Find"), tr("Item not found"));
         }
@@ -218,22 +258,59 @@ void MainWindow::findNextItem()
 
 void MainWindow::openFolder(const QString& folder)
 {
-    if(!checkForUnsavedChanges())
-    {
+    if(folder.isEmpty())
         return;
-    }
-    recentFiles->addFile(QFileInfo(currentFolder).absoluteFilePath());
-    recentFiles->removeFile(QFileInfo(folder).absoluteFilePath());
-    currentFolder = folder;
+    QFileInfo fi(folder);
+    QString absoluteFolder = fi.absoluteFilePath();
 
-    if(!currentFolder.isEmpty())
+    if(mapFolderToTree.contains(absoluteFolder))
     {
-        treeModel->load(currentFolder);
-    }
-    lastFindItem = nullptr;
-    lastFindPosition = -1;
+        QTreeView* widget = mapFolderToTree.find(absoluteFolder).value();
 
+        ui->tabWidget->setCurrentWidget(widget);
+    }
+    else
+    {
+        recentFiles->removeFile(absoluteFolder);
+        lastFolder = absoluteFolder;
+
+        QTreeView* treeView = new QTreeView();
+        TreeModel* treeModel = new TreeModel();
+
+        treeView->setModel(treeModel);
+        treeView->setHeaderHidden(true);
+        treeView->setContextMenuPolicy(Qt::CustomContextMenu);
+        connect(treeView,
+                SIGNAL(customContextMenuRequested(QPoint)),
+                this,
+                SLOT(slotTreeView_customContextMenuRequested(QPoint)));
+        connect(treeView->selectionModel(),
+            SIGNAL(currentChanged(QModelIndex,QModelIndex)),
+            this,
+            SLOT(slotTreeView_currentChanged(QModelIndex,QModelIndex)));
+        connect(treeView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(slotTreeView_doubleClicked(QModelIndex)));
+        
+        connect(treeModel, SIGNAL(onModified()), this, SLOT(slotModelModified()));
+
+        // Open folder
+        treeModel->loadFolder(absoluteFolder);
+        treeView->expand(treeModel->firstIndex());
+
+        mapFolderToTree.insert(absoluteFolder, treeView);
+        mapModelToFindData.insert(treeModel, new FindData());
+
+        int tabIndex = ui->tabWidget->addTab(treeView, QIcon(":/images/treeitem-world-folder.png"), treeModel->rootName);
+        ui->tabWidget->setTabToolTip(tabIndex, treeModel->rootFolder);
+
+        ui->tabWidget->setCurrentWidget(treeView);
+    }
     updateActions();
+}
+
+void MainWindow::enterFolder(QTreeView* treeView, TreeModel* treeModel, const QString& folder)
+{
+    treeModel->enterFolder(QFileInfo(folder).absoluteFilePath());
+    treeView->expand(treeModel->firstIndex());
 }
 
 void MainWindow::initRecentFilesMenu(const QByteArray& state)
@@ -332,7 +409,45 @@ void MainWindow::initLanguages(QString initialLocale)
     loadLanguage(initialLocale);
 }
 
-bool MainWindow::checkForUnsavedChanges()
+bool MainWindow::closeAll()
+{
+    QTreeView* tree;
+
+    while(NULL != (tree = currentTreeView()))
+    {
+        if(!closeEditor(tree))
+            return false;
+    }
+    return true;
+}
+
+bool MainWindow::closeEditor(QTreeView* editor)
+{
+    TreeModel* treeModel = getTreeModel(editor);
+
+    if(checkForUnsavedChanges(treeModel))
+    {
+        // Update recent folders
+        if(!treeModel->rootFolder.isEmpty())
+            recentFiles->addFile(treeModel->rootFolder);
+
+        // Remove treeview from tab widget
+        ui->tabWidget->removeTab(ui->tabWidget->indexOf(editor));
+
+        // Cleanup
+        mapFolderToTree.remove(treeModel->rootFolder);
+        delete mapModelToFindData.find(treeModel).value();
+        mapModelToFindData.remove(treeModel);
+
+        // Update actions
+        updateActions();
+
+        return true;
+    }
+    return false;
+}
+
+bool MainWindow::checkForUnsavedChanges(TreeModel* treeModel)
 {
     if(treeModel->isModified())
     {
@@ -355,9 +470,30 @@ bool MainWindow::checkForUnsavedChanges()
     return true;
 }
 
+TreeModel* MainWindow::getTreeModel(QTreeView* treeView)
+{
+    if(treeView != nullptr)
+    {
+        return (TreeModel*)treeView->model();
+    }
+    return nullptr;
+}
+
+QTreeView* MainWindow::currentTreeView()
+{
+    return (QTreeView*)ui->tabWidget->currentWidget();
+}
+
+FindData* MainWindow::getFindData(TreeModel* treeModel)
+{
+    return mapModelToFindData.find(treeModel).value();
+}
+
 void MainWindow::slotAction()
 {
     QAction* action = qobject_cast<QAction*>(sender());
+    QTreeView* treeView = currentTreeView();
+    TreeModel* treeModel = getTreeModel(treeView);
 
     if(action == ui->actionFileExit)
     {
@@ -372,12 +508,27 @@ void MainWindow::slotAction()
         QString newFolder = QFileDialog::getExistingDirectory(
                                     this,
                                     tr("Open folder"),
-                                    currentFolder);
+                                    lastFolder);
 
-        if(!newFolder.isEmpty() && newFolder != currentFolder)
+        if(!newFolder.isEmpty())
         {
-            openFolder(newFolder);
+            if(TreeModel::isWorldFolder(newFolder))
+            {
+                openFolder(newFolder);
+            }
+            else
+            {
+                QMessageBox::information(this, tr("Error"), tr("The folder is not a valid world folder. Does not contains \"level.dat\""), QMessageBox::Information);
+            }
         }
+    }
+    else if(action == ui->actionClose)
+    {
+        closeEditor(currentTreeView());
+    }
+    else if(action == ui->actionCloseAll)
+    {
+        closeAll();
     }
     else if(action == ui->actionHelpAbout)
     {
@@ -385,19 +536,19 @@ void MainWindow::slotAction()
     }
     else if(action == ui->actionRefresh)
     {
-        QModelIndex index = treeModelView->currentIndex();
+        QModelIndex index = treeView->currentIndex();
         if(index.isValid())
         {
-            int pos = treeModelView->verticalScrollBar()->value();
+            int pos = treeView->verticalScrollBar()->value();
             treeModel->refreshItem(index);
-            treeModelView->setCurrentIndex(index);
-            treeModelView->expand(index);
-            treeModelView->verticalScrollBar()->setValue(pos);
+            treeView->setCurrentIndex(index);
+            treeView->expand(index);
+            treeView->verticalScrollBar()->setValue(pos);
         }
     }
     else if(action == ui->actionCut)
     {
-        QModelIndex index = treeModelView->currentIndex();
+        QModelIndex index = treeView->currentIndex();
         if(index.isValid())
         {
             treeModel->cutItem(index);
@@ -405,7 +556,7 @@ void MainWindow::slotAction()
     }
     else if(action == ui->actionCopy)
     {
-        QModelIndex index = treeModelView->currentIndex();
+        QModelIndex index = treeView->currentIndex();
         if(index.isValid())
         {
             treeModel->copyItem(index);
@@ -413,7 +564,7 @@ void MainWindow::slotAction()
     }
     else if(action == ui->actionPaste)
     {
-        QModelIndex index = treeModelView->currentIndex();
+        QModelIndex index = treeView->currentIndex();
         if(index.isValid())
         {
             treeModel->pasteIntoItem(index);
@@ -421,7 +572,7 @@ void MainWindow::slotAction()
     }
     else if(action == ui->actionRename)
     {
-        QModelIndex index = treeModelView->currentIndex();
+        QModelIndex index = treeView->currentIndex();
         if(index.isValid())
         {
             TreeItem* treeItem = treeModel->toItem(index);
@@ -441,7 +592,7 @@ void MainWindow::slotAction()
     }
     else if(action == ui->actionEdit)
     {
-        QModelIndex index = treeModelView->currentIndex();
+        QModelIndex index = treeView->currentIndex();
         if(index.isValid())
         {
             treeModel->editItem(index);
@@ -449,7 +600,7 @@ void MainWindow::slotAction()
     }
     else if(action == ui->actionDelete)
     {
-        QModelIndex index = treeModelView->currentIndex();
+        QModelIndex index = treeView->currentIndex();
         if(index.isValid())
         {
             treeModel->deleteItem(index);
@@ -457,7 +608,7 @@ void MainWindow::slotAction()
     }
     else if(action == ui->actionMoveItemUp)
     {
-        QModelIndex index = treeModelView->currentIndex();
+        QModelIndex index = treeView->currentIndex();
         if(index.isValid())
         {
             treeModel->moveItemUp(index);
@@ -465,7 +616,7 @@ void MainWindow::slotAction()
     }
     else if(action == ui->actionMoveItemDown)
     {
-        QModelIndex index = treeModelView->currentIndex();
+        QModelIndex index = treeView->currentIndex();
         if(index.isValid())
         {
             treeModel->moveItemDown(index);
@@ -521,18 +672,19 @@ void MainWindow::slotAction()
     }
     else if(action == ui->actionFind)
     {
-        QModelIndex index = treeModelView->currentIndex();
+        QModelIndex index = treeView->currentIndex();
         if(index.isValid())
         {
             FindDialog dlg;
 
             if(dlg.exec() == FindDialog::Accepted)
             {
-                lastFindItem = treeModel->toItem(index);
-                lastFindIndex = index;
-                lastFindName = dlg.getName();
-                lastFindValue = dlg.getValue();
-                lastFindPosition = -1;
+                FindData* fd = mapModelToFindData.find(treeModel).value();
+                fd->lastFindItem = treeModel->toItem(index);
+                fd->lastFindIndex = index;
+                fd->lastFindName = dlg.getName();
+                fd->lastFindValue = dlg.getValue();
+                fd->lastFindPosition = -1;
 
                 findNextItem();
             }
@@ -544,23 +696,19 @@ void MainWindow::slotAction()
     }
     else if(action == ui->actionFindChunk)
     {
-        QModelIndex index = treeModelView->currentIndex();
+        QModelIndex index = treeView->currentIndex();
         if(index.isValid())
         {
             FindChunkDialog dlg;
 
             if(dlg.exec() == FindDialog::Accepted)
             {
-                lastFindItem = nullptr;
-                lastFindIndex = QModelIndex();
-                lastFindName = QString();
-                lastFindValue = QString();
-                lastFindPosition = -1;
+                getFindData(treeModel)->clear();
 
                 QModelIndex indexFound = treeModel->findChunk(index, dlg.getChunkX(), dlg.getChunkZ());
                 if(indexFound.isValid())
                 {
-                    treeModelView->setCurrentIndex(indexFound);
+                    treeView->setCurrentIndex(indexFound);
                 }
                 else
                 {
@@ -573,16 +721,8 @@ void MainWindow::slotAction()
 
 void MainWindow::slotModelModified()
 {
-    QString s = TITLE;
-
-    if(treeModel->isModified())
-    {
-        s += " *";
-    }
-    setWindowTitle(s);
-    setWindowModified(treeModel->isModified());
-
     updateActions();
+    updateTabLabel();
 }
 
 void MainWindow::slotLanguageChanged(QAction* action)
@@ -603,12 +743,29 @@ void MainWindow::slotRecentFiles_fileTriggered(const QString& fileName)
     openFolder(fileName);
 }
 
+void MainWindow::slotTabWidget_currentChanged(int index)
+{
+    updateActions();
+    slotModelModified();
+}
+
+void MainWindow::slotTabWidget_tabCloseRequested(int index)
+{
+    if(index != -1)
+    {
+        closeEditor((QTreeView*)ui->tabWidget->widget(index));
+    }
+}
+
 void MainWindow::slotTreeView_customContextMenuRequested(const QPoint& pos)
 {
     Q_UNUSED(pos);
-
+    QTreeView* treeView = currentTreeView();
+    if(!treeView)
+        return;
+    TreeModel* treeModel = getTreeModel(treeView);
     QMenu menu;
-    QModelIndex index = treeModelView->currentIndex();
+    QModelIndex index = treeView->currentIndex();
     TreeItem* treeItem = treeModel->toItem(index);
     TreeItemFolder* treeItemFolder = dynamic_cast<TreeItemFolder*>(treeItem);
 
@@ -621,7 +778,8 @@ void MainWindow::slotTreeView_customContextMenuRequested(const QPoint& pos)
     {
         if(!index.parent().isValid())
         {
-            menu.addAction(ui->actionDirUp);
+            if(treeModel->rootFolder != treeModel->currentFolder)
+                menu.addAction(ui->actionDirUp);
         }
         if(index.parent().isValid())
         {
@@ -680,13 +838,13 @@ void MainWindow::slotTreeView_customContextMenuRequested(const QPoint& pos)
     QAction* action = menu.exec(QCursor::pos());
     if(action == ui->actionDirUp)
     {
-        QDir dir(currentFolder);
+        QDir dir(treeModel->currentFolder);
         dir.cdUp();
-        openFolder(dir.absolutePath());
+        enterFolder(treeView, treeModel, dir.absolutePath());
     }
     else if(action == ui->actionDirEnter)
     {
-        openFolder(treeItemFolder->parentFolderPath + '/' + treeItemFolder->folderName);
+        enterFolder(treeView, treeModel, treeItemFolder->parentFolderPath + '/' + treeItemFolder->folderName);
     }
     else if(action == ui->actionOpenContainerFolder)
     {
@@ -702,8 +860,29 @@ void MainWindow::slotTreeView_customContextMenuRequested(const QPoint& pos)
     }
 }
 
+void MainWindow::slotTabWidget_customContextMenuRequested(const QPoint& pos)
+{
+    int index;
+
+    if(-1 != (index = ui->tabWidget->tabBar()->tabAt(pos)))
+    {
+        ui->tabWidget->setCurrentIndex(index);
+
+        QMenu menu;
+
+        menu.addAction(ui->actionClose);
+        menu.addAction(ui->actionCloseAll);
+
+        menu.exec(QCursor::pos());
+    }
+}
+
 void MainWindow::slotTreeView_doubleClicked(const QModelIndex& index)
 {
+    QTreeView* treeView = currentTreeView();
+    if(!treeView)
+        return;
+    TreeModel* treeModel = getTreeModel(treeView);
     TreeItem* item;
 
     if(nullptr != (item = treeModel->toItem(index)))

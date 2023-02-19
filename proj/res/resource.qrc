@@ -43,5 +43,7 @@
         <file>images/action-clear.png</file>
         <file>images/action-find_chunk.png</file>
         <file>images/settings-languages.png</file>
+        <file>images/file-close.png</file>
+        <file>images/file-close_all.png</file>
     </qresource>
 </RCC>

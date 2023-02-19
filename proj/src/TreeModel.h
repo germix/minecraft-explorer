@@ -13,18 +13,23 @@ class TreeModel : public QAbstractItemModel
 
     friend class TreeItem;
 public:
+    QString rootName;
+    QString rootFolder;
+    QString currentFolder;
+public:
     explicit TreeModel(QObject *parent = nullptr);
     ~TreeModel();
 public:
-    void load(const QString& worldOrSavesPath);
+    bool loadFolder(const QString& folder);
+    void enterFolder(const QString& folder);
     void save();
     bool isModified() const
     {
         return dirtyItemSet.size() > 0;
     }
-
     TreeItem* toItem(const QModelIndex& index) const;
     QModelIndex toIndex(TreeItem* item, int column = 0) const;
+    QModelIndex firstIndex() const;
     void moveItemUp(const QModelIndex& index);
     void moveItemDown(const QModelIndex& index);
     void editItem(const QModelIndex& index);
@@ -57,6 +62,8 @@ public:
     bool hasChildren(const QModelIndex& parent) const override;
     void fetchMore(const QModelIndex& parent) override;
     bool canFetchMore(const QModelIndex& parent) const override;
+public:
+    static bool isWorldFolder(const QString& folder);
 signals:
     void onModified();
 private:

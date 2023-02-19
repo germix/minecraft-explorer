@@ -7,7 +7,7 @@
 #include <QFile>
 #include <QDataStream>
 
-bool isValidNbt(const QString& fileName)
+static bool isValidNbt(const QString& fileName)
 {
     QFile file(fileName);
     if(file.open(QFile::ReadOnly) && file.size() > 2)
@@ -42,7 +42,7 @@ bool isValidNbt(const QString& fileName)
     return false;
 }
 
-bool loadWorld(TreeItem* parent, const QString& worldFolderPath)
+static bool loadWorld(TreeItem* parent, const QString& worldFolderPath)
 {
     QFileInfo levelDat(worldFolderPath + "/level.dat");
 
@@ -60,7 +60,7 @@ bool loadWorld(TreeItem* parent, const QString& worldFolderPath)
     return false;
 }
 
-void clearDirtyItem(QSet<TreeItem*>& dirtyItemSet, TreeItem* item)
+static void clearDirtyItem(QSet<TreeItem*>& dirtyItemSet, TreeItem* item)
 {
     if(dirtyItemSet.contains(item))
     {
@@ -91,8 +91,6 @@ void TreeModel::clear()
     }
     root = nullptr;
     dirtyItemSet.clear();
-
-    emit onModified();
 }
 
 void TreeModel::markDirty(TreeItem* item)
@@ -107,14 +105,26 @@ void TreeModel::markDirty(TreeItem* item)
     }
 }
 
-void TreeModel::load(const QString& worldOrSavesPath)
+bool TreeModel::loadFolder(const QString& folder)
+{
+    if(isWorldFolder(folder))
+    {
+        enterFolder(folder);
+        rootName = QFileInfo(folder).fileName();
+        rootFolder = folder;
+        return true;
+    }
+    return false;
+}
+
+void TreeModel::enterFolder(const QString& folder)
 {
     beginResetModel();
     clear();
     root = new TreeItem(nullptr);
-    if(!loadWorld(root, worldOrSavesPath))
+    if(!loadWorld(root, folder))
     {
-        QDir dir(worldOrSavesPath);
+        QDir dir(folder);
         QString dirName = dir.dirName();
         dir.cdUp();
         QString parentPath = dir.absolutePath();
@@ -123,6 +133,10 @@ void TreeModel::load(const QString& worldOrSavesPath)
     }
     root->sort();
     endResetModel();
+
+    currentFolder = folder;
+
+    emit onModified();
 }
 
 void TreeModel::save()
@@ -153,6 +167,13 @@ QModelIndex TreeModel::toIndex(TreeItem* item, int column) const
     int row = parent->children.lastIndexOf(item);
     if(row != -1)
         return createIndex(row, column, item);
+    return QModelIndex();
+}
+
+QModelIndex TreeModel::firstIndex() const
+{
+    if(root != nullptr && root->children.size() > 0)
+        return toIndex(root->children[0]);
     return QModelIndex();
 }
 
@@ -227,11 +248,15 @@ void TreeModel::refreshItem(const QModelIndex& index)
     TreeItem* item = toItem(index);
 
     clearDirtyItem(dirtyItemSet, item);
-    emit onModified();
 
-    beginRemoveRows(index, 0, item->children.size());
-    item->clear();
-    endRemoveRows();
+    if(item->children.size() > 0)
+    {
+        beginRemoveRows(index, 0, item->children.size() - 1);
+        item->clear();
+        endRemoveRows();
+    }
+
+    emit onModified();
 
     item->fetchMore();
 }
@@ -489,4 +514,11 @@ bool TreeModel::canFetchMore(const QModelIndex& parent) const
         return parentItem->canFetchMore();
     }
     return true;
+}
+
+bool TreeModel::isWorldFolder(const QString& folder)
+{
+    QFileInfo levelDat(folder + "/level.dat");
+
+    return (levelDat.exists() && isValidNbt(levelDat.absoluteFilePath()));
 }
