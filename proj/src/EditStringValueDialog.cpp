@@ -33,5 +33,6 @@ EditStringValueDialog::~EditStringValueDialog()
 void EditStringValueDialog::accept()
 {
     treeItem->value = ui->plainTextEdit->toPlainText();
+    model->itemChanged(treeItem);
     QDialog::accept();
 }
