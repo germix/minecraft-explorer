@@ -318,6 +318,7 @@ void EditBinaryValueDialog::accept()
             tagLongArray->data.append(value);
         }
     }
+    model->itemChanged(treeItem);
     QDialog::accept();
 }
 
