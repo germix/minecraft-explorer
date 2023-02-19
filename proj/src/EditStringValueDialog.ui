@@ -10,6 +10,9 @@
     <height>300</height>
    </rect>
   </property>
+  <property name="focusPolicy">
+   <enum>Qt::TabFocus</enum>
+  </property>
   <property name="windowTitle">
    <string>Edit string value</string>
   </property>
@@ -25,6 +28,9 @@
     <widget class="QPushButton" name="btnOk">
      <property name="text">
       <string>Ok</string>
+     </property>
+     <property name="default">
+      <bool>true</bool>
      </property>
     </widget>
    </item>

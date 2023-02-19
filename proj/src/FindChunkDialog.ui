@@ -10,6 +10,9 @@
     <height>150</height>
    </rect>
   </property>
+  <property name="focusPolicy">
+   <enum>Qt::TabFocus</enum>
+  </property>
   <property name="windowTitle">
    <string>Find chunk</string>
   </property>
@@ -123,6 +126,9 @@
        <property name="text">
         <string>Ok</string>
        </property>
+       <property name="default">
+        <bool>true</bool>
+       </property>
       </widget>
      </item>
     </layout>
@@ -130,6 +136,10 @@
   </layout>
  </widget>
  <tabstops>
+  <tabstop>txtChunkX</tabstop>
+  <tabstop>txtChunkZ</tabstop>
+  <tabstop>txtBlockX</tabstop>
+  <tabstop>txtBlockZ</tabstop>
   <tabstop>btnOk</tabstop>
   <tabstop>btnCancel</tabstop>
  </tabstops>

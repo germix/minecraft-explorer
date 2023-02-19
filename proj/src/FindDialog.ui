@@ -7,8 +7,11 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>184</height>
+    <height>144</height>
    </rect>
+  </property>
+  <property name="focusPolicy">
+   <enum>Qt::TabFocus</enum>
   </property>
   <property name="windowTitle">
    <string>Find</string>
@@ -83,6 +86,9 @@
       <widget class="QPushButton" name="btnOk">
        <property name="text">
         <string>Ok</string>
+       </property>
+       <property name="default">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
