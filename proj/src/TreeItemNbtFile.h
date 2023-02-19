@@ -22,6 +22,11 @@ public:
     {
         return true;
     }
+    virtual bool canAddNbtTag(int type) const
+    {
+        Q_UNUSED(type);
+        return true;
+    }
     virtual bool canFind() const override
     {
         return true;
