@@ -128,6 +128,8 @@ void MainWindow::loadSettings()
 
     lastTabActive = -1;
     lastOpenFolders.clear();
+
+    updateActions();
 }
 
 void MainWindow::saveSettings()
@@ -144,45 +146,76 @@ void MainWindow::saveSettings()
 void MainWindow::updateActions()
 {
     QTreeView* treeView = currentTreeView();
-    if(!treeView)
-        return;
-    TreeModel* treeModel = getTreeModel(treeView);
-
-    ui->actionFileSave->setEnabled(treeModel->isModified());
-
-    QModelIndex index = treeView->currentIndex();
-    TreeItem* item = treeModel->toItem(index);
-    if(item != nullptr)
+    if(treeView)
     {
-        FindData* fd = getFindData(treeModel);
-        ui->actionFind->setEnabled(item->canFind());
-        ui->actionFindNext->setEnabled(item == getFindData(treeModel)->lastFindItem);
-        ui->actionFindChunk->setEnabled(item->canFindChunk());
+        TreeModel* treeModel = getTreeModel(treeView);
 
-        ui->actionCut->setEnabled(item->canCutItem());
-        ui->actionCopy->setEnabled(item->canCopyItem());
-        ui->actionPaste->setEnabled(item->canPasteIntoItem());
+        ui->actionFileSave->setEnabled(treeModel->isModified());
 
-        ui->actionEdit->setEnabled(item->canEdit());
-        ui->actionDelete->setEnabled(item->canDelete());
-        ui->actionRename->setEnabled(item->canRename());
-        ui->actionRefresh->setEnabled(item->canRefresh());
-        ui->actionMoveItemUp->setEnabled(item->canMoveUp());
-        ui->actionMoveItemDown->setEnabled(item->canMoveDown());
+        QModelIndex index = treeView->currentIndex();
+        TreeItem* item = treeModel->toItem(index);
+        if(item != nullptr)
+        {
+            FindData* fd = getFindData(treeModel);
+            ui->actionFind->setEnabled(item->canFind());
+            ui->actionFindNext->setEnabled(item == getFindData(treeModel)->lastFindItem);
+            ui->actionFindChunk->setEnabled(item->canFindChunk());
 
-        checkNbtTag(item, ui->actionAddByteTag, NBTTAG_BYTE);
-        checkNbtTag(item, ui->actionAddShortTag, NBTTAG_SHORT);
-        checkNbtTag(item, ui->actionAddIntTag, NBTTAG_INT);
-        checkNbtTag(item, ui->actionAddLongTag, NBTTAG_LONG);
-        checkNbtTag(item, ui->actionAddFloatTag, NBTTAG_FLOAT);
-        checkNbtTag(item, ui->actionAddDoubleTag, NBTTAG_DOUBLE);
-        checkNbtTag(item, ui->actionAddByteArrayTag, NBTTAG_BYTE_ARRAY);
-        checkNbtTag(item, ui->actionAddStringTag, NBTTAG_STRING);
-        checkNbtTag(item, ui->actionAddListTag, NBTTAG_LIST);
-        checkNbtTag(item, ui->actionAddCompoundTag, NBTTAG_COMPOUND);
-        checkNbtTag(item, ui->actionAddIntArrayTag, NBTTAG_INT_ARRAY);
-        checkNbtTag(item, ui->actionAddLongArrayTag, NBTTAG_LONG_ARRAY);
+            ui->actionCut->setEnabled(item->canCutItem());
+            ui->actionCopy->setEnabled(item->canCopyItem());
+            ui->actionPaste->setEnabled(item->canPasteIntoItem());
+
+            ui->actionEdit->setEnabled(item->canEdit());
+            ui->actionDelete->setEnabled(item->canDelete());
+            ui->actionRename->setEnabled(item->canRename());
+            ui->actionRefresh->setEnabled(item->canRefresh());
+            ui->actionMoveItemUp->setEnabled(item->canMoveUp());
+            ui->actionMoveItemDown->setEnabled(item->canMoveDown());
+
+            checkNbtTag(item, ui->actionAddByteTag, NBTTAG_BYTE);
+            checkNbtTag(item, ui->actionAddShortTag, NBTTAG_SHORT);
+            checkNbtTag(item, ui->actionAddIntTag, NBTTAG_INT);
+            checkNbtTag(item, ui->actionAddLongTag, NBTTAG_LONG);
+            checkNbtTag(item, ui->actionAddFloatTag, NBTTAG_FLOAT);
+            checkNbtTag(item, ui->actionAddDoubleTag, NBTTAG_DOUBLE);
+            checkNbtTag(item, ui->actionAddByteArrayTag, NBTTAG_BYTE_ARRAY);
+            checkNbtTag(item, ui->actionAddStringTag, NBTTAG_STRING);
+            checkNbtTag(item, ui->actionAddListTag, NBTTAG_LIST);
+            checkNbtTag(item, ui->actionAddCompoundTag, NBTTAG_COMPOUND);
+            checkNbtTag(item, ui->actionAddIntArrayTag, NBTTAG_INT_ARRAY);
+            checkNbtTag(item, ui->actionAddLongArrayTag, NBTTAG_LONG_ARRAY);
+
+            return;
+        }
     }
+
+    ui->actionFind->setEnabled(false);
+    ui->actionFindNext->setEnabled(false);
+    ui->actionFindChunk->setEnabled(false);
+
+    ui->actionCut->setEnabled(false);
+    ui->actionCopy->setEnabled(false);
+    ui->actionPaste->setEnabled(false);
+
+    ui->actionEdit->setEnabled(false);
+    ui->actionDelete->setEnabled(false);
+    ui->actionRename->setEnabled(false);
+    ui->actionRefresh->setEnabled(false);
+    ui->actionMoveItemUp->setEnabled(false);
+    ui->actionMoveItemDown->setEnabled(false);
+
+    checkNbtTag(nullptr, ui->actionAddByteTag, NBTTAG_BYTE);
+    checkNbtTag(nullptr, ui->actionAddShortTag, NBTTAG_SHORT);
+    checkNbtTag(nullptr, ui->actionAddIntTag, NBTTAG_INT);
+    checkNbtTag(nullptr, ui->actionAddLongTag, NBTTAG_LONG);
+    checkNbtTag(nullptr, ui->actionAddFloatTag, NBTTAG_FLOAT);
+    checkNbtTag(nullptr, ui->actionAddDoubleTag, NBTTAG_DOUBLE);
+    checkNbtTag(nullptr, ui->actionAddByteArrayTag, NBTTAG_BYTE_ARRAY);
+    checkNbtTag(nullptr, ui->actionAddStringTag, NBTTAG_STRING);
+    checkNbtTag(nullptr, ui->actionAddListTag, NBTTAG_LIST);
+    checkNbtTag(nullptr, ui->actionAddCompoundTag, NBTTAG_COMPOUND);
+    checkNbtTag(nullptr, ui->actionAddIntArrayTag, NBTTAG_INT_ARRAY);
+    checkNbtTag(nullptr, ui->actionAddLongArrayTag, NBTTAG_LONG_ARRAY);
 }
 
 void MainWindow::updateTabLabel()
@@ -225,8 +258,16 @@ void MainWindow::addNbtTag(int type)
 
 void MainWindow::checkNbtTag(TreeItem* parent, QAction* action, int type)
 {
-    action->setVisible(parent->canAddNbtTag(type));
-    action->setEnabled(parent->canAddNbtTag(type));
+    if(parent == nullptr)
+    {
+        action->setVisible(false);
+        action->setEnabled(false);
+    }
+    else
+    {
+        action->setVisible(parent->canAddNbtTag(type));
+        action->setEnabled(parent->canAddNbtTag(type));
+    }
 }
 
 void MainWindow::findNextItem()
