@@ -1,2 +1,4 @@
-"lrelease.exe" MinecraftExplorer.pro
-MOVE translate\*.qm ..\bin\translations\
+lrelease.exe MinecraftExplorer.pro
+MOVE /Y translate\*.qm ..\bin\translations\
+COPY /Y translate\*.png ..\bin\translations\
+pause

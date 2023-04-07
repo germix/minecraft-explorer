@@ -1,1 +1,2 @@
-"lupdate.exe" MinecraftExplorer.pro
+lupdate.exe MinecraftExplorer.pro
+pause
