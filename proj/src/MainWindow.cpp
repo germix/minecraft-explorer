@@ -330,17 +330,18 @@ void MainWindow::openFolder(const QString& folder)
             this,
             SLOT(slotTreeView_currentChanged(QModelIndex,QModelIndex)));
         connect(treeView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(slotTreeView_doubleClicked(QModelIndex)));
-        
+
         connect(treeModel, SIGNAL(onModified()), this, SLOT(slotModelModified()));
 
         // Open folder
-        treeModel->loadFolder(absoluteFolder);
+        bool ok = treeModel->loadFolder(absoluteFolder);
         treeView->expand(treeModel->firstIndex());
 
         mapFolderToTree.insert(absoluteFolder, treeView);
         mapModelToFindData.insert(treeModel, new FindData());
 
-        int tabIndex = ui->tabWidget->addTab(treeView, QIcon(":/images/treeitem-world-folder.png"), treeModel->rootName);
+        QIcon tabIcon = ok ? QIcon(":/images/treeitem-world-folder.png") : QIcon(":/images/treeitem-world-folder-warning.png");
+        int tabIndex = ui->tabWidget->addTab(treeView, tabIcon, treeModel->rootName);
         ui->tabWidget->setTabToolTip(tabIndex, treeModel->rootFolder);
 
         ui->tabWidget->setCurrentWidget(treeView);
@@ -557,9 +558,13 @@ void MainWindow::slotAction()
             {
                 openFolder(newFolder);
             }
-            else
+            else if(QMessageBox::Yes == QMessageBox::question(
+                this,
+                tr("Open folder"),
+                tr("The folder is not a valid world folder. Does not contains \"level.dat\"\nOpen anyway?"),
+                QMessageBox::Yes | QMessageBox::No))
             {
-                QMessageBox::information(this, tr("Error"), tr("The folder is not a valid world folder. Does not contains \"level.dat\""), QMessageBox::Information);
+                openFolder(newFolder);
             }
         }
     }

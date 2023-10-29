@@ -45,5 +45,6 @@
         <file>images/settings-languages.png</file>
         <file>images/file-close.png</file>
         <file>images/file-close_all.png</file>
+        <file>images/treeitem-world-folder-warning.png</file>
     </qresource>
 </RCC>

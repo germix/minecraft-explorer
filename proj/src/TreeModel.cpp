@@ -107,14 +107,11 @@ void TreeModel::markDirty(TreeItem* item)
 
 bool TreeModel::loadFolder(const QString& folder)
 {
-    if(isWorldFolder(folder))
-    {
-        enterFolder(folder);
-        rootName = QFileInfo(folder).fileName();
-        rootFolder = folder;
-        return true;
-    }
-    return false;
+    enterFolder(folder);
+    rootName = QFileInfo(folder).fileName();
+    rootFolder = folder;
+
+    return isWorldFolder(folder);
 }
 
 void TreeModel::enterFolder(const QString& folder)
